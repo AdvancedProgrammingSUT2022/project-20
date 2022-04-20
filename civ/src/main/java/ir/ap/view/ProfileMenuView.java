@@ -56,7 +56,11 @@ public class ProfileMenuView extends AbstractMenuView {
     }
 
     public Menu enterMenu(Matcher matcher) {
-        return responseAndGo(Message.MENU_NAVIGATION_IMPOSSIBLE, Menu.PROFILE);
+        Menu nextMenu = Menu.getMenuByName(matcher.group("menuName"));
+        if (nextMenu == Menu.MAIN) {
+            return responseAndGo(null, Menu.MAIN);
+        } else
+            return responseAndGo(Message.MENU_NAVIGATION_IMPOSSIBLE, Menu.PROFILE);
     }
 
     public Menu exitMenu(Matcher matcher) {

@@ -1,5 +1,7 @@
 package ir.ap.controller;
 
-public class GameController extends AbstractController {
+import ir.ap.model.GameArea;
 
+public class GameController extends AbstractController {
+    private GameArea gameArea = null;
 }
