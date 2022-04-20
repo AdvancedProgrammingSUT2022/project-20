@@ -6,28 +6,50 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import ir.ap.controller.GameController;
 import ir.ap.controller.UserController;
-import ir.ap.model.User;
 
 public abstract class AbstractMenuView {
     protected static final Scanner SCANNER = new Scanner(System.in);
     protected static final UserController USER_CONTROLLER = new UserController();
     protected static final GameController GAME_CONTROLLER = new GameController();
+    protected static final Gson GSON = new Gson();
 
-    protected static User user;
-    protected static Menu currentMenu = Menu.LOGIN;
+    protected static String currentUsername = null;
+    protected static Menu currentMenu;
 
     public static String constantCaseToCamelCase(String constCaseStr) {
-        String res = Arrays.stream(constCaseStr.split("_"))
+        String camelCaseStr = Arrays.stream(constCaseStr.split("_"))
                 .map(t -> t.substring(0, 1).toUpperCase() + t.substring(1).toLowerCase())
                 .collect(Collectors.joining(""));
-        return res.substring(0, 1).toLowerCase() + res.substring(1);
+        return camelCaseStr.substring(0, 1).toLowerCase() + camelCaseStr.substring(1);
     }
 
     public static Matcher getCommandMatcher(String regex, String input) {
-        Matcher res = Pattern.compile(regex).matcher(input);
-        return (res.matches() ? res : null);
+        Matcher matcher = Pattern.compile(regex).matcher(input);
+        return (matcher.matches() ? matcher : null);
+    }
+
+    public static boolean responseOk(String response) {
+        return GSON.fromJson(response, JsonObject.class)
+                .get("ok").getAsBoolean();
+    }
+
+    public static boolean responseOk(JsonObject response) {
+        return response.get("ok").getAsBoolean();
+    }
+
+    public static boolean isLogin() {
+        return currentUsername != null;
+    }
+
+    public static Menu responseAndGo(Object msg, Menu nextMenu) {
+        if (msg != null)
+            System.out.println(msg);
+        return nextMenu;
     }
 
     public static void run() {
@@ -61,9 +83,9 @@ public abstract class AbstractMenuView {
 
     public abstract Enum<?>[] getCommands();
 
-    public abstract void enterMenu(Matcher matcher);
+    public abstract Menu enterMenu(Matcher matcher);
 
-    public abstract void exitMenu(Matcher matcher);
+    public abstract Menu exitMenu(Matcher matcher);
 
-    public abstract void showMenu(Matcher matcher);
+    public abstract Menu showMenu(Matcher matcher);
 }

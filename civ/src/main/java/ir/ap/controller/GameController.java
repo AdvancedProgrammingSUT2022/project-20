@@ -1,5 +1,5 @@
 package ir.ap.controller;
 
-public class GameController {
-    
+public class GameController extends AbstractController {
+
 }
