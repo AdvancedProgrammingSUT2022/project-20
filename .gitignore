@@ -1,6 +1,12 @@
 .idea/
+.idea_modules/
 .vscode/
 
 out/
 bin/
 target/
+
+*.iml
+
+Log/
+log.json
