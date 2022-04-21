@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import ir.ap.controller.GameController;
@@ -40,6 +41,23 @@ public abstract class AbstractMenuView {
 
     public static boolean responseOk(JsonObject response) {
         return response.get("ok").getAsBoolean();
+    }
+
+    public static <T> T getField(JsonObject response, String fieldName, Class<T> classOfT) {
+        if (!responseOk(response))
+            return null;
+        JsonElement field = response.get(fieldName);
+        if (field == null)
+            return null;
+        if (classOfT.equals(String.class))
+            return classOfT.cast(field.getAsString());
+        if (classOfT.equals(int.class))
+            return classOfT.cast(field.getAsInt());
+        if (classOfT.equals(boolean.class))
+            return classOfT.cast(field.getAsBoolean());
+        if (classOfT.equals(double.class))
+            return classOfT.cast(field.getAsDouble());
+        throw new RuntimeException();
     }
 
     public static boolean isLogin() {

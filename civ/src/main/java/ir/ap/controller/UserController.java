@@ -12,6 +12,10 @@ public class UserController extends AbstractController {
         return JSON_FALSE;
     }
 
+    public JsonObject logout(String username) {
+        return JSON_FALSE;
+    }
+
     public JsonObject changeNickname(String username, String newNickname) {
         return JSON_FALSE;
     }
