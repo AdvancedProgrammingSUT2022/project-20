@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public enum Resource {
 
-    BANANAS(1,1,0,0,new ArrayList<>(Arrays.asList(new TerrainType.TerrainFeature[]{TerrainType.TerrainFeature.JUNGLE})),new ArrayList<>(Arrays.asList(new Improvement[]{})),new ArrayList<>(Arrays.asList(new Technology[]{}))),
+    BANANAS(1,1,0,0,new ArrayList<>(Arrays.asList(new TerrainType.TerrainFeature[]{/*TerrainType.TerrainFeature.JUNGLE*/})),new ArrayList<>(Arrays.asList(new Improvement[]{})),new ArrayList<>(Arrays.asList(new Technology[]{}))),
     CATTLE(2,1,0,0,new ArrayList<>(Arrays.asList(new TerrainType[]{})),new ArrayList<>(Arrays.asList(new Improvement[]{})),new ArrayList<>(Arrays.asList(new Technology[]{}))),
     DEER(3,1,0,0,new ArrayList<>(Arrays.asList(new TerrainType[]{})),new ArrayList<>(Arrays.asList(new Improvement[]{})),new ArrayList<>(Arrays.asList(new Technology[]{}))),
     FISH(4,2,0,0,new ArrayList<>(Arrays.asList(new TerrainType[]{})),new ArrayList<>(Arrays.asList(new Improvement[]{})),new ArrayList<>(Arrays.asList(new Technology[]{}))),
