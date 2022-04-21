@@ -1,6 +1,6 @@
 package ir.ap.model;
 
-public enum UnitType {
+public enum UnitType implements Production {
     // Fields that their value is N/A and their type is primitive(like int, ...) are -1
     ARCHER(1, 70, CombatType.ARCHERY, 4, 6, 2, 2, null, Technology.ARCHERY, Era.ANCIENT),
     CHARIOT_ARCHER(2, 60, CombatType.MOUNTED, 3, 6, 2, 4, Resource.HORSES, Technology.THE_WHEEL, Era.ANCIENT),

@@ -18,7 +18,7 @@ public class City {
     private ArrayList<Tile> territory;
     private ArrayList<Tile> workingTiles;
 
-    private Enum<?> currentProduction;
+    private Production currentProduction;
     private int[] turnsLeftForProductionConstruction;
 
     private int combatStrength;
@@ -165,28 +165,20 @@ public class City {
         workingTiles.add(tile);
     }
 
-    public Enum<?> getCurrentProduction() {
+    public Production getCurrentProduction() {
         return this.currentProduction;
     }
 
-    public void setCurrentProduction(Enum<?> currentProduction) {
+    public void setCurrentProduction(Production currentProduction) {
         this.currentProduction = currentProduction;
     }
 
-    public int getTurnsLeftForProductionConstruction(BuildingType building) {
-        return this.turnsLeftForProductionConstruction[building.getId()];
+    public int getTurnsLeftForProductionConstruction(Production production) {
+        return this.turnsLeftForProductionConstruction[production.getId()];
     }
 
-    public int getTurnsLeftForProductionConstruction(UnitType unit) {
-        return this.turnsLeftForProductionConstruction[unit.getId()];
-    }
-
-    public void setTurnsLeftForProductionConstruction(BuildingType building, int turns) {
-        this.turnsLeftForProductionConstruction[building.getId()] = turns;
-    }
-
-    public void setTurnsLeftForProductionConstruction(UnitType unit, int turns) {
-        this.turnsLeftForProductionConstruction[unit.getId()] = turns;
+    public void setTurnsLeftForProductionConstruction(Production production, int turns) {
+        this.turnsLeftForProductionConstruction[production.getId()] = turns;
     }
 
     public int getCombatStrength() {

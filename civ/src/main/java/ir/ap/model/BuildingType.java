@@ -1,6 +1,7 @@
 package ir.ap.model;
 
-public enum BuildingType {
+public enum BuildingType implements Production {
+    // WARN: Start id's from 50 (UnitType 0->49, BuildingType 50->99)
     BARRACKS,
     GRANARY,
     LIBRARY,
