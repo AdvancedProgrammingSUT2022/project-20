@@ -5,28 +5,35 @@ import java.util.Arrays;
 
 public enum TerrainType {
 
+<<<<<<< HEAD
     COAST(1,1,0,1,0,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.ICE})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.FISH,Resource.WHALES,Resource.PEARLS,Resource.OIL}))),
     DESERT(2,0,0,0,-33,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.OASIS,TerrainFeature.FLOOD_PLAINS})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.IRON,Resource.OIL,Resource.ALUMINUM,Resource.URANIUM,Resource.GOLD,Resource.SILVER,Resource.GEMS,Resource.MARBLE,Resource.COTTON,Resource.INCENSE,Resource.SHEEP}))),
     GRASSLAND(3,2,0,0,-33,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.FOREST,TerrainFeature.MARSH})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.IRON,Resource.HORSES,Resource.COAL,Resource.URANIUM,Resource.CATTLE,Resource.GOLD,Resource.GEMS,Resource.MARBLE,Resource.COTTON,Resource.WINE,Resource.SHEEP}))),
     HILL(4,0,2,0,25,2,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.FOREST,TerrainFeature.JUNGLE})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.IRON,Resource.COAL,Resource.ALUMINUM,Resource.URANIUM,Resource.DEER,Resource.GOLD,Resource.SILVER,Resource.GEMS,Resource.MARBLE,Resource.SHEEP}))),
+=======
+    COAST(1,1,0,1,0,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.ICE})),new ArrayList<>(Arrays.asList(new Resource[]{}))),
+    DESERT(2,0,0,0,-33,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.OASIS,TerrainFeature.FLOOD_PLAINS})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.IRON,Resource.GOLD,Resource.SILVER,Resource.GEMS,Resource.MARBLE,Resource.COTTON,Resource.INCENSE,Resource.SHEEP}))),
+    GRASSLAND(3,2,0,0,-33,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.JUNGLE,TerrainFeature.MARSH})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.IRON,Resource.HORSES,Resource.COAL,Resource.CATTLE,Resource.GOLD,Resource.GEMS,Resource.MARBLE,Resource.COTTON,Resource.SHEEP}))),
+    HILL(4,0,2,0,25,2,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.JUNGLE,TerrainFeature.FOREST})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.IRON,Resource.COAL,Resource.DEER,Resource.GOLD,Resource.SILVER,Resource.GEMS,Resource.MARBLE,Resource.SHEEP}))),
+>>>>>>> resource
     MOUNTAIN(5,0,0,0,25,1000000000,new ArrayList<>(Arrays.asList(new TerrainFeature[]{})),new ArrayList<>(Arrays.asList(new Resource[]{}))),
-    OCEAN(6,1,0,1,0,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.ICE})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.OIL}))),
-    PLAINS(7,1,1,0,-33,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.FOREST, TerrainFeature.JUNGLE})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.IRON,Resource.HORSES,Resource.COAL,Resource.ALUMINUM,Resource.URANIUM,Resource.WHEAT,Resource.GOLD,Resource.GEMS,Resource.MARBLE,Resource.IVORY,Resource.COTTON,Resource.WINE,Resource.INCENSE,Resource.SHEEP}))),
-    SNOW(8,0,0,0,-33,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.IRON,Resource.OIL,Resource.URANIUM}))),
-    TUNDRA(9,1,0,0,-33,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.FOREST})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.IRON,Resource.HORSES,Resource.OIL,Resource.ALUMINUM,Resource.URANIUM,Resource.DEER,Resource.SILVER,Resource.GEMS,Resource.MARBLE,Resource.FURS})));
+    OCEAN(6,1,0,1,0,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.ICE})),new ArrayList<>(Arrays.asList(new Resource[]{}))),
+    PLAINS(7,1,1,0,-33,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.JUNGLE, TerrainFeature.FOREST})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.IRON,Resource.HORSES,Resource.COAL,Resource.WHEAT,Resource.GOLD,Resource.GEMS,Resource.MARBLE,Resource.IVORY,Resource.COTTON,Resource.INCENSE,Resource.SHEEP}))),
+    SNOW(8,0,0,0,-33,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.IRON}))),
+    TUNDRA(9,1,0,0,-33,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.JUNGLE})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.IRON,Resource.HORSES,Resource.DEER,Resource.SILVER,Resource.GEMS,Resource.MARBLE,Resource.FURS})));
 
     public enum TerrainFeature{
         BARRINGER_CRATER(1,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
         FALLOUT(2,3, -3, -3, -33, 2,new ArrayList<>(Arrays.asList(new Resource[]{}))),
         FLOOD_PLAINS(3,2,0,0,-33,1,new ArrayList<>(Arrays.asList(new Resource[]{Resource.WHEAT,Resource.SUGAR}))),
-        FOREST(4,1,1,0,25,2,new ArrayList<>(Arrays.asList(new Resource[]{Resource.URANIUM,Resource.DEER,Resource.FURS,Resource.DYES,Resource.SILK}))),
+        JUNGLE(4,1,1,0,25,2,new ArrayList<>(Arrays.asList(new Resource[]{Resource.DEER,Resource.FURS,Resource.DYES,Resource.SILK}))),
         GRAND_MESA(5,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
         GREAT_BARRIER_REEF(6,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
         ICE(7,0,0,0,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
-        JUNGLE(8,1,-1,0,25,2,new ArrayList<>(Arrays.asList(new Resource[]{Resource.OIL,Resource.URANIUM,Resource.BANANAS,Resource.GEMS,Resource.DYES,Resource.SPICES}))),
+        FOREST(8,1,-1,0,25,2,new ArrayList<>(Arrays.asList(new Resource[]{Resource.BANANAS,Resource.GEMS,Resource.DYES}))),
         KRAKATOA(9,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
         LAKES(10,2,0,1,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
-        MARSH(11,-1,0,0,-33,2,new ArrayList<>(Arrays.asList(new Resource[]{Resource.OIL,Resource.URANIUM,Resource.SUGAR}))),
+        MARSH(11,-1,0,0,-33,2,new ArrayList<>(Arrays.asList(new Resource[]{Resource.SUGAR}))),
         MT_FUJI(12,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
         OASIS(13,3,0,1,-33,1,new ArrayList<>(Arrays.asList(new Resource[]{}))),
         OLD_FAITHFULL(14,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
