@@ -3,11 +3,11 @@ package ir.ap.model;
 public enum Improvement {
     CAMP,
     FARM,
-    LUMBERMILL,
+    LUMBER_MILL,
     MINE,
     PASTURE,
     PLANTATION,
     QUARRY,
-    TRADINGPOST,
+    TRADING_POST,
     FACTORY;
 }

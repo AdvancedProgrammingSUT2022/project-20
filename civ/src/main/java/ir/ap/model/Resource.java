@@ -42,11 +42,11 @@ public enum Resource {
     private int foodYield;
     private int productionYield;
     private int goldYield;
-    private ArrayList<TerrainType> canBeFoundOn;
+    private ArrayList<Enum<?>> canBeFoundOn;
     private ArrayList<Improvement> improvementsRequired;
     private ArrayList<Technology> technologyRequired;
 
-    Resource(int id, int foodYield, int productionYield, int goldYield, ArrayList<TerrainType> canBeFoundOn, ArrayList<Improvement> improvementsRequired, ArrayList<Technology> technologyRequired)
+    Resource(int id, int foodYield, int productionYield, int goldYield, ArrayList<Enum<?>> canBeFoundOn, ArrayList<Improvement> improvementsRequired, ArrayList<Technology> technologyRequired)
     {
         this.id = id;
         this.foodYield = foodYield;
