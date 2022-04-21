@@ -119,12 +119,6 @@ public class Tile {
         hasRailRoad = false;
     }
 
-    public boolean isBlock() {
-        return terrainFeature == TerrainFeature.FOREST ||
-                terrainType == TerrainType.MOUNTAIN ||
-                terrainType == TerrainType.HILL;
-    }
-
     public boolean setNeighborOnSide(Direction dir, Tile other) {
         if (dir == null)
             return false;
@@ -258,4 +252,29 @@ public class Tile {
     public boolean getHasRailRoad() {
         return hasRailRoad;
     }
+
+    public boolean hasRiver() {
+        return getHasRiverOnSide(Direction.UP_RIGHT) ||
+                getHasRiverOnSide(Direction.RIGHT) ||
+                getHasRiverOnSide(Direction.DOWN_RIGHT) ||
+                getHasRiverOnSide(Direction.DOWN_LEFT) ||
+                getHasRiverOnSide(Direction.LEFT) ||
+                getHasRiverOnSide(Direction.UP_LEFT);
+    }
+
+    public boolean isWaterTile() {
+        return (terrainType != null && terrainType.isSourceOfWater()) ||
+                (terrainFeature != null && terrainFeature.isSourceOfWater());
+    }
+
+    public boolean isFreshWaterTile() {
+        return (terrainFeature != null && terrainFeature.isSourceOfWater());
+    }
+
+    public boolean isBlock() {
+        return terrainFeature == TerrainFeature.FOREST ||
+                terrainType == TerrainType.MOUNTAIN ||
+                terrainType == TerrainType.HILL;
+    }
+
 }

@@ -75,6 +75,11 @@ public enum TerrainType {
         {
             return this.movementCost;
         }
+
+        public boolean isSourceOfWater() {
+            return this == OASIS || this == RIVERS;
+        }
+
         public ArrayList<Resource> getResourcesPossible()
         {
             return this.resourcesPossible;
@@ -135,5 +140,9 @@ public enum TerrainType {
         this.movementCost = movementCost;
         this.featuresPossible = featuresPossible;
         this.resourcesPossible = resourcesPossible;
+    }
+
+    public boolean isSourceOfWater() {
+        return this == COAST || this == OCEAN;
     }
 }
