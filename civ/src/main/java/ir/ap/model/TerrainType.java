@@ -16,22 +16,22 @@ public enum TerrainType {
     TUNDRA(9,1,0,0,-33,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.FOREST})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.IRON,Resource.HORSES,Resource.OIL,Resource.ALUMINUM,Resource.URANIUM,Resource.DEER,Resource.SILVER,Resource.GEMS,Resource.MARBLE,Resource.FURS})));
 
     public enum TerrainFeature{
-        BARRINGERCRATER(1,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
+        BARRINGER_CRATER(1,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
         FALLOUT(2,3, -3, -3, -33, 2,new ArrayList<>(Arrays.asList(new Resource[]{}))),
         FLOODPLAINS(3,2,0,0,-33,1,new ArrayList<>(Arrays.asList(new Resource[]{Resource.WHEAT,Resource.SUGAR}))),
         FOREST(4,1,1,0,25,2,new ArrayList<>(Arrays.asList(new Resource[]{Resource.URANIUM,Resource.DEER,Resource.FURS,Resource.DYES,Resource.SILK}))),
-        GRANDMESA(5,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
-        GREATBARRIERREEF(6,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
+        GRAND_MESA(5,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
+        GREAT_BARRIER_REEF(6,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
         ICE(7,0,0,0,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
         JUNGLE(8,1,-1,0,25,2,new ArrayList<>(Arrays.asList(new Resource[]{Resource.OIL,Resource.URANIUM,Resource.BANANAS,Resource.GEMS,Resource.DYES,Resource.SPICES}))),
         KRAKATOA(9,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
         LAKES(10,2,0,1,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
         MARSH(11,-1,0,0,-33,2,new ArrayList<>(Arrays.asList(new Resource[]{Resource.OIL,Resource.URANIUM,Resource.SUGAR}))),
-        MTFUJI(12,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
+        MT_FUJI(12,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
         OASIS(13,3,0,1,-33,1,new ArrayList<>(Arrays.asList(new Resource[]{}))),
-        OLDFAITHFULL(14,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
+        OLD_FAITHFULL(14,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
         RIVERS(15,0,0,1,0,1,new ArrayList<>(Arrays.asList(new Resource[]{}))),
-        ROCKOFGIBRALTAR(16,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{})));
+        ROCK_OF_GIBRALTAR(16,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{})));
 
         private int id;
         private int foodYield;
@@ -49,6 +49,35 @@ public enum TerrainType {
             this.movementCost = movementCost;
             this.resourcesPossible = resourcesPossible;
         }
+
+        public int getId()
+        {
+            return this.id;
+        }
+        public int getFoodYield()
+        {
+            return this.foodYield;
+        }
+        public int getProductionYield()
+        {
+            return this.productionYield;
+        }
+        public int getGoldYield()
+        {
+            return this.goldYield;
+        }
+        public int getCombatModifier()
+        {
+            return this.combatModifier;
+        }
+        public int getMovementCost()
+        {
+            return this.movementCost;
+        }
+        public ArrayList<Resource> getResourcesPossible()
+        {
+            return this.resourcesPossible;
+        }
     }
 
     private int id;
@@ -59,40 +88,6 @@ public enum TerrainType {
     private int movementCost;
     private ArrayList<TerrainFeature> featuresPossible;
     private ArrayList<Resource> resourcesPossible;
-
-    /// seters
-    public void setId(int x)
-    {
-        this.id = x;
-    }
-    public void setFoodYield(int x)
-    {
-        this.foodYield = x;
-    }
-    public void setProductionYield(int x)
-    {
-        this.productionYield = x;
-    }
-    public void setGoldYield(int x)
-    {
-        this.goldYield = x;
-    }
-    public void setCombatModifier(int x)
-    {
-        this.combatModifier = x;
-    }
-    public void setMovementCost(int x)
-    {
-        this.movementCost = x;
-    }
-    public void setFeaturesPossible(ArrayList<TerrainFeature> x)
-    {
-        this.featuresPossible = x;
-    }
-    public void setResourcesPossible(ArrayList<Resource> x)
-    {
-        this.resourcesPossible = x;
-    }
 
     /// geters
     public int getId()
