@@ -1,8 +1,7 @@
 package ir.ap.model;
 
 public enum UnitType {
-    // Fields that their value is N/A and their type is primitive(like int, ...) are
-    // -1
+    // Fields that their value is N/A and their type is primitive(like int, ...) are -1
     ARCHER(1, 70, CombatType.ARCHERY, 4, 6, 2, 2, null, Technology.ARCHERY, Era.ANCIENT),
     CHARIOT_ARCHER(2, 60, CombatType.MOUNTED, 3, 6, 2, 4, Resource.HORSES, Technology.THE_WHEEL, Era.ANCIENT),
     SCOUT(3, 25, CombatType.RECON, 4, -1, -1, 2, null, null, Era.ANCIENT),
@@ -80,21 +79,21 @@ public enum UnitType {
             this.technologyRequired = technologyRequired;
         }
 
-        Technology getTechnologyRequired() {
+        public Technology getTechnologyRequired() {
             return technologyRequired;
         }
     }
 
-    int id;
-    int cost;
-    CombatType combatType;
-    int combatStrength;
-    int rangedCombatStrength;
-    int range;
-    int movement;
-    Resource resourceRequired;
-    Technology technologyRequired;
-    Era era;
+    private int id;
+    private int cost;
+    private CombatType combatType;
+    private int combatStrength;
+    private int rangedCombatStrength;
+    private int range;
+    private int movement;
+    private Resource resourceRequired;
+    private Technology technologyRequired;
+    private Era era;
 
     private UnitType(int id, int cost, CombatType combatType, int combatStrength, int rangedCombatStrength, int range,
             int movement, Resource resourceRequired, Technology technologyRequired, Era era) {
@@ -108,5 +107,45 @@ public enum UnitType {
         this.resourceRequired = resourceRequired;
         this.technologyRequired = technologyRequired;
         this.era = era;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public CombatType getCombatType() {
+        return combatType;
+    }
+
+    public int getCombatStrength() {
+        return combatStrength;
+    }
+
+    public int getRangedCombatStrength() {
+        return rangedCombatStrength;
+    }
+
+    public int getRange() {
+        return range;
+    }
+
+    public int getMovement() {
+        return movement;
+    }
+
+    public Resource getResourceRequired() {
+        return resourceRequired;
+    }
+
+    public Technology getTechnologyRequired() {
+        return technologyRequired;
+    }
+
+    public Era getEra() {
+        return era;
     }
 }

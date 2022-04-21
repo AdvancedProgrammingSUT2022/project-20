@@ -36,4 +36,10 @@ public enum BuildingType {
     HOSPITAL,
     MILITARY_BASE,
     STOCK_EXCHANGE;
+
+    private int id;
+
+    public int getId() {
+        return id;
+    }
 }
