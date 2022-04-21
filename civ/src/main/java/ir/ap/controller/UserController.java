@@ -20,7 +20,7 @@ public class UserController extends AbstractController {
         return JSON_FALSE;
     }
 
-    public JsonObject changePassword(String username, String newPassword) {
+    public JsonObject changePassword(String username, String oldPassword, String newPassword) {
         return JSON_FALSE;
     }
 }

@@ -35,12 +35,12 @@ public abstract class AbstractMenuView {
     }
 
     public static boolean responseOk(String response) {
-        return GSON.fromJson(response, JsonObject.class)
+        return response != null && GSON.fromJson(response, JsonObject.class)
                 .get("ok").getAsBoolean();
     }
 
     public static boolean responseOk(JsonObject response) {
-        return response.get("ok").getAsBoolean();
+        return response != null && response.get("ok").getAsBoolean();
     }
 
     public static <T> T getField(JsonObject response, String fieldName, Class<T> classOfT) {
