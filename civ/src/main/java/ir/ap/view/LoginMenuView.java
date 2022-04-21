@@ -131,8 +131,10 @@ public class LoginMenuView extends AbstractMenuView {
             return responseAndGo(Message.NICKNAME_INVALID, Menu.LOGIN);
         else if (password == null)
             return responseAndGo(Message.PASSWORD_INVALID, Menu.LOGIN);
-        else if (responseOk(USER_CONTROLLER.register(username, nickname, password)))
-            return responseAndGo(Message.USER_CREATED, Menu.LOGIN);
+        JsonObject response = USER_CONTROLLER.register(username, nickname, password);
+        String msg = getField(response, "msg", String.class);
+        if (msg != null)
+            return responseAndGo(msg, Menu.LOGIN);
         else
             return responseAndGo(Message.E500, Menu.LOGIN);
     }

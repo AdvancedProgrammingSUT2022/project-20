@@ -111,7 +111,8 @@ public class ProfileMenuView extends AbstractMenuView {
                     return responseAndGo(Message.E500, Menu.PROFILE);
             } else if (args[i].matches(Validator.PASSWORD_ARG.toString())) {
                 String oldPassword = null, newPassword = null;
-                for (int j = i + 1; j < Math.min(args.length, i + 5); j++) {
+                int j;
+                for (j = i + 1; j < Math.min(args.length, i + 5); j++) {
                     if (args[j].matches(Validator.CURRENT_PASSWORD_ARG.toString())) {
                         if (j + 1 < args.length) {
                             oldPassword = args[++j];
@@ -124,6 +125,7 @@ public class ProfileMenuView extends AbstractMenuView {
                         return responseAndGo(Message.ARG_INVALID.toString().replace("%s", args[j]), Menu.PROFILE);
                     }
                 }
+                i = j - 1;
                 if (oldPassword == null)
                     return responseAndGo(Message.INVALID_CREDENTIALS, Menu.PROFILE);
                 else if (newPassword == null)
@@ -134,7 +136,6 @@ public class ProfileMenuView extends AbstractMenuView {
                 String msg = getField(response, "msg", String.class);
                 if (msg != null) {
                     responseAndGo(msg, Menu.PROFILE);
-                    i += 4;
                 } else {
                     return responseAndGo(Message.E500, Menu.PROFILE);
                 }
