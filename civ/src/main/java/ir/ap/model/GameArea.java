@@ -1,7 +1,6 @@
 package ir.ap.model;
 
 import java.util.HashMap;
-import java.util.TreeMap;
 
 public class GameArea {
     private Map map;
