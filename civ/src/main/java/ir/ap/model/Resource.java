@@ -64,6 +64,10 @@ public enum Resource {
         this.type = resourceType;
     }
 
+    public static Resource[] getLuxuryResources() {
+        return new Resource[] {COTTON, DYES, FURS, GEMS, GOLD, INCENSE, IVORY, MARBLE, SILK, SILVER, SUGAR};
+    }
+
     public int getId() {
         return id;
     }

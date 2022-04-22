@@ -14,7 +14,7 @@ public enum Improvement {
     TRADING_POST(8,0,0,1,Technology.TRAPPING,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.PLAINS,TerrainType.DESERT,TerrainType.GRASSLAND,TerrainType.TUNDRA}))),
     FACTORY(9,0,2,0,Technology.ENGINEERING,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.PLAINS,TerrainType.DESERT,TerrainType.GRASSLAND,TerrainType.TUNDRA,TerrainType.SNOW})));
 
-    public Improvement getImprovementById(int id)
+    public static Improvement getImprovementById(int id)
     {
         if(id == 1) return CAMP;
         if(id == 2) return FARM;
@@ -28,20 +28,20 @@ public enum Improvement {
         return null;
     }
 
-    int id;
-    int foodYield;
-    int productionYield;
-    int goldYield;
-    Technology technologyRequired;
-    ArrayList<Enum<?>> terrainsRequired;
+    private int id;
+    private int foodYield;
+    private int productionYield;
+    private int goldYield;
+    private Technology technologyRequired;
+    private ArrayList<Enum<?>> canBeFoundOn;
 
-    Improvement(int id, int foodYield, int productionYield, int goldYield, Technology technologyRequired, ArrayList<Enum<?>> terrainsRequired) {
+    Improvement(int id, int foodYield, int productionYield, int goldYield, Technology technologyRequired, ArrayList<Enum<?>> canBeFoundOn) {
         this.id = id;
         this.foodYield = foodYield;
         this.productionYield = productionYield;
         this.goldYield = goldYield;
         this.technologyRequired = technologyRequired;
-        this.terrainsRequired = terrainsRequired;
+        this.canBeFoundOn = canBeFoundOn;
     }
     public int getId() {
         return id;
@@ -58,7 +58,7 @@ public enum Improvement {
     public Technology getTechnologyRequired() {
         return technologyRequired;
     }
-    public ArrayList<Enum<?>> getTerrainsRequired() {
-        return terrainsRequired;
+    public ArrayList<Enum<?>> getCanBeFoundOn() {
+        return canBeFoundOn;
     }
 }
