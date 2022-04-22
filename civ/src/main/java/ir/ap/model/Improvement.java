@@ -14,7 +14,7 @@ public enum Improvement {
     TRADING_POST(8,0,0,1,Technology.TRAPPING,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.PLAINS,TerrainType.DESERT,TerrainType.GRASSLAND,TerrainType.TUNDRA}))),
     FACTORY(9,0,2,0,Technology.ENGINEERING,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.PLAINS,TerrainType.DESERT,TerrainType.GRASSLAND,TerrainType.TUNDRA,TerrainType.SNOW})));
 
-    public Improvement getImprovementById(int id)
+    public static Improvement getImprovementById(int id)
     {
         if(id == 1) return CAMP;
         if(id == 2) return FARM;
