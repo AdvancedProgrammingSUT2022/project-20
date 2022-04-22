@@ -1,5 +1,7 @@
 package ir.ap.model;
 
-public class Civilization {
+import java.util.ArrayList;
+
+public class Civilization {    
     
 }
