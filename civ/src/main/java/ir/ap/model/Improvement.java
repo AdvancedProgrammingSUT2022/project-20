@@ -33,15 +33,15 @@ public enum Improvement {
     private int productionYield;
     private int goldYield;
     private Technology technologyRequired;
-    private ArrayList<Enum<?>> terrainsRequired;
+    private ArrayList<Enum<?>> canBeFoundOn;
 
-    Improvement(int id, int foodYield, int productionYield, int goldYield, Technology technologyRequired, ArrayList<Enum<?>> terrainsRequired) {
+    Improvement(int id, int foodYield, int productionYield, int goldYield, Technology technologyRequired, ArrayList<Enum<?>> canBeFoundOn) {
         this.id = id;
         this.foodYield = foodYield;
         this.productionYield = productionYield;
         this.goldYield = goldYield;
         this.technologyRequired = technologyRequired;
-        this.terrainsRequired = terrainsRequired;
+        this.canBeFoundOn = canBeFoundOn;
     }
     public int getId() {
         return id;
@@ -58,7 +58,7 @@ public enum Improvement {
     public Technology getTechnologyRequired() {
         return technologyRequired;
     }
-    public ArrayList<Enum<?>> getTerrainsRequired() {
-        return terrainsRequired;
+    public ArrayList<Enum<?>> getCanBeFoundOn() {
+        return canBeFoundOn;
     }
 }
