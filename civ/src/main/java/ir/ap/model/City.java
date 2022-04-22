@@ -25,8 +25,6 @@ public class City {
     private int hp;
 
     private int population;
-    private int happiness;
-    private int unhappiness;
     private int food;
     private int production;
 
@@ -53,8 +51,6 @@ public class City {
         hp = 0;
 
         population = 0;
-        happiness = 0;
-        unhappiness = 0;
         food = 0;
         production = 0;
 
@@ -82,8 +78,6 @@ public class City {
         hp = 0;
 
         population = 0;
-        happiness = 0;
-        unhappiness = 0;
         food = 0;
         production = 0;
 
@@ -217,28 +211,8 @@ public class City {
         this.population += delta;
     }
 
-    public int getHappiness() {
-        return this.happiness;
-    }
-
-    public void setHappiness(int happiness) {
-        this.happiness = happiness;
-    }
-
-    public void addToHappiness(int delta) {
-        this.happiness += delta;
-    }
-
-    public int getUnhappiness() {
-        return this.unhappiness;
-    }
-
-    public void setUnhappiness(int unhappiness) {
-        this.unhappiness = unhappiness;
-    }
-
-    public void addToUnhappiness(int delta) {
-        this.unhappiness += delta;
+    public int getRealPopulation() {
+        return (int) Math.round(1000 * Math.pow(getPopulation(), 2.8));
     }
 
     public int getFood() {
@@ -311,6 +285,38 @@ public class City {
 
     public void addToScienceYield(double delta) {
         this.scienceYield += delta;
+    }
+
+    public int getResourceCount(Resource rsc) {
+        int rscCnt = 0;
+        for (Tile tile : territory) {
+            rscCnt += tile.getResourceCount(rsc);
+        }
+        return rscCnt;
+    }
+
+    public int getImprovedResourceCount(Resource rsc) {
+        int improvedRscCnt = 0;
+        for (Tile tile : territory) {
+            improvedRscCnt += tile.getImprovedResourceCount(rsc);
+        }
+        return improvedRscCnt;
+    }
+    
+    public ArrayList<Resource> getResourcesInCity() {
+        ArrayList<Resource> resources = new ArrayList<>();
+        for (Tile tile : territory) {
+            resources.addAll(tile.getResources());
+        }
+        return resources;
+    }
+
+    public ArrayList<Resource> getImprovedResourcesInCity() {
+        ArrayList<Resource> improvedRscs = new ArrayList<>();
+        for (Tile tile : territory) {
+            improvedRscs.addAll(tile.getImprovedResources());
+        }
+        return improvedRscs;
     }
 
     public ArrayList<BuildingType> getBuildingTypesInCity() {

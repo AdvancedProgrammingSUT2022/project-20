@@ -39,8 +39,13 @@ public enum BuildingType implements Production {
     STOCK_EXCHANGE;
 
     private int id;
+    private int happinessYield;
 
     public int getId() {
         return id;
+    }
+
+    public int getHappinessYield() {
+        return happinessYield;
     }
 }
