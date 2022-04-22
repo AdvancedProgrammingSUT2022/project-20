@@ -233,4 +233,10 @@ public class Civilization {
 
         return happiness;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        return (other != null && other instanceof Civilization) &&
+                getName().equals(((Civilization) other).getName());
+    }
 }
