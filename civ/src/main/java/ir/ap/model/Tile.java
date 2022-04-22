@@ -31,6 +31,7 @@ public class Tile {
 
     private Tile[] neighbors;
     private boolean[] hasRiverOnSide;
+    private int[] weight;
 
     private int index;
 
@@ -53,6 +54,7 @@ public class Tile {
     public Tile() {
         neighbors = new Tile[6];
         hasRiverOnSide = new boolean[6];
+        weight = new int[6];
 
         index = -1;
 
@@ -76,6 +78,7 @@ public class Tile {
     public Tile(int index, TerrainType terrainType, TerrainFeature terrainFeature) {
         neighbors = new Tile[6];
         hasRiverOnSide = new boolean[6];
+        weight = new int[6];
 
         this.index = index;
 
@@ -99,6 +102,7 @@ public class Tile {
     public Tile(int index, TerrainType terrainType, TerrainFeature terrainFeature, TileKnowledge tileKnowledge) {
         neighbors = new Tile[6];
         hasRiverOnSide = new boolean[6];
+        weight = new int[6];
 
         this.index = index;
 
@@ -140,6 +144,29 @@ public class Tile {
     public Tile getNeighborOnSide(int dirId) {
         Direction dir = Direction.getDirectionById(dirId);
         return getNeighborOnSide(dir);
+    }
+
+    public boolean setWeightOnSide(Direction dir, int weight) {
+        if (dir == null || weight < 0)
+            return false;
+        this.weight[dir.getId()] = weight;
+        return true;
+    }
+
+    public boolean setWeightOnSide(int dirId, int weight) {
+        Direction dir = Direction.getDirectionById(dirId);
+        return setWeightOnSide(dir, weight);
+    }
+
+    public int getWeightOnSide(Direction dir) {
+        if (dir == null)
+            return -1;
+        return weight[dir.getId()];
+    }
+
+    public int getWeightOnSide(int dirId) {
+        Direction dir = Direction.getDirectionById(dirId);
+        return getWeightOnSide(dir);
     }
 
     public boolean setHasRiverOnSide(Direction dir, boolean value) {
