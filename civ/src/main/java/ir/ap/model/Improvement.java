@@ -58,7 +58,7 @@ public enum Improvement {
     public Technology getTechnologyRequired() {
         return technologyRequired;
     }
-    public ArrayList<TerrainType> getTerrainsRequired() {
+    public ArrayList<Enum<?>> getTerrainsRequired() {
         return terrainsRequired;
     }
 }
