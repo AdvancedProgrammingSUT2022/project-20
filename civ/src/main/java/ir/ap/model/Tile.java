@@ -263,12 +263,14 @@ public class Tile {
     }
 
     public boolean isWaterTile() {
-        return (terrainType != null && terrainType.isSourceOfWater()) ||
+        return hasRiver() ||
+                (terrainType != null && terrainType.isSourceOfWater()) ||
                 (terrainFeature != null && terrainFeature.isSourceOfWater());
     }
 
     public boolean isFreshWaterTile() {
-        return (terrainFeature != null && terrainFeature.isSourceOfWater());
+        return hasRiver() ||
+                (terrainFeature != null && terrainFeature.isSourceOfWater());
     }
 
     public boolean isBlock() {
