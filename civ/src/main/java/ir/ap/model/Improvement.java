@@ -28,12 +28,12 @@ public enum Improvement {
         return null;
     }
 
-    int id;
-    int foodYield;
-    int productionYield;
-    int goldYield;
-    Technology technologyRequired;
-    ArrayList<Enum<?>> terrainsRequired;
+    private int id;
+    private int foodYield;
+    private int productionYield;
+    private int goldYield;
+    private Technology technologyRequired;
+    private ArrayList<Enum<?>> terrainsRequired;
 
     Improvement(int id, int foodYield, int productionYield, int goldYield, Technology technologyRequired, ArrayList<Enum<?>> terrainsRequired) {
         this.id = id;
