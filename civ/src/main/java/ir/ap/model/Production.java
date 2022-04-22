@@ -1,6 +1,20 @@
 package ir.ap.model;
 
-public interface Production {
+public abstract interface Production {
 
-    public int getId();
+    public static Production[] getAllProductions() {
+        Production[] buildings = BuildingType.values();
+        Production[] units = UnitType.values();
+        int blen = buildings.length, ulen = units.length;
+        Production[] productions = new Production[blen + ulen];
+        for (int i = 0; i < blen + ulen; i++) {
+            if (i < blen)
+                productions[i] = buildings[i];
+            else
+                productions[i] = units[i - blen];
+        }
+        return productions;
+    }
+
+    public abstract int getId();
 }

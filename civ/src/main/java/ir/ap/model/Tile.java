@@ -228,8 +228,36 @@ public class Tile {
         resources.add(resource);
     }
 
+    public void addResource(Resource resource, int count) {
+        for (int i = 0; i < count; i++) {
+            addResource(resource);
+        }
+    }
+
+    public int getResourceCount(Resource resource) {
+        int count = 0;
+        for (Resource curRsc : this.resources) {
+            count += (curRsc == resource ? 1 : 0);
+        }
+        return count;
+    }
+
+    public int getImprovedResourceCount(Resource resource) {
+        return (resourceIsImproved(resource) ?
+            getResourceCount(resource) : 0);
+    }
+
     public ArrayList<Resource> getResources() {
         return new ArrayList<>(resources);
+    }
+
+    public ArrayList<Resource> getImprovedResources() {
+        ArrayList<Resource> improvedRscs = new ArrayList<>();
+        for (Resource curRsc : this.resources) {
+            if (resourceIsImproved(curRsc))
+                improvedRscs.add(curRsc);
+        }
+        return improvedRscs;
     }
 
     public void setImprovement(Improvement improvement) {
@@ -278,6 +306,35 @@ public class Tile {
 
     public boolean getHasRailRoad() {
         return hasRailRoad;
+    }
+
+    public int getFoodYield() {
+        return (terrainType != null ? terrainType.getFoodYield() : 0) +
+                (terrainFeature != null ? terrainFeature.getFoodYield() : 0);
+    }
+
+    public int getGoldYield() {
+        return (terrainType != null ? terrainType.getGoldYield() : 0) +
+                (terrainFeature != null ? terrainFeature.getGoldYield() : 0);
+    }
+
+    public int getProductionYield() {
+        return (terrainType != null ? terrainType.getProductionYield() : 0) +
+                (terrainFeature != null ? terrainFeature.getProductionYield() : 0);
+    }
+
+    public int getCombatModifier() {
+        return (terrainType != null ? terrainType.getCombatModifier() : 0) +
+                (terrainFeature != null ? terrainFeature.getCombatModifier() : 0);
+    }
+
+    public int getMovementCost() {
+        return (terrainType != null ? terrainType.getMovementCost() : 0) +
+                (terrainFeature != null ? terrainFeature.getMovementCost() : 0);
+    }
+    
+    public boolean resourceIsImproved(Resource resource) {
+        return this.improvement == resource.getImprovementRequired();
     }
 
     public boolean hasRiver() {
