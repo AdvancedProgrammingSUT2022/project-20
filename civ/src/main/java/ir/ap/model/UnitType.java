@@ -40,34 +40,34 @@ public enum UnitType implements Production {
     }
 
     public enum UnitAction {
-        MOVETO,
-        SLEEP,
-        ALERT,
-        FORTIFY,
-        FORTIFY_HEAL,
-        GARRISON,
-        SETUP_RANGED,
-        ATTACK,
-        FOUND_CITY,
-        CANCEL_MISSION,
-        WAKE,
-        DELETE,
+        MOVETO, 
+        SLEEP, 
+        ALERT, 
+        FORTIFY, 
+        FORTIFY_HEAL, 
+        GARRISON, 
+        SETUP_RANGED, 
+        ATTACK, 
+        FOUND_CITY, 
+        CANCEL_MISSION, 
+        WAKE, 
+        DELETE, 
         BUILD_ROAD(Technology.THE_WHEEL),
         BUILD_RAILROAD(Technology.RAILROAD),
         BUILD_BRIDGE(Technology.CONSTRUCTION),
-        BUILD_FARM,
-        BUILD_MINE,
-        BUILD_TRADINGPOST,
-        BUILD_LUMBERMILL,
-        BUILD_PASTURE,
-        BUILD_CAMP,
-        BUILD_PLANTATION,
-        BUILD_QUARRY,
+        BUILD_FARM, 
+        BUILD_MINE, 
+        BUILD_TRADINGPOST, 
+        BUILD_LUMBERMILL, 
+        BUILD_PASTURE, 
+        BUILD_CAMP, 
+        BUILD_PLANTATION, 
+        BUILD_QUARRY, 
         REMOVE_JUNGLE(Technology.BRONZE_WORKING),
         REMOVE_FOREST(Technology.MINING),
         REMOVE_MARSH(Technology.MASONRY),
-        REMOVE_ROUTE,
-        REPAIR;
+        REMOVE_ROUTE, 
+        REPAIR; 
 
         private Technology technologyRequired;
 
@@ -86,7 +86,7 @@ public enum UnitType implements Production {
 
     private int id;
     private int cost;
-    private CombatType combatType;
+    private CombatType combatType; 
     private int combatStrength;
     private int rangedCombatStrength;
     private int range;
