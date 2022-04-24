@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 
 import ir.ap.model.User;
 
-public class UserController extends AbstractController {
+public class UserController extends AbstractController implements AutoCloseable {
 
     public enum Validator {
         USERNAME("\\w+"),
@@ -37,8 +37,11 @@ public class UserController extends AbstractController {
         PASSWORD_INVALID("password invalid"),
 
         USER_LOGGED_IN("user logged in successfully"),
-        USER_NOT_LOGGED_IN("please login first"),
+        USER_NOT_LOGGED_IN("user is not logged in"),
         INVALID_CREDENTIALS("Username and password didn't match"),
+
+        PASSWORD_CHANGED("password changed successfully"),
+        NICKNAME_CHANGED("nickname changed successfully"),
 
         E500("Server error");
 
@@ -64,6 +67,11 @@ public class UserController extends AbstractController {
         this();
         if (shouldReadUsers)
             readUsers();
+    }
+
+    @Override
+    public void close() {
+        writeUsers();
     }
 
     public boolean readUsers() {
@@ -117,18 +125,40 @@ public class UserController extends AbstractController {
     }
 
     public JsonObject login(String username, String password) {
-        return JSON_FALSE;
+        User user = User.getUser(username);
+        if (user == null || !user.checkPassword(password))
+            return messageToJsonObj(Message.INVALID_CREDENTIALS, false);
+        user.setLogin(true);
+        return messageToJsonObj(Message.USER_LOGGED_IN, true);
     }
 
     public JsonObject logout(String username) {
-        return JSON_FALSE;
+        User user = User.getUser(username);
+        if (user == null || !user.isLogin())
+            return messageToJsonObj(Message.USER_NOT_LOGGED_IN, false);
+        user.setLogin(false);
+        return messageToJsonObj(Message.USER_LOGGED_IN, true);
     }
 
     public JsonObject changeNickname(String username, String newNickname) {
-        return JSON_FALSE;
+        User user = User.getUser(username);
+        if (user == null || !user.isLogin())
+            return messageToJsonObj(Message.USER_NOT_LOGGED_IN, false);
+        if (User.nicknameExists(newNickname)) {
+            return messageToJsonObj(Message.USER_WITH_NICKNAME_EXISTS
+                    .toString().replace("%s", newNickname), false);
+        }
+        user.setNickname(newNickname);
+        return messageToJsonObj(Message.NICKNAME_CHANGED, true);
     }
 
     public JsonObject changePassword(String username, String oldPassword, String newPassword) {
-        return JSON_FALSE;
+        User user = User.getUser(username);
+        if (user == null || !user.isLogin())
+            return messageToJsonObj(Message.USER_NOT_LOGGED_IN, false);
+        if (!user.checkPassword(oldPassword))
+            return messageToJsonObj(Message.INVALID_CREDENTIALS, false);
+        user.setPassword(newPassword);
+        return messageToJsonObj(Message.PASSWORD_CHANGED, true);
     }
 }
