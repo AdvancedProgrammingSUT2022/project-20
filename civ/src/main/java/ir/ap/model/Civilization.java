@@ -1,11 +1,6 @@
 package ir.ap.model;
 
 import java.util.ArrayList;
-<<<<<<< HEAD
-
-public class Civilization {    
-    
-=======
 import java.util.Arrays;
 
 public class Civilization {
@@ -238,5 +233,4 @@ public class Civilization {
 
         return happiness;
     }
->>>>>>> d83d77b7a64bb4913f922d38fc48802163f4cfae
 }

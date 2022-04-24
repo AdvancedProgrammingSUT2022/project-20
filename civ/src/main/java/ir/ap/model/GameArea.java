@@ -1,10 +1,6 @@
 package ir.ap.model;
 
 import java.util.HashMap;
-<<<<<<< HEAD
-
-public class GameArea {
-=======
 import java.util.TreeMap;
 
 public class GameArea {
@@ -86,5 +82,4 @@ public class GameArea {
                 return user2civ.get(user);
         return null;
     }
->>>>>>> d83d77b7a64bb4913f922d38fc48802163f4cfae
 }
