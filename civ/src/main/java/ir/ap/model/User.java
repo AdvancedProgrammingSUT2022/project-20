@@ -10,6 +10,14 @@ public class User {
     private int score ;
     private boolean isLogin ;
 
+    public User(String username, String password, String nickname) {
+        this.username = username;
+        this.password = password;
+        this.nickname = nickname;
+        score = 0;
+        isLogin = false;
+    }
+
     public User(String username, String password, String nickname, int score, boolean isLogin) {
         this.username = username;
         this.password = password;
@@ -54,8 +62,9 @@ public class User {
         this.isLogin = isLogin;
     }
      
-    public boolean equals( User user ) {
-        if( user != null && this != null && user.getUsername() != null && this.username != null && user.getUsername().equals( this.username ) )return true ;
+    @Override
+    public boolean equals( Object user ) {
+        if( user != null && user instanceof User && ((User)user).getUsername() != null && this.username != null && ((User)user).getUsername().equals( this.username ) )return true ;
         else return false ;
     }
 
@@ -85,8 +94,9 @@ public class User {
         else return false;
     }
 
-    public static void addUser( User user ){
-        if( hasUser( user ) == true )return ;
+    public static boolean addUser( User user ){
+        if( hasUser( user ) == true )return false;
         users.add( user ) ;
+        return true;
     } 
 }
