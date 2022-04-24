@@ -100,6 +100,7 @@ public class MainMenuView extends AbstractMenuView {
 
     public Menu playGame(Matcher matcher) {
         ArrayList<String> players = new ArrayList<>();
+        players.add(currentUsername);
         String[] args = matcher.group("args").trim().split("\\s+");
         for (int i = 0; i < args.length; i++) {
             if (!args[i].matches(Validator.PLAYER_ARG.toString())) {
