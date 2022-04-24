@@ -54,7 +54,7 @@ public class UserController extends AbstractController {
         }
     }
 
-    private static final String PLAYERS_CONF_FILE = "src/main/resources/config/players.json";
+    private static final String PLAYERS_CONF_FILE = "players.json";
 
     public UserController() {
         super();
@@ -87,6 +87,7 @@ public class UserController extends AbstractController {
             usersWriter.close();
             return true;
         } catch (Exception ex) {
+            ex.printStackTrace();
             return false;
         }
     }
