@@ -5,20 +5,20 @@ import java.util.ArrayList;
 public class User {
     private static ArrayList< User > users = new ArrayList<>();
     private String username ;
-    private String password ;
     private String nickname ; 
+    private String password ;
     private int score ;
     private boolean isLogin ;
 
-    public User(String username, String password, String nickname) {
+    public User(String username, String nickname, String password) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;
         score = 0;
         isLogin = false;
     }
-
-    public User(String username, String password, String nickname, int score, boolean isLogin) {
+    
+    public User(String username, String nickname, String password, int score, boolean isLogin) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;
@@ -26,6 +26,14 @@ public class User {
         this.isLogin = isLogin;
     }
 
+    public static void resetUsers() {
+        users = new ArrayList<>();
+    }
+
+    public static ArrayList<User> getUsers() {
+        return users;
+    }
+    
     public String getUsername() {
         return username;
     }
@@ -78,6 +86,22 @@ public class User {
     public static boolean hasUser( String username ){
         for(int i = 0 ; i < users.size() ; i ++){
             if( users.get( i ).getUsername().equals( username ) )return true;
+        }
+        return false;
+    }
+
+    public static boolean usernameExists(String username) {
+        for (User user : users) {
+            if (user.getUsername().equals(username))
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean nicknameExists(String nickname) {
+        for (User user : users) {
+            if (user.getNickname().equals(nickname))
+                return true;
         }
         return false;
     }

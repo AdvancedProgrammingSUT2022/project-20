@@ -28,4 +28,12 @@ public abstract class AbstractController {
         jsonObj.addProperty("ok", value);
         return jsonObj;
     }
+
+    public static JsonObject messageToJsonObj(Object msg, boolean ok) {
+        JsonObject jsonObj = new JsonObject();
+        if (msg != null)
+            jsonObj.addProperty("msg", msg.toString());
+        jsonObj.addProperty("ok", ok);
+        return jsonObj;
+    }
 }
