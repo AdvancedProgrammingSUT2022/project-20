@@ -1,7 +1,11 @@
 package ir.ap.controller;
 
+import java.util.ArrayList;
+
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import ir.ap.model.City;
 import ir.ap.model.Civilization;
 import ir.ap.model.GameArea;
 import ir.ap.model.User;
@@ -46,18 +50,6 @@ public class GameController extends AbstractGameController implements JsonRespon
 
     @Override
     public void close() {
-    }
-
-    public JsonObject getCivilizationByUsername(String username) {
-        return JSON_FALSE;
-    }
-
-    public JsonObject getAllCivilizations() {
-        return JSON_FALSE;
-    }
-
-    public JsonObject getAllPlayers() {
-        return JSON_FALSE;
     }
 
     public JsonObject newGame(String[] players) {

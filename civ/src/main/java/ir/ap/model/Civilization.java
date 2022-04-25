@@ -180,6 +180,13 @@ public class Civilization {
         }
         return res;
     }
+    public void setCapital(City capital) {
+        this.capital = capital;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public int getRealPopulation() {
         int res = 0;

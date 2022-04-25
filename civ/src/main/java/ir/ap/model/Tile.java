@@ -37,9 +37,6 @@ public class Tile {
 
     private TerrainType terrainType;
     private TerrainFeature terrainFeature;
-
-    private TileKnowledge tileKnowledge;
-
     private ArrayList<Resource> resources;
 
     private Improvement improvement;
@@ -61,7 +58,6 @@ public class Tile {
         terrainType = null;
         terrainFeature = null;
 
-        tileKnowledge = null;
 
         resources = new ArrayList<>();
 
@@ -85,7 +81,6 @@ public class Tile {
         this.terrainType = terrainType;
         this.terrainFeature = terrainFeature;
 
-        tileKnowledge = null;
 
         resources = new ArrayList<>();
 
@@ -108,8 +103,6 @@ public class Tile {
 
         this.terrainType = terrainType;
         this.terrainFeature = terrainFeature;
-
-        this.tileKnowledge = tileKnowledge;
 
         resources = new ArrayList<>();
 
@@ -214,14 +207,6 @@ public class Tile {
 
     public TerrainFeature getTerrainFeature() {
         return terrainFeature;
-    }
-
-    public void setTileKnowledge(TileKnowledge tileKnowledge) {
-        this.tileKnowledge = tileKnowledge;
-    }
-
-    public TileKnowledge getTileKnowledge() {
-        return tileKnowledge;
     }
 
     public void addResource(Resource resource) {
