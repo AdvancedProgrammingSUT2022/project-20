@@ -11,11 +11,9 @@ public class CivilizationController extends AbstractGameController {
         super(gameArea);
     }
 
-
     public Civilization getCivilizationByUsername(String username)
     {
         Civilization civilization = gameArea.getCivilizationByUser(gameArea.getUserByUsername(username));
-        Gson gson = new Gson();
         return civilization;
     }
 

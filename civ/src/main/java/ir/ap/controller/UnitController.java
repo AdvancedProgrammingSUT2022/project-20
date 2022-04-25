@@ -9,7 +9,7 @@ public class UnitController extends AbstractGameController {
 
     public void addUnit(Civilization civilization, Tile tile, UnitType unitType){
         Unit unit = new Unit(unitType, civilization, tile);
-        civilization.getUnits().add( unit );
+        civilization.addUnit(unit);
         if( unit.isCivilian() == true ){
             tile.setNonCombatUnit( unit );
         } 
@@ -22,6 +22,15 @@ public class UnitController extends AbstractGameController {
     {
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
+        if (unit.isCivilian()) {
+            if (tile.getNonCombatUnit() != null)
+                return false;
+            tile.setNonCombatUnit(unit);
+        } else {
+            if (tile.getCombatUnit() != null)
+                return false;
+            tile.setCombatUnit(unit);
+        }
         unit.setTile(tile);
         unit.setUnitAction(UnitType.UnitAction.MOVETO);
         return true;
@@ -48,7 +57,8 @@ public class UnitController extends AbstractGameController {
     {
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
-
+        City city = unit.getTile().getCity();
+        if (city == null || city.getCivilization() != civilization || city.getCombatUnit() != unit) return false;
         unit.setUnitAction(UnitType.UnitAction.GARRISON);
         return true;
     }
