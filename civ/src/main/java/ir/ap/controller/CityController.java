@@ -1,5 +1,9 @@
 package ir.ap.controller;
 
-public class CityController extends AbstractGameController {
+import ir.ap.model.GameArea;
 
+public class CityController extends AbstractGameController {
+    public CityController(GameArea gameArea) {
+        this.gameArea = gameArea;
+    }
 }
