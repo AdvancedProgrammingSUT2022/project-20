@@ -14,14 +14,14 @@ public class Map {
         // Call updateDistances
         for(int i = 0 ; i < 30 ; i ++){
             for(int j = 0 ; j < 30 ; j ++){
-
+                
             }
         }
     }
 
     public Map() {            
         generateRandomMap();
-    }    
+    }
 
     public Tile getTileByIndex( int index ){
         for(int i = 0 ; i < tiles.size() ; i ++){

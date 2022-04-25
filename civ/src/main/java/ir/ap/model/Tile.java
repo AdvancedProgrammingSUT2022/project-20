@@ -48,18 +48,17 @@ public class Tile {
     private boolean hasRoad;
     private boolean hasRailRoad;
 
-    public Tile() {
+    public Tile(int index, TerrainType terrainType, TerrainFeature terrainFeature, ArrayList<Resource> resources) {
         neighbors = new Tile[6];
         hasRiverOnSide = new boolean[6];
         weight = new int[6];
 
-        index = -1;
+        this.index = index;
 
-        terrainType = null;
-        terrainFeature = null;
+        this.terrainType = terrainType;
+        this.terrainFeature = terrainFeature;
 
-
-        resources = new ArrayList<>();
+        this.resources = resources;
 
         improvement = null;
         building = null;
@@ -71,49 +70,8 @@ public class Tile {
         hasRailRoad = false;
     }
 
-    public Tile(int index, TerrainType terrainType, TerrainFeature terrainFeature) {
-        neighbors = new Tile[6];
-        hasRiverOnSide = new boolean[6];
-        weight = new int[6];
-
-        this.index = index;
-
-        this.terrainType = terrainType;
-        this.terrainFeature = terrainFeature;
-
-
-        resources = new ArrayList<>();
-
-        improvement = null;
-        building = null;
-
-        combatUnit = null;
-        nonCombatUnit = null;
-
-        hasRoad = false;
-        hasRailRoad = false;
-    }
-
-    public Tile(int index, TerrainType terrainType, TerrainFeature terrainFeature, TileKnowledge tileKnowledge) {
-        neighbors = new Tile[6];
-        hasRiverOnSide = new boolean[6];
-        weight = new int[6];
-
-        this.index = index;
-
-        this.terrainType = terrainType;
-        this.terrainFeature = terrainFeature;
-
-        resources = new ArrayList<>();
-
-        improvement = null;
-        building = null;
-
-        combatUnit = null;
-        nonCombatUnit = null;
-
-        hasRoad = false;
-        hasRailRoad = false;
+    public void setResources(ArrayList<Resource> resources) {
+        this.resources = resources;
     }
 
     public boolean setNeighborOnSide(Direction dir, Tile other) {

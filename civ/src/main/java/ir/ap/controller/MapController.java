@@ -8,7 +8,6 @@ import ir.ap.model.Civilization;
 import ir.ap.model.GameArea;
 import ir.ap.model.Tile;
 import ir.ap.model.UnitType;
-import ir.ap.model.User;
 
 public class MapController extends AbstractGameController {
     
