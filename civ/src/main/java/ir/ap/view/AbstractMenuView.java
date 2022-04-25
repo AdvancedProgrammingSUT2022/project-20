@@ -15,12 +15,16 @@ import ir.ap.controller.UserController;
 
 public abstract class AbstractMenuView {
     protected static final Scanner SCANNER = new Scanner(System.in);
-    protected static final UserController USER_CONTROLLER = new UserController();
+    protected static final UserController USER_CONTROLLER = new UserController(true);
     protected static final GameController GAME_CONTROLLER = new GameController();
     protected static final Gson GSON = new Gson();
 
     protected static String currentUsername = null;
     protected static Menu currentMenu;
+
+    public static void close() {
+        USER_CONTROLLER.close();
+    }
 
     public static String constantCaseToCamelCase(String constCaseStr) {
         String camelCaseStr = Arrays.stream(constCaseStr.split("_"))
@@ -44,7 +48,7 @@ public abstract class AbstractMenuView {
     }
 
     public static <T> T getField(JsonObject response, String fieldName, Class<T> classOfT) {
-        if (!responseOk(response))
+        if (response == null)
             return null;
         JsonElement field = response.get(fieldName);
         if (field == null)

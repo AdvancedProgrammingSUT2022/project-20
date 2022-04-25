@@ -58,6 +58,7 @@ public class LoginMenuView extends AbstractMenuView {
 
         USER_LOGGED_IN("user logged in successfully"),
         USER_NOT_LOGGED_IN("please login first"),
+        USER_ALREADY_LOGGED_IN("please logout first"),
         INVALID_CREDENTIALS("Username and password didn't match"),
 
         ARG_INVALID("argument %s invalid"),
@@ -140,6 +141,8 @@ public class LoginMenuView extends AbstractMenuView {
     }
 
     public Menu login(Matcher matcher) {
+        if (isLogin())
+            return responseAndGo(Message.USER_ALREADY_LOGGED_IN, Menu.LOGIN);
         String username = null, password = null;
         String[] args = matcher.group("args").trim().split("\\s+");
         for (int i = 0; i < args.length; i++) {
