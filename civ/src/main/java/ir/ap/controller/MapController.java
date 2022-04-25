@@ -16,7 +16,7 @@ public class MapController extends AbstractGameController {
         super(gameArea);
     }
 
-    public void initCivilizationPositions( UnitController unitController ){
+    public void initCivilizationPositions(){
         ArrayList<Tile> khoshkiHas = gameArea.getMap().getKhoshkiHa() ;
         Collections.shuffle( khoshkiHas , new Random( gameArea.getSeed() ) );
         int i = 0;
