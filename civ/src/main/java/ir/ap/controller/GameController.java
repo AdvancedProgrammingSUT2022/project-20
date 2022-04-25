@@ -52,6 +52,18 @@ public class GameController extends AbstractGameController implements JsonRespon
     public void close() {
     }
 
+    public JsonObject getCivilizationByUsername(String username) {
+        return JSON_FALSE;
+    }
+
+    public JsonObject getAllCivilizations() {
+        return JSON_FALSE;
+    }
+
+    public JsonObject getAllPlayers() {
+        return JSON_FALSE;
+    }
+
     public JsonObject newGame(String[] players) {
         gameArea = new GameArea(System.currentTimeMillis());
         for (String username : players) {
