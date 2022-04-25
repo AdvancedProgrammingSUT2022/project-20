@@ -80,4 +80,8 @@ public class GameController extends AbstractGameController implements JsonRespon
         cityController = new CityController(gameArea);
         return messageToJsonObj(Message.GAME_STARTED, true);
     }
+
+    public JsonObject nextTurn() {
+        return JSON_FALSE;
+    }
 }
