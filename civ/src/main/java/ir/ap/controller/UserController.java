@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 
 import ir.ap.model.User;
 
-public class UserController extends AbstractController implements AutoCloseable {
+public class UserController implements JsonResponsor, AutoCloseable {
 
     public enum Validator {
         USERNAME("\\w+"),
