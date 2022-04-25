@@ -1,8 +1,12 @@
 package ir.ap.controller;
 
+import java.util.Random;
+
 import ir.ap.model.GameArea;
 
 public abstract class AbstractGameController {
+    protected static final Random RANDOM = new Random(System.currentTimeMillis());
+
     protected GameArea gameArea;
 
     protected GameController gameController;

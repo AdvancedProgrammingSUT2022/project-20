@@ -1,6 +1,7 @@
 package ir.ap.view;
 
 import java.util.Arrays;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,7 +17,7 @@ import ir.ap.controller.UserController;
 public abstract class AbstractMenuView {
     protected static final Scanner SCANNER = new Scanner(System.in);
     protected static final UserController USER_CONTROLLER = new UserController(true);
-    protected static final GameController GAME_CONTROLLER = new GameController();
+    protected static final GameController GAME_CONTROLLER = new GameController(true);
     protected static final Gson GSON = new Gson();
 
     protected static String currentUsername = null;

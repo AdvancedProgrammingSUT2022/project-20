@@ -180,6 +180,12 @@ public class Civilization {
         }
         return res;
     }
+    public void removeUnit(Unit unit){
+        units.remove(unit);
+    }
+    public void removeCity(City city){
+        cities.remove(city);
+    }
     public void setCapital(City capital) {
         this.capital = capital;
     }

@@ -1,5 +1,7 @@
 package ir.ap.controller;
 
+import java.io.FileReader;
+import java.io.Reader;
 import java.util.ArrayList;
 
 import com.google.gson.Gson;
@@ -45,11 +47,35 @@ public class GameController extends AbstractGameController implements JsonRespon
         }
     }
 
+    private static final String CITY_NAMES_FILE = "citynames.json";
+
     public GameController() {
+        super();
+    }
+
+    public GameController(boolean readData) {
+        super();
+        if (readData) {
+            readCityNames();
+        }
     }
 
     @Override
     public void close() {
+    }
+
+    public boolean readCityNames() {
+        try {
+            Reader namesReader = new FileReader(CITY_NAMES_FILE);
+            String[] curNames = GSON.fromJson(namesReader, String[].class);
+            for (String name : curNames) {
+                City.addCityName(name);
+            }
+            namesReader.close();
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     public JsonObject getCivilizationByUsername(String username) {

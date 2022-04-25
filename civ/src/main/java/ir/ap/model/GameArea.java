@@ -95,4 +95,16 @@ public class GameArea {
     {
         return user2civ.get(user);
     }
+
+    public int getDistance(Tile fTile, Tile sTile) {
+        // TODO
+    }
+
+    public Tile[] getTilesInDistance(Unit unit, int dist) {
+        // TODO
+    }
+
+    public Tile[] getTilesInDistance(City city, int dist) {
+        
+    }
 }
