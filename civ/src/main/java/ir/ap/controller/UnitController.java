@@ -57,7 +57,8 @@ public class UnitController extends AbstractGameController {
     {
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
-
+        City city = unit.getTile().getCity();
+        if (city == null || city.getCivilization() != civilization || city.getCombatUnit() != unit) return false;
         unit.setUnitAction(UnitType.UnitAction.GARRISON);
         return true;
     }

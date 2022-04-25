@@ -130,8 +130,7 @@ public class User {
     
     public static boolean addUser( User user ){
         if( hasUser( user ) == true )return false;
-        staticId ++;
-        user.setId( staticId );
+        user.setId( staticId++ );
         users.add( user ) ;
         return true;
     }

@@ -9,10 +9,13 @@ import java.util.Random;
 import ir.ap.model.Tile.TileKnowledge;
 
 public class GameArea {
+    private static final int MAX_USERS = 10;
+    private static final int MAX_LAND_TILES = 1000;
+
     private Map map;
     private HashMap<User,Civilization> user2civ;
     private HashMap<Civilization,User> civ2user;
-    private Tile.TileKnowledge[][] tilesKnowledges = new Tile.TileKnowledge[ 10 ][ 1000 ] ;
+    private Tile.TileKnowledge[][] tilesKnowledges = new Tile.TileKnowledge[ MAX_USERS ][ MAX_LAND_TILES ] ;
 
     private int turn;
     private int year;
@@ -59,6 +62,7 @@ public class GameArea {
 
     public boolean addUser(User user, Civilization civilization)
     {
+        if (user.getId() >= MAX_USERS) return false;
         if (user2civ.get(user) != null) return false;
         if (civ2user.get(civilization) != null) return false;
         user2civ.put(user,civilization);

@@ -39,6 +39,7 @@ public class Tile {
     private TerrainFeature terrainFeature;
     private ArrayList<Resource> resources;
 
+    private City city;
     private Improvement improvement;
     private Building building;
 
@@ -61,6 +62,7 @@ public class Tile {
 
         resources = new ArrayList<>();
 
+        city = null;
         improvement = null;
         building = null;
 
@@ -84,6 +86,7 @@ public class Tile {
 
         resources = new ArrayList<>();
 
+        city = null;
         improvement = null;
         building = null;
 
@@ -106,6 +109,7 @@ public class Tile {
 
         resources = new ArrayList<>();
 
+        city = null;
         improvement = null;
         building = null;
 
@@ -243,6 +247,14 @@ public class Tile {
                 improvedRscs.add(curRsc);
         }
         return improvedRscs;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
+    }
+
+    public City getCity() {
+        return this.city;
     }
 
     public void setImprovement(Improvement improvement) {

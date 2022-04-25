@@ -176,7 +176,7 @@ public class City {
     }
 
     public int getCombatStrength() {
-        return this.combatStrength;
+        return this.combatStrength + (this.combatUnit != null ? this.combatUnit.getCombatStrength() / 3 : 0);
     }
 
     public void setCombatStrength(int combatStrength) {
