@@ -1,7 +1,10 @@
 package ir.ap.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
+
+import ir.ap.model.TerrainType.TerrainFeature;
 
 public class Map {
     private  ArrayList<Tile> tiles ;
@@ -9,18 +12,55 @@ public class Map {
     private int[][] dist = new int[100][100] ;
     private final int INF = 1000000000 ;
     
-    private void generateRandomMap(){
+    private void generateRandomMap(long seed){
+        Random randomobj = new Random();
+        randomobj.setSeed(seed);
         // Set Tiles, khoshkiHa, initializing dist[][]
         // Call updateDistances
+        
         for(int i = 0 ; i < 30 ; i ++){
             for(int j = 0 ; j < 30 ; j ++){
-                
+                if( (i >= 10 && i < 20) || (j >= 5 && j < 25) )continue ;
+                Tile tile = new Tile( (i*30)+j, TerrainType.OCEAN, null, new ArrayList<>(Arrays.asList(new Resource[]{})));
+                tiles.add( tile );
             }
         }
+
+        TerrainType[] allTerrainTypes = new  TerrainType[]{TerrainType.COAST, TerrainType.DESERT, TerrainType.GRASSLAND, TerrainType.HILL, TerrainType.MOUNTAIN, TerrainType.PLAINS, TerrainType.SNOW, TerrainType.TUNDRA};
+        Resource[] allResources = new Resource[]{Resource.BANANAS, Resource.CATTLE, Resource.COAL, Resource.COTTON, Resource.DEER, Resource.DYES, Resource.FURS, Resource.GEMS, Resource.GOLD, Resource.HORSES, Resource.INCENSE,
+             Resource.IRON, Resource.IVORY, Resource.MARBLE, Resource.SHEEP, Resource.SILK, Resource.SILVER, Resource.SUGAR, Resource.WHEAT};
+
+        for(int i = 10 ; i < 20 ; i ++){
+            for(int j = 5 ; j < 25 ; j ++){
+                TerrainType terrainType ;
+                TerrainType.TerrainFeature terrainFeature ;
+                ArrayList<Resource> resources = new ArrayList<>() ;
+                
+                terrainType = allTerrainTypes[ randomobj.nextInt(allTerrainTypes.length) ] ;
+                terrainFeature = terrainType.getFeaturesPossible().get( randomobj.nextInt( terrainType.getFeaturesPossible().size() ) );
+                for(int z = 0 ; z < allResources.length; z ++){
+                    if( (terrainType.isResourcePossible( allResources[ z ] ) == true) || (terrainFeature.isResourcePossible( allResources[ z ] ) == true) ){
+                        if( randomobj.nextInt( 2 ) == 0 ){
+                            resources.add( allResources[ z ] );
+                        }
+                    }
+                }
+                Tile tile = new Tile((i*30)+j, terrainType, terrainFeature, resources) ;
+                for(int z = 0 ; z < 6 ; z ++){
+                    if( randomobj.nextInt( 2 ) == 1 ){
+                        tile.setHasRiverOnSide(i, true);
+                    }
+                } 
+                // Hasayegi Ha And initialize dist[][]
+                tiles.add( tile );
+                khoshkiHa.add( tile );
+            }
+        }
+        updateDistances();
     }
 
-    public Map() {            
-        generateRandomMap();
+    public Map(long seed) {            
+        generateRandomMap(seed);
     }
 
     public Tile getTileByIndex( int index ){

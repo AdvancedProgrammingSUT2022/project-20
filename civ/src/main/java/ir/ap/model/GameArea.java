@@ -23,7 +23,7 @@ public class GameArea {
     private final long seed;
 
     public GameArea(long seed) {
-        map = new Map();
+        map = new Map( seed );
         user2civ = new HashMap<>();
         civ2user = new HashMap<>();
         turn = 0;

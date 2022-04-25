@@ -84,6 +84,12 @@ public enum TerrainType {
         {
             return this.resourcesPossible;
         }
+        public boolean isResourcePossible( Resource resource ){
+            for(int i = 0 ; i < resourcesPossible.size() ; i ++){
+                if( resourcesPossible.get( i ).equals( resource ) )return true;
+            }
+            return false;
+        }
     }
 
     private int id;
@@ -127,6 +133,12 @@ public enum TerrainType {
     public ArrayList<Resource> getResourcesPossible()
     {
         return this.resourcesPossible;
+    }
+    public boolean isResourcePossible( Resource resource ){
+        for(int i = 0 ; i < resourcesPossible.size() ; i ++){
+            if( resourcesPossible.get( i ).equals( resource ) )return true;
+        }
+        return false;
     }
 
     /// constructor
