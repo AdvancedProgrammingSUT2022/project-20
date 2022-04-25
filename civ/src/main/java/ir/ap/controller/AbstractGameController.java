@@ -69,7 +69,7 @@ public abstract class AbstractGameController {
         this.cityController = cityController;
     }
 
-    public GameController getGameContrller() {
+    public GameController getGameController() {
         return this.gameController;
     }
 
