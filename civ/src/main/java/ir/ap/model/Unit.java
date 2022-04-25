@@ -13,26 +13,6 @@ public class Unit {
     private Civilization civilization;
     private Tile tile;
 
-<<<<<<< HEAD
-    // public Unit(UnitType unitType) {
-    //     this.unitType = unitType;
-    //     unitAction = null;
-    //     mp = unitType.getMovement();
-    //     hp = MAX_HP;
-    //     civilization = null;
-    //     tile = null;
-    // }
-=======
-    public Unit(UnitType unitType) {
-        this.unitType = unitType;
-        unitAction = null;
-        mp = unitType.getMovement();
-        hp = (unitType.isCivilian() ? 0 : MAX_HP);
-        civilization = null;
-        tile = null;
-    }
->>>>>>> c2e25afae903cefa9864a414f7000e17d48df155
-
     public Unit(UnitType unitType, Civilization civilization, Tile tile) {
         this.unitType = unitType;
         unitAction = null;
@@ -41,7 +21,6 @@ public class Unit {
         this.civilization = civilization;
         this.tile = tile;
     }
-
 
     public UnitType getUnitType() {
         return unitType;
@@ -141,6 +120,10 @@ public class Unit {
 
     public Era getEra() {
         return unitType.getEra();
+    }
+
+    public boolean isCivilian() {
+        return unitType.isCivilian();
     }
 
 }

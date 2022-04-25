@@ -82,6 +82,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             controller.setUnitController(unitController);
             controller.setCityController(cityController);
         }
+        
         return messageToJsonObj(Message.GAME_STARTED, true);
     }
 
