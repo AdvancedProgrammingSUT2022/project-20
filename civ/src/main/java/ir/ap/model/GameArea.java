@@ -11,8 +11,8 @@ public class GameArea {
     private int year;
     private Era era;
 
-    public GameArea() {
-        map = new Map();
+    public GameArea(int seed) {
+        map = new Map(seed);
         user2civ = new HashMap<>();
         civ2user = new HashMap<>();
         turn = 0;
