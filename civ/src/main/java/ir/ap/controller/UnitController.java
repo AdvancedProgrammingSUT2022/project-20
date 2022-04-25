@@ -4,7 +4,18 @@ import ir.ap.model.*;
 
 public class UnitController extends AbstractGameController {
     public UnitController(GameArea gameArea) {
-        this.gameArea = gameArea;
+        super(gameArea);
+    }
+
+    public void addUnit(Civilization civilization, Tile tile, UnitType unitType){
+        Unit unit = new Unit(unitType, civilization, tile);
+        civilization.getUnits().add( unit );
+        if( unit.isCivilian() == true ){
+            tile.setNonCombatUnit( unit );
+        } 
+        else{
+            tile.setCombatUnit( unit );
+        }
     }
 
     public boolean unitMoveTo(Civilization civilization, Tile tile)

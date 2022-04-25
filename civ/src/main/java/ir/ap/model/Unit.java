@@ -13,29 +13,11 @@ public class Unit {
     private Civilization civilization;
     private Tile tile;
 
-    public Unit(UnitType unitType) {
-        this.unitType = unitType;
-        unitAction = null;
-        mp = unitType.getMovement();
-        hp = MAX_HP;
-        civilization = null;
-        tile = null;
-    }
-
     public Unit(UnitType unitType, Civilization civilization, Tile tile) {
         this.unitType = unitType;
         unitAction = null;
         mp = unitType.getMovement();
-        hp = MAX_HP;
-        this.civilization = civilization;
-        this.tile = tile;
-    }
-
-    public Unit(UnitType unitType, UnitAction unitAction, int mp, int hp, Civilization civilization, Tile tile) {
-        this.unitType = unitType;
-        this.unitAction = unitAction;
-        this.mp = mp;
-        this.hp = hp;
+        hp = (unitType.isCivilian() ? 0 : MAX_HP);
         this.civilization = civilization;
         this.tile = tile;
     }
@@ -113,7 +95,7 @@ public class Unit {
     }
 
     public int getCombatStrength() {
-        return unitType.getCombatStrength();
+        return unitType.getCombatStrength() + (unitAction == UnitAction.FORTIFY ? 3 : 0);
     }
 
     public int getRangedCombatStrength() {
@@ -138,6 +120,10 @@ public class Unit {
 
     public Era getEra() {
         return unitType.getEra();
+    }
+
+    public boolean isCivilian() {
+        return unitType.isCivilian();
     }
 
 }
