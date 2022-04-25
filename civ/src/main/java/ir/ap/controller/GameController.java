@@ -41,11 +41,6 @@ public class GameController extends AbstractGameController implements JsonRespon
         }
     }
 
-    private CivilizationController civController;
-    private MapController mapController;
-    private UnitController unitController;
-    private CityController cityController;
-
     public GameController() {
     }
 
@@ -78,6 +73,15 @@ public class GameController extends AbstractGameController implements JsonRespon
         mapController = new MapController(gameArea);
         unitController = new UnitController(gameArea);
         cityController = new CityController(gameArea);
+        AbstractGameController[] controllers = new AbstractGameController[] {
+                this, civController, mapController, unitController, cityController };
+        for (AbstractGameController controller : controllers) {
+            controller.setGameController(this);
+            controller.setCivilizationController(civController);
+            controller.setMapController(mapController);
+            controller.setUnitController(unitController);
+            controller.setCityController(cityController);
+        }
         return messageToJsonObj(Message.GAME_STARTED, true);
     }
 

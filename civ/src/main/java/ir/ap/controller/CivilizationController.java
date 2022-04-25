@@ -4,6 +4,6 @@ import ir.ap.model.GameArea;
 
 public class CivilizationController extends AbstractGameController {
     public CivilizationController(GameArea gameArea) {
-        this.gameArea = gameArea;
+        super(gameArea);
     }
 }
