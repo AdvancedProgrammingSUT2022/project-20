@@ -18,21 +18,30 @@ public class UnitController extends AbstractGameController {
         }
     }
 
-    public boolean unitMoveTo(Civilization civilization, Tile tile)
+    public boolean unitMoveTo(Civilization civilization, Tile target)
     {
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
+        Tile tile = unit.getTile();
+        if (tile == null) return false;
+        int dist = gameArea.getDistance(unit.getTile(), target);
+        if (dist > unit.getMp())
+            return false;
         if (unit.isCivilian()) {
-            if (tile.getNonCombatUnit() != null)
+            if (target.getNonCombatUnit() != null)
                 return false;
-            tile.setNonCombatUnit(unit);
+            target.setNonCombatUnit(unit);
+            tile.setNonCombatUnit(null);
         } else {
-            if (tile.getCombatUnit() != null)
+            if (target.getCombatUnit() != null)
                 return false;
-            tile.setCombatUnit(unit);
+            target.setCombatUnit(unit);
+            tile.setCombatUnit(null);
         }
-        unit.setTile(tile);
+        unit.addToMp(-dist);
+        unit.setTile(target);
         unit.setUnitAction(UnitType.UnitAction.MOVETO);
+        // TODO: tileknowledge
         return true;
     }
 
@@ -151,8 +160,13 @@ public class UnitController extends AbstractGameController {
     public boolean unitFoundCity(Civilization civilization)
     {
         Unit unit = civilization.getSelectedUnit();
-        if(unit == null) return false;
-
+        if (unit == null || !(unit.getUnitType() == UnitType.SETTLER))
+            return false;
+        Tile tile = unit.getTile();
+        if (tile == null || tile.getCity() != null)
+            return false;
+        City city = new City(City.getCityName(RANDOM.nextInt()), civilization, tile);
+        cityController.addCity(city);
         unit.setUnitAction(UnitType.UnitAction.FOUND_CITY);
         return true;
     }

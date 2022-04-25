@@ -6,6 +6,9 @@ import java.util.HashSet;
 
 public class City {
     private static ArrayList<City> cities = new ArrayList<>();
+    private static ArrayList<String> cityNames = new ArrayList<>();
+
+    private static final int DEFAULT_HP = 60;
 
     private String name;
     private Civilization civilization;
@@ -21,7 +24,6 @@ public class City {
     private Production currentProduction;
     private int[] turnsLeftForProductionConstruction;
 
-    private int combatStrength;
     private int hp;
 
     private int population;
@@ -47,10 +49,9 @@ public class City {
         currentProduction = null;
         turnsLeftForProductionConstruction = new int[100];
 
-        combatStrength = 0;
-        hp = 0;
+        hp = DEFAULT_HP;
 
-        population = 0;
+        population = 1;
         food = 0;
         production = 0;
 
@@ -74,10 +75,9 @@ public class City {
         currentProduction = null;
         turnsLeftForProductionConstruction = new int[100];
 
-        combatStrength = 0;
-        hp = 0;
+        hp = DEFAULT_HP;
 
-        population = 0;
+        population = 1;
         food = 0;
         production = 0;
 
@@ -109,6 +109,14 @@ public class City {
             return false;
         cities.add(city);
         return true;
+    }
+
+    public static void addCityName(String name) {
+        cityNames.add(name);
+    }
+
+    public static String getCityName(int index) {
+        return cityNames.get(index % cityNames.size());
     }
 
     public String getName() {
@@ -176,15 +184,7 @@ public class City {
     }
 
     public int getCombatStrength() {
-        return this.combatStrength + (this.combatUnit != null ? this.combatUnit.getCombatStrength() / 3 : 0);
-    }
-
-    public void setCombatStrength(int combatStrength) {
-        this.combatStrength = combatStrength;
-    }
-
-    public void addToCombatStrength(int delta) {
-        this.combatStrength += delta;
+        return this.population * 3 + (this.combatUnit != null ? this.combatUnit.getCombatStrength() / 3 : 0);
     }
 
     public int getHp() {

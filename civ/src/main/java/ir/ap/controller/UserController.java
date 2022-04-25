@@ -63,9 +63,9 @@ public class UserController implements JsonResponsor, AutoCloseable {
         super();
     }
 
-    public UserController(boolean shouldReadUsers) {
+    public UserController(boolean readData) {
         this();
-        if (shouldReadUsers)
+        if (readData)
             readUsers();
     }
 
