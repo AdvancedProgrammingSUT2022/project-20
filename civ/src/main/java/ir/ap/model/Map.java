@@ -7,7 +7,7 @@ public class Map {
     private final ArrayList<Tile> Tiles;
     private final ArrayList<Tile> khoshkiHa ;
     private int[][] dist = new int[100][100] ;
-    private final Random randomobj;    
+    //private final Random randomobj;    
     private final int INF = 1000000000 ;
     
     private void generateRandomMap(){
@@ -16,10 +16,11 @@ public class Map {
 
     }
 
-    public Map(int seed) {        
-        randomobj = new Random(); 
-        randomobj.setSeed(seed);    
-        generateRandomMap();
+    public Map() {        
+        // randomobj = new Random(); 
+        // randomobj.setSeed(seed);    
+        // generateRandomMap();
+        
     }    
 
     public void updateDistances(){
