@@ -1,41 +1,32 @@
 package ir.ap.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Random;
+
+import ir.ap.model.Tile.TileKnowledge;
 
 public class GameArea {
     private Map map;
     private HashMap<User,Civilization> user2civ;
     private HashMap<Civilization,User> civ2user;
+    private Tile.TileKnowledge[][] tilesKnowledges = new Tile.TileKnowledge[ 10 ][ 1000 ] ;
 
     private int turn;
     private int year;
     private Era era;
+    private final long seed;
 
-    public GameArea() {
+    public GameArea(long seed) {
         map = new Map();
         user2civ = new HashMap<>();
         civ2user = new HashMap<>();
         turn = 0;
         year = -4000; // 4000 BC
         era = Era.ANCIENT;
-    }
-
-    public GameArea(Map map) {
-        this.map = map;
-        user2civ = new HashMap<>();
-        civ2user = new HashMap<>();
-        turn = 0;
-        year = -4000; // 4000 BC
-        era = Era.ANCIENT;
-    }
-
-    public GameArea(Map map, int turn, int year, Era era) {
-        this.map = map;
-        user2civ = new HashMap<>();
-        civ2user = new HashMap<>();
-        this.turn = turn;
-        this.year = year;
-        this.era = era;
+        this.seed = seed;
     }
 
     public Map getMap() {
@@ -60,6 +51,10 @@ public class GameArea {
 
     public Era getEra() {
         return era;
+    }
+
+    public long getSeed() {
+        return seed;
     }
 
     public boolean addUser(User user, Civilization civilization)
