@@ -50,6 +50,10 @@ public class Unit {
         mp = unitType.getMovement();
     }
 
+    public boolean canMove() {
+        return mp > 0;
+    }
+
     public int getHp() {
         return hp;
     }

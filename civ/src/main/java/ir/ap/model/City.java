@@ -8,15 +8,12 @@ public class City {
     private static ArrayList<City> cities = new ArrayList<>();
     private static ArrayList<String> cityNames = new ArrayList<>();
 
-    private static final int DEFAULT_HP = 60;
+    private static final int DEFAULT_HP = 20;
 
     private String name;
     private Civilization civilization;
 
     private Tile tile;
-
-    private Unit combatUnit;
-    private Unit nonCombatUnit;
 
     private ArrayList<Tile> territory;
     private ArrayList<Tile> workingTiles;
@@ -40,8 +37,6 @@ public class City {
         civilization = null;
 
         tile = null;
-        combatUnit = null;
-        nonCombatUnit = null;
 
         territory = new ArrayList<>();
         workingTiles = new ArrayList<>();
@@ -66,8 +61,6 @@ public class City {
         this.civilization = civilization;
 
         this.tile = tile;
-        combatUnit = null;
-        nonCombatUnit = null;
 
         territory = new ArrayList<>();
         workingTiles = new ArrayList<>();
@@ -136,19 +129,19 @@ public class City {
     }
 
     public Unit getCombatUnit() {
-        return this.combatUnit;
+        return this.tile.getCombatUnit();
     }
 
     public void setCombatUnit(Unit combatUnit) {
-        this.combatUnit = combatUnit;
+        this.tile.setCombatUnit(combatUnit);
     }
 
     public Unit getNonCombatUnit() {
-        return this.nonCombatUnit;
+        return this.tile.getNonCombatUnit();
     }
 
     public void setNonCombatUnit(Unit nonCombatUnit) {
-        this.nonCombatUnit = nonCombatUnit;
+        this.tile.setNonCombatUnit(nonCombatUnit);
     }
 
     public ArrayList<Tile> getTerritory() {
@@ -184,7 +177,7 @@ public class City {
     }
 
     public int getCombatStrength() {
-        return this.population * 3 + (this.combatUnit != null ? this.combatUnit.getCombatStrength() / 3 : 0);
+        return this.population * 3 + (getCombatUnit() != null ? getCombatUnit().getCombatStrength() / 3 : 0);
     }
 
     public int getHp() {
@@ -302,7 +295,7 @@ public class City {
         }
         return improvedRscCnt;
     }
-    
+
     public ArrayList<Resource> getResourcesInCity() {
         ArrayList<Resource> resources = new ArrayList<>();
         for (Tile tile : territory) {

@@ -15,7 +15,8 @@ public class CityController extends AbstractGameController {
         Civilization civ = city.getCivilization();
         if (tile == null || tile.getCity() != null)
             return false;
-        City.addCity(city);
+        if (!City.addCity(city))
+            return false;
         tile.setCity(city);
         civ.addCity(city);
         city.setCombatUnit(tile.getCombatUnit());

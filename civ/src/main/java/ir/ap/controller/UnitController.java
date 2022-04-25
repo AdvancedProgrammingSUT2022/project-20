@@ -20,12 +20,13 @@ public class UnitController extends AbstractGameController {
 
     public boolean unitMoveTo(Civilization civilization, Tile target)
     {
+        if (civilization == null || target == null) return false;
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
         Tile tile = unit.getTile();
         if (tile == null) return false;
-        int dist = gameArea.getDistance(unit.getTile(), target);
-        if (dist > unit.getMp())
+        int dist = gameArea.getWeightedDistance(tile, target);
+        if (dist - target.getMovementCost() + 1 > unit.getMp())
             return false;
         if (unit.isCivilian()) {
             if (target.getNonCombatUnit() != null)
@@ -42,6 +43,7 @@ public class UnitController extends AbstractGameController {
         unit.setTile(target);
         unit.setUnitAction(UnitType.UnitAction.MOVETO);
         // TODO: tileknowledge
+        // TODO: handle rivers
         return true;
     }
 
@@ -84,21 +86,27 @@ public class UnitController extends AbstractGameController {
 
     public boolean unitAttack(Civilization civilization, Tile tile)
     {
+        if (civilization == null || tile == null) return false;
         Unit unit = civilization.getSelectedUnit();
         Unit enemyUnit = tile.getCombatUnit();
-        if(unit == null || enemyUnit == null) return false;
-
+        Tile curTile = unit.getTile();
+        // TODO: Non Combat Units!!
+        if(unit == null || enemyUnit == null || curTile == null) return false;
         City city = tile.getCity();
+        // TODO: City!!
+        // TODO: River!!
         if(unit.getCombatType() == UnitType.CombatType.ARCHERY || unit.getCombatType() == UnitType.CombatType.SIEGE) {
-            if(gameArea.getDistance > unit.getRange()) return false;
+            if(gameArea.getDistanceInTiles(curTile, tile) > unit.getRange()) return false;
             if(unit.getCombatType() == UnitType.CombatType.SIEGE && unit.getUnitAction() != UnitType.UnitAction.SETUP_RANGED) return false;
             enemyUnit.setHp(enemyUnit.getHp() - unit.getCombatStrength());
-            if (enemyUnit.getHp() < 0) {
-                Civilization civilization1 = unit.getCivilization();
+            if (enemyUnit.isDead()) {
+                Civilization civilization1 = enemyUnit.getCivilization();
                 civilization1.removeUnit(enemyUnit);
+                tile.setCombatUnit(null);
             }
-            if(unit.getHp() < 0){
+            if(unit.isDead()){
                 civilization.removeUnit(unit);
+                curTile.setCombatUnit(null);
             }
         }
 
@@ -159,14 +167,18 @@ public class UnitController extends AbstractGameController {
 
     public boolean unitFoundCity(Civilization civilization)
     {
+        if (civilization == null) return false;
         Unit unit = civilization.getSelectedUnit();
         if (unit == null || !(unit.getUnitType() == UnitType.SETTLER))
             return false;
         Tile tile = unit.getTile();
         if (tile == null || tile.getCity() != null)
             return false;
-        City city = new City(City.getCityName(RANDOM.nextInt()), civilization, tile);
-        cityController.addCity(city);
+        City city;
+        int cnt = 10;
+        do {
+            city = new City(City.getCityName(RANDOM.nextInt()), civilization, tile);
+        } while (!cityController.addCity(city) && cnt --> 0);
         unit.setUnitAction(UnitType.UnitAction.FOUND_CITY);
         return true;
     }
