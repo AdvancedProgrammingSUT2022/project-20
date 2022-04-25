@@ -148,4 +148,8 @@ public enum UnitType implements Production {
     public Era getEra() {
         return era;
     }
+
+    public boolean isCivilian() {
+        return combatType == CombatType.CIVILIAN;
+    }
 }

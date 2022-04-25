@@ -17,7 +17,7 @@ public class Unit {
         this.unitType = unitType;
         unitAction = null;
         mp = unitType.getMovement();
-        hp = MAX_HP;
+        hp = (unitType.isCivilian() ? 0 : MAX_HP);
         civilization = null;
         tile = null;
     }
@@ -26,7 +26,7 @@ public class Unit {
         this.unitType = unitType;
         unitAction = null;
         mp = unitType.getMovement();
-        hp = MAX_HP;
+        hp = (unitType.isCivilian() ? 0 : MAX_HP);
         this.civilization = civilization;
         this.tile = tile;
     }
@@ -113,7 +113,7 @@ public class Unit {
     }
 
     public int getCombatStrength() {
-        return unitType.getCombatStrength();
+        return unitType.getCombatStrength() + (unitAction == UnitAction.FORTIFY ? 3 : 0);
     }
 
     public int getRangedCombatStrength() {
