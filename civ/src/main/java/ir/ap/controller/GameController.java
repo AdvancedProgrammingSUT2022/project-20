@@ -1,15 +1,16 @@
 package ir.ap.controller;
 
+import java.util.ArrayList;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import ir.ap.model.*;
-import org.w3c.dom.html.HTMLImageElement;
+import ir.ap.model.City;
+import ir.ap.model.Civilization;
+import ir.ap.model.GameArea;
+import ir.ap.model.User;
 
-import java.net.UnknownServiceException;
-import java.util.ArrayList;
-
-public class GameController extends AbstractController {
+public class GameController extends AbstractGameController implements JsonResponsor, AutoCloseable {
 
     public enum Validator {
         ;
@@ -27,9 +28,8 @@ public class GameController extends AbstractController {
     }
 
     public enum Message {
+        GAME_STARTED("game started successfully"),
         USER_NOT_LOGGED_IN("user is not logged in"),
-
-        GAME_STARTED("game started"),
 
         E500("Server error");
 
@@ -45,73 +45,31 @@ public class GameController extends AbstractController {
         }
     }
 
-    private GameArea gameArea = null;
+    private CivilizationController civController;
+    private MapController mapController;
+    private UnitController unitController;
+    private CityController cityController;
 
-    public JsonObject getCivilizationByUsername(String username)
-    {
-        Civilization civilization = gameArea.getCivilizationByUser(gameArea.getUserByUsername(username));
-
-        Gson gson = new Gson();
-        String x = gson.toJson(civilization);
-        return gson.fromJson(x,JsonObject.class);
+    public GameController() {
     }
 
-    public JsonObject getAllCivilizations()
-    {
-        ArrayList<Civilization> civilizations = new ArrayList<Civilization>();
-        for(Civilization civilization : gameArea.getCiv2user().keySet())
-            civilizations.add(civilization);
-
-        Gson gson = new Gson();
-        String x = gson.toJson(civilizations);
-        return gson.fromJson(x,JsonObject.class);
+    @Override
+    public void close() {
     }
 
-    public JsonObject getAllPlayers()
-    {
-        ArrayList<User> Users = new ArrayList<User>();
-        for(User user : gameArea.getCiv2user().values())
-            Users.add(user);
-
-        Gson gson = new Gson();
-        String x = gson.toJson(Users);
-        return gson.fromJson(x,JsonObject.class);
-    }
-
-    public JsonObject newGame(String[] players)
-    {
-        gameArea = new GameArea((int)System.currentTimeMillis());
+    public JsonObject newGame(String[] players) {
+        gameArea = new GameArea(System.currentTimeMillis());
         for (String username : players) {
-            User user = User.getUser(username);
-            if (user == null || !user.isLogin())
+            User curUser = User.getUser(username);
+            if (curUser == null || !curUser.isLogin())
                 return messageToJsonObj(Message.USER_NOT_LOGGED_IN, false);
+            Civilization curCiv = new Civilization(curUser.getNickname() + ".civ", null);
+            gameArea.addUser(curUser, curCiv);
         }
-        return messageToJsonObj(Message.GAME_STARTED,true);
-    }
-
-    public JsonObject nextTurn(String username)
-    {
-        return JSON_FALSE;
-    }
-
-    public JsonObject selectCity(String username, String cityName)
-    {
-        Civilization civilization = gameArea.getCivilizationByName(username);
-        City city = gameArea.getCityByName(cityName);
-        civilization.setSelectedCity(city);
-        return messageToJsonObj("city has benn selected succesfully",true);
-    }
-
-    public JsonObject selectCity(String username, int tileID)
-    {
-        Civilization civilization = gameArea.getCivilizationByName(username);
-        City city = gameArea.getCityByTileID(tileID);
-        civilization.setSelectedCity(city);
-        return messageToJsonObj("city has benn selected succesfully",true);
-    }
-
-    public JsonObject ()
-    {
-        return ;
+        civController = new CivilizationController(gameArea);
+        mapController = new MapController(gameArea);
+        unitController = new UnitController(gameArea);
+        cityController = new CityController(gameArea);
+        return messageToJsonObj(Message.GAME_STARTED, true);
     }
 }
