@@ -10,7 +10,6 @@ public class User {
     private int score ;
     private boolean isLogin ;
     private int id ;
-    public static int staticId = 0 ;
     
     public User(String username, String nickname, String password) {
         this.username = username;
@@ -130,7 +129,6 @@ public class User {
     
     public static boolean addUser( User user ){
         if( hasUser( user ) == true )return false;
-        user.setId( staticId++ );
         users.add( user ) ;
         return true;
     }

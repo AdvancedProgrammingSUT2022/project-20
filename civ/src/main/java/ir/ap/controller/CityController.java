@@ -4,6 +4,7 @@ import ir.ap.model.City;
 import ir.ap.model.Civilization;
 import ir.ap.model.GameArea;
 import ir.ap.model.Tile;
+import ir.ap.model.Tile.TileKnowledge;
 
 public class CityController extends AbstractGameController {
     public CityController(GameArea gameArea) {
@@ -22,9 +23,12 @@ public class CityController extends AbstractGameController {
         city.setCombatUnit(tile.getCombatUnit());
         city.setNonCombatUnit(tile.getNonCombatUnit());
         for (Tile territoryTile : gameArea.getTilesInRange(city, city.getTerritoryRange())) {
-            city.addToTerritory(territoryTile);
+            if (territoryTile.getOwnerCity() == null) {
+                city.addToTerritory(territoryTile);
+                territoryTile.setOwnerCity(city);
+                gameArea.setTileKnowledgeByCivilization(civ, territoryTile, TileKnowledge.VISIBLE);
+            }
         }
-        // TODO: TileKnowledges
         return true;
     }
 }

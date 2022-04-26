@@ -26,7 +26,7 @@ public class UnitController extends AbstractGameController {
         Tile tile = unit.getTile();
         if (tile == null) return false;
         int dist = gameArea.getWeightedDistance(tile, target);
-        if (dist - target.getMovementCost() + 1 > unit.getMp())
+        if (unit.getMp() == 0 || dist >= unit.getMp() + UnitType.MAX_MOVEMENT)
             return false;
         if (unit.isCivilian()) {
             if (target.getNonCombatUnit() != null)
@@ -43,7 +43,6 @@ public class UnitController extends AbstractGameController {
         unit.setTile(target);
         unit.setUnitAction(UnitType.UnitAction.MOVETO);
         // TODO: tileknowledge
-        // TODO: handle rivers
         return true;
     }
 

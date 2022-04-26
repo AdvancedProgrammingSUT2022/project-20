@@ -15,7 +15,7 @@ public class GameArea {
     private Map map;
     private HashMap<User,Civilization> user2civ;
     private HashMap<Civilization,User> civ2user;
-    private Tile.TileKnowledge[][] tilesKnowledges = new Tile.TileKnowledge[ MAX_USERS ][ MAX_LAND_TILES ] ;
+    private TileKnowledge[][] tilesKnowledges = new TileKnowledge[ MAX_USERS ][ MAX_LAND_TILES ] ;
 
     private int turn;
     private int year;
@@ -26,6 +26,9 @@ public class GameArea {
         map = new Map( seed );
         user2civ = new HashMap<>();
         civ2user = new HashMap<>();
+        for (int i = 0; i < MAX_USERS; i++)
+            for (int j = 0; j < MAX_LAND_TILES; j++)
+                tilesKnowledges[i][j] = TileKnowledge.FOG_OF_WAR;
         turn = 0;
         year = -4000; // 4000 BC
         era = Era.ANCIENT;
@@ -58,6 +61,14 @@ public class GameArea {
 
     public long getSeed() {
         return seed;
+    }
+
+    public void setTileKnowledgeByCivilization(Civilization civ, Tile tile, TileKnowledge tileKnowledge) {
+        tilesKnowledges[civ.getIndex()][tile.getIndex()] = tileKnowledge;
+    }
+
+    public TileKnowledge getTileKnowledgeByCivilization(Civilization civ, Tile tile) {
+        return tilesKnowledges[civ.getIndex()][tile.getIndex()];
     }
 
     public boolean addUser(User user, Civilization civilization)

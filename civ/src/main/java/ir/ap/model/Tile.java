@@ -219,6 +219,10 @@ public class Tile {
         return ownerCity;
     }
 
+    public void setOwnerCity(City city) {
+        ownerCity = city;
+    }
+
     public void setImprovement(Improvement improvement) {
         this.improvement = improvement;
     }
