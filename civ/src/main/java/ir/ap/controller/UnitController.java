@@ -1,21 +1,73 @@
 package ir.ap.controller;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
 import ir.ap.model.*;
+import ir.ap.model.Tile.TileKnowledge;
 
 public class UnitController extends AbstractGameController {
     public UnitController(GameArea gameArea) {
         super(gameArea);
     }
 
+    public Set<Tile> getUnitVisitingTiles(Unit unit) {
+        if (unit == null) return null;
+        Tile tile = unit.getTile();
+        if (tile == null) return null;
+        Set<Tile> retTiles = new HashSet<>();
+        for (Tile adjTile : tile.getNeighbors()) {
+            retTiles.add(adjTile);
+            if (!adjTile.isBlock()) {
+                for (Tile tileInDepth2 : adjTile.getNeighbors()) {
+                    retTiles.add(tileInDepth2);
+                }
+            }
+        }
+        return retTiles;
+    }
+
     public void addUnit(Civilization civilization, Tile tile, UnitType unitType){
         Unit unit = new Unit(unitType, civilization, tile);
         civilization.addUnit(unit);
-        if( unit.isCivilian() == true ){
-            tile.setNonCombatUnit( unit );
-        } 
-        else{
-            tile.setCombatUnit( unit );
+        addUnitToMap(unit);
+    }
+
+    public boolean addUnitToMap(Unit unit) {
+        if (unit == null)
+            return false;
+        Tile tile = unit.getTile();
+        if (tile == null)
+            return false;
+        if (unit.isCivilian()) {
+            tile.setNonCombatUnit(unit);
+        } else {
+            tile.setCombatUnit(unit);
         }
+        for (Tile visitingTile : getUnitVisitingTiles(unit)) {
+            visitingTile.addVisitingUnit(unit);
+            gameArea.setTileKnowledgeByCivilization(unit.getCivilization(), visitingTile, TileKnowledge.VISIBLE);
+        }
+        return true;
+    }
+
+    public boolean removeUnitFromMap(Unit unit) {
+        if (unit == null) return false;
+        Tile tile = unit.getTile();
+        if (tile == null) return false;
+        if (unit.isCivilian()) {
+            tile.setNonCombatUnit(null);
+        } else {
+            tile.setCombatUnit(null);
+        }
+        for (Tile visitingTile : getUnitVisitingTiles(unit)) {
+            visitingTile.removeVisitingUnit(unit);
+            if (!visitingTile.civilizationIsVisiting(unit.getCivilization())) {
+                gameArea.setTileKnowledgeByCivilization(unit.getCivilization(), visitingTile, TileKnowledge.REVEALED);
+            }
+        }
+        return true;
     }
 
     public boolean unitMoveTo(Civilization civilization, Tile target)
@@ -28,21 +80,14 @@ public class UnitController extends AbstractGameController {
         int dist = gameArea.getWeightedDistance(tile, target);
         if (unit.getMp() == 0 || dist >= unit.getMp() + UnitType.MAX_MOVEMENT)
             return false;
-        if (unit.isCivilian()) {
-            if (target.getNonCombatUnit() != null)
-                return false;
-            target.setNonCombatUnit(unit);
-            tile.setNonCombatUnit(null);
-        } else {
-            if (target.getCombatUnit() != null)
-                return false;
-            target.setCombatUnit(unit);
-            tile.setCombatUnit(null);
-        }
+        if ((unit.isCivilian() && target.getNonCombatUnit() != null) ||
+            (!unit.isCivilian() && target.getCombatUnit() != null))
+            return false;
+        removeUnitFromMap(unit);
         unit.addToMp(-dist);
         unit.setTile(target);
         unit.setUnitAction(UnitType.UnitAction.MOVETO);
-        // TODO: tileknowledge
+        addUnitToMap(unit);
         return true;
     }
 

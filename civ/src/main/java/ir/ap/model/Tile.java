@@ -1,6 +1,8 @@
 package ir.ap.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import ir.ap.model.TerrainType.TerrainFeature;
 
@@ -41,6 +43,7 @@ public class Tile {
 
     private City city;
     private City ownerCity;
+    private HashSet<Unit> visitingUnits;
     private Improvement improvement;
     private Building building;
 
@@ -64,6 +67,7 @@ public class Tile {
 
         city = null;
         ownerCity = null;
+        visitingUnits = new HashSet<>();
         improvement = null;
         building = null;
 
@@ -76,6 +80,10 @@ public class Tile {
 
     public void setResources(ArrayList<Resource> resources) {
         this.resources = resources;
+    }
+
+    public Tile[] getNeighbors() {
+        return neighbors;
     }
 
     public boolean setNeighborOnSide(Direction dir, Tile other) {
@@ -221,6 +229,32 @@ public class Tile {
 
     public void setOwnerCity(City city) {
         ownerCity = city;
+    }
+
+    public void addVisitingUnit(Unit unit) {
+        visitingUnits.add(unit);
+    }
+
+    public void removeVisitingUnit(Unit unit) {
+        visitingUnits.remove(unit);
+    }
+
+    public boolean isVisiting(Unit unit) {
+        return visitingUnits.contains(unit);
+    }
+
+    public Set<Unit> getVisitingUnits() {
+        return visitingUnits;
+    }
+
+    public boolean civilizationIsVisiting(Civilization civ) {
+        if (civ == null) return false;
+        if (ownerCity != null && ownerCity.getCivilization().equals(civ))
+            return true;
+        for (Unit unit : getVisitingUnits())
+            if (unit.getCivilization().equals(civ))
+                return true;
+        return false;
     }
 
     public void setImprovement(Improvement improvement) {
