@@ -40,6 +40,7 @@ public class Tile {
     private ArrayList<Resource> resources;
 
     private City city;
+    private City ownerCity;
     private Improvement improvement;
     private Building building;
 
@@ -62,6 +63,7 @@ public class Tile {
         this.resources = resources;
 
         city = null;
+        ownerCity = null;
         improvement = null;
         building = null;
 
@@ -211,6 +213,10 @@ public class Tile {
 
     public City getCity() {
         return this.city;
+    }
+
+    public City getOwnerCity() {
+        return ownerCity;
     }
 
     public void setImprovement(Improvement improvement) {

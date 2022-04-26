@@ -21,7 +21,9 @@ public class CityController extends AbstractGameController {
         civ.addCity(city);
         city.setCombatUnit(tile.getCombatUnit());
         city.setNonCombatUnit(tile.getNonCombatUnit());
-        // TODO: add territory
+        for (Tile territoryTile : gameArea.getTilesInRange(city, city.getTerritoryRange())) {
+            city.addToTerritory(territoryTile);
+        }
         // TODO: TileKnowledges
         return true;
     }

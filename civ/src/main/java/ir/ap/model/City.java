@@ -9,12 +9,14 @@ public class City {
     private static ArrayList<String> cityNames = new ArrayList<>();
 
     private static final int DEFAULT_HP = 20;
+    private static final int DEFAULT_TERRITORY_RANGE = 5;
 
     private String name;
     private Civilization civilization;
 
     private Tile tile;
 
+    private int territoryRange;
     private ArrayList<Tile> territory;
     private ArrayList<Tile> workingTiles;
 
@@ -38,6 +40,7 @@ public class City {
 
         tile = null;
 
+        territoryRange = DEFAULT_TERRITORY_RANGE;
         territory = new ArrayList<>();
         workingTiles = new ArrayList<>();
 
@@ -62,6 +65,7 @@ public class City {
 
         this.tile = tile;
 
+        territoryRange = DEFAULT_TERRITORY_RANGE;
         territory = new ArrayList<>();
         workingTiles = new ArrayList<>();
 
@@ -146,6 +150,10 @@ public class City {
 
     public ArrayList<Tile> getTerritory() {
         return new ArrayList<>(this.territory);
+    }
+
+    public int getTerritoryRange() {
+        return territoryRange;
     }
 
     public void addToTerritory(Tile tile) {
