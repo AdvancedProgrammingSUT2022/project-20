@@ -11,7 +11,7 @@ public class CityController extends AbstractGameController {
         super(gameArea);
     }
 
-    public boolean addCity(City city) {
+    public boolean addCityToMap(City city) {
         Tile tile = city.getTile();
         Civilization civ = city.getCivilization();
         if (tile == null || tile.getCity() != null)
@@ -20,8 +20,6 @@ public class CityController extends AbstractGameController {
             return false;
         tile.setCity(city);
         civ.addCity(city);
-        city.setCombatUnit(tile.getCombatUnit());
-        city.setNonCombatUnit(tile.getNonCombatUnit());
         for (Tile territoryTile : gameArea.getTilesInRange(city, city.getTerritoryRange())) {
             if (territoryTile.getOwnerCity() == null) {
                 city.addToTerritory(territoryTile);
@@ -30,5 +28,23 @@ public class CityController extends AbstractGameController {
             }
         }
         return true;
+    }
+
+    public boolean removeCityFromMap(City city) {
+
+    }
+
+    public boolean addCity(City city) {
+
+    }
+
+    public boolean removeCity(City city) {
+
+    }
+
+    public boolean changeCityOwner(City city, Civilization newCiv) {
+        removeCity(city);
+        city.setCivilization(newCiv);
+        addCity(city);
     }
 }

@@ -5,6 +5,7 @@ import ir.ap.model.UnitType.UnitAction;
 
 public class Unit {
     private static final int MAX_HP = 10;
+    private static final int DEFAULT_VISITING_RANGE = 2;
 
     private final UnitType unitType;
     private UnitAction unitAction;
@@ -108,6 +109,10 @@ public class Unit {
 
     public int getRange() {
         return unitType.getRange();
+    }
+    
+    public int getVisitingRange() {
+        return DEFAULT_VISITING_RANGE;
     }
 
     public int getMovement() {

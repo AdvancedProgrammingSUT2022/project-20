@@ -1,7 +1,10 @@
 package ir.ap.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 
 import ir.ap.model.*;
@@ -12,26 +15,54 @@ public class UnitController extends AbstractGameController {
         super(gameArea);
     }
 
-    public Set<Tile> getUnitVisitingTiles(Unit unit) {
+    public Set<Tile> getUnitVisitingTilesInRange(Unit unit, int range) {
         if (unit == null) return null;
         Tile tile = unit.getTile();
         if (tile == null) return null;
         Set<Tile> retTiles = new HashSet<>();
-        for (Tile adjTile : tile.getNeighbors()) {
+        HashMap<Tile, Boolean> visited = new HashMap<>();
+        HashMap<Tile, Integer> dist = new HashMap<>();
+        Queue<Tile> queue = new LinkedList<>();
+        queue.add(tile);
+        dist.put(tile, 0);
+        while (!queue.isEmpty()) {
+            Tile adjTile = queue.poll();
+            if (visited.get(adjTile) != null) continue;
+            visited.put(adjTile, true);
+            if (dist.get(adjTile) == null || dist.get(adjTile) > range) continue;
             retTiles.add(adjTile);
             if (!adjTile.isBlock()) {
-                for (Tile tileInDepth2 : adjTile.getNeighbors()) {
-                    retTiles.add(tileInDepth2);
+                for (Tile tileInDepth : adjTile.getNeighbors()) {
+                    queue.add(tileInDepth);
                 }
             }
         }
         return retTiles;
     }
 
-    public void addUnit(Civilization civilization, Tile tile, UnitType unitType){
+    public Set<Tile> getUnitVisitingTiles(Unit unit) {
+        return getUnitVisitingTilesInRange(unit, unit.getVisitingRange());
+    }
+
+    public boolean addUnit(Civilization civilization, Tile tile, UnitType unitType){
         Unit unit = new Unit(unitType, civilization, tile);
         civilization.addUnit(unit);
-        addUnitToMap(unit);
+        return addUnitToMap(unit);
+    }
+
+    public boolean removeUnit(Unit unit) {
+        Civilization civ = unit.getCivilization();
+        if (civ != null)
+            civ.removeUnit(unit);
+        return removeUnitFromMap(unit);
+    }
+
+    public boolean changeUnitOwner(Unit unit, Civilization newCiv) {
+        if (unit == null || newCiv == null) return false;
+        removeUnit(unit);
+        addUnit(newCiv, unit.getTile(), unit.getUnitType());
+        // TODO: XP?
+        return true;
     }
 
     public boolean addUnitToMap(Unit unit) {
@@ -141,101 +172,94 @@ public class UnitController extends AbstractGameController {
         Civilization otherCiv = (enemyUnit == null ? (enemyCity == null ? null : enemyCity.getCivilization()) : enemyUnit.getCivilization());
         if (otherCiv == null) return false;
 
+        int dist = gameArea.getDistanceInTiles(curTile, target);
         if(city != null) {
-            if (enemyCity.getTile() == target) {
-                if (gameArea.getDistance > city.getRange()) return false;
+            if (enemyCity != null) {
+                if (dist > city.getTerritoryRange()) return false;
                 enemyCity.setHp(enemyCity.getHp() - city.getCombatStrength());
 
-                if (enemyCity.getHp() <= 0) {
-                    enemyCity.setHp(0);
+                if (enemyCity.isDead()) {
+                    cityController.changeCityOwner(enemyCity, civilization);
                 }
 
                 return true;
             }
-            if(enemyUnit != null){
-                if (gameArea.getDistance > city.getRange()) return false;
+            else if(enemyUnit != null){
+                if (dist > city.getTerritoryRange()) return false;
                 enemyUnit.setHp(enemyUnit.getHp() - city.getCombatStrength());
 
                 if (enemyUnit.getHp() <= 0) {
-                    otherCiv.removeUnit(enemyUnit);
+                    removeUnit(enemyUnit);
                 }
 
                 return true;
             }
         }
-
+        
         if(unit != null) {
             if(unit.getUnitType().getCombatType() == UnitType.CombatType.CIVILIAN) return false;
             if(enemyUnit != null) {
                 if (unit.getCombatType() == UnitType.CombatType.ARCHERY || unit.getCombatType() == UnitType.CombatType.SIEGE) {
-                    if (gameArea.getDistanceInTiles(curTile, target) > unit.getRange()) return false;
+                    if (dist > unit.getRange()) return false;
                     if (unit.getCombatType() == UnitType.CombatType.SIEGE && unit.getUnitAction() != UnitType.UnitAction.SETUP_RANGED)
                         return false;
                     enemyUnit.setHp(enemyUnit.getHp() - unit.getCombatStrength());
                     if (enemyUnit.isDead()) {
-                        otherCiv.removeUnit(enemyUnit);
-                        target.setCombatUnit(null);
+                        removeUnit(enemyUnit);
                     }
                     if (unit.isDead()) {
-                        civilization.removeUnit(unit);
-                        curTile.setCombatUnit(null);
+                        removeUnit(unit);
                     }
                     return true;
-                    // in this type of attack we will kill worker
+                    // TODO: in this type of attack we will kill worker
                 }
 
                 if (unit.getCombatType() == UnitType.CombatType.MOUNTED || unit.getCombatType() == UnitType.CombatType.MELEE || unit.getCombatType() == UnitType.CombatType.GUNPOWDER || unit.getCombatType() == UnitType.CombatType.ARMORED || unit.getCombatType() == UnitType.CombatType.RECON) {
-                    if (gameArea.getDistance > unit.getMp()) return false;
+                    if (dist > 1) return false;
                     if (enemyUnit.getUnitType().getCombatType() == UnitType.CombatType.CIVILIAN) {
-                        if (enemyCity.getTile() != target) {
-                            otherCiv.removeUnit(enemyUnit);
-                            civilization.addUnit(enemyUnit);
+                        if (enemyCity == null) {
+                            changeUnitOwner(enemyUnit, civilization);
                             return true;
                         }
                     } else {
                         enemyUnit.setHp(enemyUnit.getHp() - unit.getCombatStrength());
                         unit.setHp(unit.getHp() - enemyUnit.getCombatStrength());
                         if (enemyUnit.getHp() <= 0) {
+                            removeUnit(enemyUnit);
                             unitMoveTo(civilization, target);
-                            otherCiv.removeUnit(enemyUnit);
                         }
                         if (unit.getHp() <= 0) {
-                            civilization.removeUnit(unit);
+                            removeUnit(unit);
                         }
                         return true;
                     }
-                    // in this type of attack we got worker if it is not city
+                    // TODO: in this type of attack we got worker if it is not city
                 }
             }
-            if (enemyCity.getTile() == target) {
+            if (enemyCity != null) {
                 if (unit.getCombatType() == UnitType.CombatType.ARCHERY || unit.getCombatType() == UnitType.CombatType.SIEGE) {
-                    if (gameArea.getDistance > unit.getRange()) return false;
+                    if (dist > unit.getRange()) return false;
                     if (unit.getCombatType() == UnitType.CombatType.SIEGE && unit.getUnitAction() != UnitType.UnitAction.SETUP_RANGED)
                         return false;
                     enemyCity.setHp(enemyCity.getHp() - unit.getCombatStrength());
                     unit.setHp(unit.getHp() - enemyCity.getCombatStrength());
 
-                    if (enemyCity.getHp() <= 0) {
-                        enemyCity.setHp(0);
-                    }
                     if (unit.getHp() <= 0) {
-                        civilization.removeUnit(unit);
+                        removeUnit(unit);
                     }
                     return true;
                 }
 
                 if (unit.getCombatType() == UnitType.CombatType.MOUNTED || unit.getCombatType() == UnitType.CombatType.MELEE || unit.getCombatType() == UnitType.CombatType.GUNPOWDER || unit.getCombatType() == UnitType.CombatType.ARMORED || unit.getCombatType() == UnitType.CombatType.RECON) {
-                    if (gameArea.getDistance > unit.getMovement()) return false;
+                    if (dist > 1) return false;
                     enemyCity.setHp(enemyCity.getHp() - unit.getCombatStrength());
                     unit.setHp(unit.getHp() - enemyCity.getCombatStrength());
                     if (enemyCity.getHp() <= 0) {
                         unitMoveTo(civilization, target);
-                        otherCiv.removeCity(enemyCity);
-                        civilization.addCity(enemyCity);
+                        cityController.changeCityOwner(enemyCity, civilization);
                         if(enemyUnit.getUnitType().getCombatType() == UnitType.CombatType.CIVILIAN)
                         {
-                            otherCiv.removeUnit(enemyUnit);
-                            civilization.addUnit(enemyUnit);
+                            changeUnitOwner(enemyUnit, civilization);
                         }
                     }
                     if (unit.getHp() <= 0) {
@@ -247,7 +271,7 @@ public class UnitController extends AbstractGameController {
             if (unit.getUnitType().getCombatType() != UnitType.CombatType.ARMORED && unit.getUnitType().getCombatType() != UnitType.CombatType.MOUNTED)
                 unit.setMp(0);
             else
-                unit.setMp(unit.getMp() - gameArea.getDistance);
+                unit.setMp(unit.getMp() - dist);
 
 
             unit.setUnitAction(UnitType.UnitAction.ATTACK);

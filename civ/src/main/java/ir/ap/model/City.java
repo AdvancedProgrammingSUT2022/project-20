@@ -193,11 +193,15 @@ public class City {
     }
 
     public void setHp(int hp) {
-        this.hp = hp;
+        this.hp = Math.max(0, hp);
     }
 
     public void addToHp(int delta) {
         this.hp += delta;
+    }
+
+    public boolean isDead() {
+        return this.hp <= 0;
     }
 
     public int getPopulation() {

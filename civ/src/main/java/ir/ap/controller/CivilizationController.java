@@ -39,11 +39,13 @@ public class CivilizationController extends AbstractGameController {
 
     public void selectCity(Civilization civilization, City city)
     {
+        civilization.setSelectedUnit(null);
         civilization.setSelectedCity(city);
     }
 
     public void selectUnit(Civilization civilization, Unit unit)
     {
+        civilization.setSelectedCity(null);
         civilization.setSelectedUnit(unit);
     }
 }
