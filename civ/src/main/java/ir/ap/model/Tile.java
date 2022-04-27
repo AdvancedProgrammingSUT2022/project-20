@@ -223,6 +223,10 @@ public class Tile {
         return this.city;
     }
 
+    public boolean hasCity() {
+        return getCity() != null;
+    }
+
     public City getOwnerCity() {
         return ownerCity;
     }
@@ -265,12 +269,20 @@ public class Tile {
         return improvement;
     }
 
+    public boolean hasImprovement() {
+        return getImprovement() != null;
+    }
+
     public void setBuilding(Building building) {
         this.building = building;
     }
 
     public Building getBuilding() {
         return building;
+    }
+
+    public boolean hasBuilding() {
+        return getBuilding() != null;
     }
 
     public void setCombatUnit(Unit combatUnit) {
@@ -281,12 +293,20 @@ public class Tile {
         return combatUnit;
     }
 
+    public boolean hasCombatUnit() {
+        return getCombatUnit() != null;
+    }
+
     public void setNonCombatUnit(Unit nonCombatUnit) {
         this.nonCombatUnit = nonCombatUnit;
     }
 
     public Unit getNonCombatUnit() {
         return nonCombatUnit;
+    }
+
+    public boolean hasNonCombatUnit() {
+        return getNonCombatUnit() != null;
     }
 
     public void setHasRoad(boolean hasRoad) {
