@@ -211,7 +211,7 @@ public class UnitController extends AbstractGameController {
                         removeUnit(unit);
                     }
                     return true;
-                    // TODO: in this type of attack we will kill worker
+                    // in this type of attack we will kill worker
                 }
 
                 if (unit.getCombatType() == UnitType.CombatType.MOUNTED || unit.getCombatType() == UnitType.CombatType.MELEE || unit.getCombatType() == UnitType.CombatType.GUNPOWDER || unit.getCombatType() == UnitType.CombatType.ARMORED || unit.getCombatType() == UnitType.CombatType.RECON) {
@@ -233,7 +233,7 @@ public class UnitController extends AbstractGameController {
                         }
                         return true;
                     }
-                    // TODO: in this type of attack we got worker if it is not city
+                    // in this type of attack we got worker if it is not city
                 }
             }
             if (enemyCity != null) {
@@ -303,6 +303,7 @@ public class UnitController extends AbstractGameController {
         if(unit == null) return false;
 
         unit.setUnitAction(UnitType.UnitAction.CANCEL_MISSION);
+        // TODO: kar dige i lazeme anjam bedim?
         return true;
     }
 
@@ -310,7 +311,17 @@ public class UnitController extends AbstractGameController {
     {
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
-
+        if(unit.getUnitType() != UnitType.WORKER) return false;
+        Tile tile = unit.getTile();
+        if(tile.getHasRoad() == true)
+            return false; // we can't build road twice
+        if(unit.getHowManyTurnWeKeepBuildRoadAction() == 3){
+            unit.setHowManyTurnWeKeepBuildRoadAction(0);
+            tile.setHasRoad(true);
+            unit.setUnitAction(null);
+            return true;
+        }
+        unit.setHowManyTurnWeKeepBuildRoadAction(unit.getHowManyTurnWeKeepBuildRoadAction()+1);
         unit.setUnitAction(UnitType.UnitAction.BUILD_ROAD);
         return true;
     }
@@ -319,7 +330,18 @@ public class UnitController extends AbstractGameController {
     {
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
+        if(unit.getUnitType() != UnitType.WORKER) return false;
+        Tile tile = unit.getTile();
+        if(tile.getHasRailRoad() == true)
+            return false; // we can't build Railroad twice
+        if(unit.getHowManyTurnWeKeepBuildRailRoadAction() == 3){
+            unit.setHowManyTurnWeKeepBuildRailRoadAction(0);
+            tile.setHasRailRoad(true);
+            unit.setUnitAction(null);
+            return true;
+        }
 
+        unit.setHowManyTurnWeKeepBuildRailRoadAction(unit.getHowManyTurnWeKeepBuildRailRoadAction()+1);
         unit.setUnitAction(UnitType.UnitAction.BUILD_RAILROAD);
         return true;
     }
