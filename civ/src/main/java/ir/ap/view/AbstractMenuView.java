@@ -1,7 +1,6 @@
 package ir.ap.view;
 
 import java.util.Arrays;
-import java.util.Random;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

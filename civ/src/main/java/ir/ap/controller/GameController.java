@@ -2,9 +2,7 @@ package ir.ap.controller;
 
 import java.io.FileReader;
 import java.io.Reader;
-import java.util.ArrayList;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import ir.ap.model.City;

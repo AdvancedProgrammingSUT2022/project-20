@@ -1,7 +1,5 @@
 package ir.ap.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import ir.ap.model.*;
 
 import java.util.ArrayList;

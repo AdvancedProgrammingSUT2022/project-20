@@ -1,47 +1,11 @@
 package ir.ap.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
-
 import ir.ap.model.*;
 import ir.ap.model.Tile.TileKnowledge;
 
 public class UnitController extends AbstractGameController {
     public UnitController(GameArea gameArea) {
         super(gameArea);
-    }
-
-    public Set<Tile> getUnitVisitingTilesInRange(Unit unit, int range) {
-        if (unit == null) return null;
-        Tile tile = unit.getTile();
-        if (tile == null) return null;
-        Set<Tile> retTiles = new HashSet<>();
-        HashMap<Tile, Boolean> visited = new HashMap<>();
-        HashMap<Tile, Integer> dist = new HashMap<>();
-        Queue<Tile> queue = new LinkedList<>();
-        queue.add(tile);
-        dist.put(tile, 0);
-        while (!queue.isEmpty()) {
-            Tile adjTile = queue.poll();
-            if (visited.get(adjTile) != null) continue;
-            visited.put(adjTile, true);
-            if (dist.get(adjTile) == null || dist.get(adjTile) > range) continue;
-            retTiles.add(adjTile);
-            if (!adjTile.isBlock()) {
-                for (Tile tileInDepth : adjTile.getNeighbors()) {
-                    queue.add(tileInDepth);
-                }
-            }
-        }
-        return retTiles;
-    }
-
-    public Set<Tile> getUnitVisitingTiles(Unit unit) {
-        return getUnitVisitingTilesInRange(unit, unit.getVisitingRange());
     }
 
     public boolean addUnit(Civilization civilization, Tile tile, UnitType unitType){
@@ -76,7 +40,7 @@ public class UnitController extends AbstractGameController {
         } else {
             tile.setCombatUnit(unit);
         }
-        for (Tile visitingTile : getUnitVisitingTiles(unit)) {
+        for (Tile visitingTile : mapController.getUnitVisitingTiles(unit)) {
             visitingTile.addVisitingUnit(unit);
             gameArea.setTileKnowledgeByCivilization(unit.getCivilization(), visitingTile, TileKnowledge.VISIBLE);
         }
@@ -92,7 +56,7 @@ public class UnitController extends AbstractGameController {
         } else {
             tile.setCombatUnit(null);
         }
-        for (Tile visitingTile : getUnitVisitingTiles(unit)) {
+        for (Tile visitingTile : mapController.getUnitVisitingTiles(unit)) {
             visitingTile.removeVisitingUnit(unit);
             if (!visitingTile.civilizationIsVisiting(unit.getCivilization())) {
                 gameArea.setTileKnowledgeByCivilization(unit.getCivilization(), visitingTile, TileKnowledge.REVEALED);
@@ -108,7 +72,7 @@ public class UnitController extends AbstractGameController {
         if(unit == null) return false;
         Tile tile = unit.getTile();
         if (tile == null) return false;
-        int dist = gameArea.getWeightedDistance(tile, target);
+        int dist = mapController.getWeightedDistance(tile, target);
         if (unit.getMp() == 0 || dist >= unit.getMp() + UnitType.MAX_MOVEMENT)
             return false;
         if ((unit.isCivilian() && target.getNonCombatUnit() != null) ||
@@ -172,7 +136,7 @@ public class UnitController extends AbstractGameController {
         Civilization otherCiv = (enemyUnit == null ? (enemyCity == null ? null : enemyCity.getCivilization()) : enemyUnit.getCivilization());
         if (otherCiv == null) return false;
 
-        int dist = gameArea.getDistanceInTiles(curTile, target);
+        int dist = mapController.getDistanceInTiles(curTile, target);
         if(city != null) {
             if (enemyCity != null) {
                 if (dist > city.getTerritoryRange()) return false;
@@ -283,10 +247,10 @@ public class UnitController extends AbstractGameController {
     {
         if (civilization == null) return false;
         Unit unit = civilization.getSelectedUnit();
-        if (unit == null || !(unit.getUnitType() == UnitType.SETTLER))
+        if (unit == null || unit.getUnitType() != UnitType.SETTLER)
             return false;
         Tile target = unit.getTile();
-        if (target == null || target.getCity() != null)
+        if (target == null || target.hasCity())
             return false;
         City city;
         int cnt = 10;

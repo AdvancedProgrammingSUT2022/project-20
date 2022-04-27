@@ -102,10 +102,14 @@ public class City {
     }
 
     public static boolean addCity(City city) {
-        if (hasCity(city))
+        if (city == null || hasCity(city))
             return false;
         cities.add(city);
         return true;
+    }
+
+    public static boolean removeCity(City city) {
+        return cities.remove(city);
     }
 
     public static void addCityName(String name) {
@@ -150,6 +154,10 @@ public class City {
 
     public ArrayList<Tile> getTerritory() {
         return new ArrayList<>(this.territory);
+    }
+
+    public void resetTerritory() {
+        this.territory = new ArrayList<>();
     }
 
     public int getTerritoryRange() {
