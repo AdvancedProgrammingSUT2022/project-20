@@ -257,6 +257,8 @@ public class UnitController extends AbstractGameController {
         do {
             city = new City(City.getCityName(RANDOM.nextInt()), civilization, target);
         } while (!cityController.addCity(city) && cnt --> 0);
+        if (cnt < 0)
+            return false;
         unit.setUnitAction(UnitType.UnitAction.FOUND_CITY);
         return true;
     }
@@ -273,6 +275,7 @@ public class UnitController extends AbstractGameController {
 
     public boolean unitBuildRoad(Civilization civilization)
     {
+        if (civilization == null) return false;
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
         if(unit.getUnitType() != UnitType.WORKER) return false;
