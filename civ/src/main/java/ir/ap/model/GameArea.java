@@ -1,10 +1,6 @@
 package ir.ap.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Random;
 
 import ir.ap.model.Tile.TileKnowledge;
 
@@ -64,10 +60,12 @@ public class GameArea {
     }
 
     public void setTileKnowledgeByCivilization(Civilization civ, Tile tile, TileKnowledge tileKnowledge) {
+        if (civ == null || tile == null || tileKnowledge == null) return;
         tilesKnowledges[civ.getIndex()][tile.getIndex()] = tileKnowledge;
     }
 
     public TileKnowledge getTileKnowledgeByCivilization(Civilization civ, Tile tile) {
+        if (civ == null || tile == null) return null;
         return tilesKnowledges[civ.getIndex()][tile.getIndex()];
     }
 
@@ -105,21 +103,5 @@ public class GameArea {
     public Civilization getCivilizationByUser(User user)
     {
         return user2civ.get(user);
-    }
-
-    public int getDistanceInTiles(Tile fTile, Tile sTile) {
-        // TODO
-    }
-
-    public int getWeightedDistance(Tile fTile, Tile sTile) {
-        // TODO
-    }
-
-    public Tile[] getTilesInRange(Unit unit, int dist) {
-        // TODO
-    }
-
-    public Tile[] getTilesInRange(City city, int dist) {
-        // TODO
     }
 }

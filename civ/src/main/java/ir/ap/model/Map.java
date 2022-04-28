@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import ir.ap.model.TerrainType.TerrainFeature;
-
 public class Map {
     private  ArrayList<Tile> tiles ;
     private  ArrayList<Tile> khoshkiHa ;
