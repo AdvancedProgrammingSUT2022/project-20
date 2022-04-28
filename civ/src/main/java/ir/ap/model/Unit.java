@@ -13,23 +13,14 @@ public class Unit {
     private int hp;
     private Civilization civilization;
     private Tile tile;
-    private int howManyTurnWeKeepBuildRoadAction;
-    private int howManyTurnWeKeepBuildRailRoadAction;
+    private int howManyTurnWeKeepAction;
 
-    public int getHowManyTurnWeKeepBuildRoadAction() {
-        return howManyTurnWeKeepBuildRoadAction;
+    public int getHowManyTurnWeKeepAction() {
+        return this.howManyTurnWeKeepAction;
     }
 
-    public int getHowManyTurnWeKeepBuildRailRoadAction() {
-        return howManyTurnWeKeepBuildRailRoadAction;
-    }
-
-    public void setHowManyTurnWeKeepBuildRoadAction(int howManyTurnWeKeepBuildRoadAction) {
-        this.howManyTurnWeKeepBuildRoadAction = howManyTurnWeKeepBuildRoadAction;
-    }
-
-    public void setHowManyTurnWeKeepBuildRailRoadAction(int howManyTurnWeKeepBuildRailRoadAction) {
-        this.howManyTurnWeKeepBuildRailRoadAction = howManyTurnWeKeepBuildRailRoadAction;
+    public void setHowManyTurnWeKeepAction(int howManyTurnWeKeepAction) {
+        this.howManyTurnWeKeepAction = howManyTurnWeKeepAction;
     }
 
     public Unit(UnitType unitType, Civilization civilization, Tile tile) {
