@@ -50,8 +50,10 @@ public class Map {
                     if( randomobj.nextInt( 2 ) == 1 ){
                         tile.setHasRiverOnSide(i, true);
                     }
+                    else{
+
+                    }
                 } 
-                // Hasayegi Ha And initialize dist[][]
                 tiles.add( tile );
                 khoshkiHa.add( tile );
             }
