@@ -85,7 +85,7 @@ public class Civilization {
     }
 
     public ArrayList<City> getCities() {
-        return new ArrayList<>(cities);
+        return cities;
     }
 
     public void addCity(City city) {
@@ -93,7 +93,7 @@ public class Civilization {
     }
 
     public ArrayList<City> getCitiesDestroyed() {
-        return new ArrayList<>(citiesDestroyed);
+        return citiesDestroyed;
     }
 
     public void addCityDestroyed(City city) {
@@ -101,7 +101,7 @@ public class Civilization {
     }
 
     public ArrayList<City> getCitiesAnnexed() {
-        return new ArrayList<>(citiesAnnexed);
+        return citiesAnnexed;
     }
 
     public void addCitiesAnnexed(City city) {
@@ -109,7 +109,7 @@ public class Civilization {
     }
 
     public ArrayList<City> getCitiesPuppeted() {
-        return new ArrayList<>(citiesPuppeted);
+        return citiesPuppeted;
     }
 
     public void addCitiesPuppeted(City city) {
@@ -117,7 +117,7 @@ public class Civilization {
     }
 
     public ArrayList<Unit> getUnits() {
-        return new ArrayList<>(units);
+        return units;
     }
 
     public void addUnit(Unit unit) {

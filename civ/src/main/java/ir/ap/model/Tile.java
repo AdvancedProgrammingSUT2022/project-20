@@ -203,7 +203,7 @@ public class Tile {
     }
 
     public ArrayList<Resource> getResources() {
-        return new ArrayList<>(resources);
+        return resources;
     }
 
     public ArrayList<Resource> getImprovedResources() {

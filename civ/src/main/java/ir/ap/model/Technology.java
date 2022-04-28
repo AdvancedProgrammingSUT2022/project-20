@@ -83,13 +83,13 @@ public enum Technology {
     }
     public ArrayList<Technology> getTechnologiesRequired()
     {
-        return new ArrayList<>(this.technologiesRequired);
+        return this.technologiesRequired;
     }
     public Era getEra() {
         return era;
     }
     public ArrayList<Object> getObjectsUnlocks()
     {
-        return new ArrayList<>(this.objectsUnlocks);
+        return this.objectsUnlocks;
     }
 }

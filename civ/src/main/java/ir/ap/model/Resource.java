@@ -85,7 +85,7 @@ public enum Resource {
     }
 
     public ArrayList<Enum<?>> getCanBeFoundOn() {
-        return new ArrayList<>(canBeFoundOn);
+        return canBeFoundOn;
     }
 
     public Improvement getImprovementRequired() {

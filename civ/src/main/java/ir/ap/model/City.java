@@ -153,7 +153,7 @@ public class City {
     }
 
     public ArrayList<Tile> getTerritory() {
-        return new ArrayList<>(this.territory);
+        return this.territory;
     }
 
     public void resetTerritory() {
@@ -168,12 +168,31 @@ public class City {
         territory.add(tile);
     }
 
-    public ArrayList<Tile> getWorkingTiles() {
-        return new ArrayList<>(this.workingTiles);
+    public void removeFromTerritory(Tile tile) {
+        territory.remove(tile);
     }
 
-    public void addToWorkingTiles(Tile tile) {
+    public ArrayList<Tile> getWorkingTiles() {
+        return this.workingTiles;
+    }
+
+    public boolean hasWorkingTile(Tile tile) {
+        return workingTiles.contains(tile);
+    }
+
+    public boolean addToWorkingTiles(Tile tile) {
+        if (hasWorkingTile(tile))
+            return false;
         workingTiles.add(tile);
+        return true;
+    }
+
+    public boolean removeFromWorkingTiles(Tile tile) {
+        return workingTiles.remove(tile);
+    }
+
+    public int getUnemployedCitizens() {
+        return getPopulation() - getWorkingTiles().size();
     }
 
     public Production getCurrentProduction() {
