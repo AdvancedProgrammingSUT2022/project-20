@@ -30,13 +30,19 @@ public class CivilizationController extends AbstractGameController {
         return Users;
     }
 
-    public String nextTurn(String username)
+    public void nextTurn(Civilization civilization)
     {
-        Civilization civilization = getCivilizationByUsername(username);
+        if (civilization == null) return;
         for(Unit unit : civilization.getUnits())
             if(unit.getUnitType() == UnitType.WORKER)
             {
                 Tile tile = unit.getTile();
+                if (unit.getUnitAction() == UnitType.UnitAction.REPAIR) {
+                    // TODO: safe 28 Game.pdf
+                }
+                if (unit.getUnitAction() == UnitType.UnitAction.FORTIFY_HEAL) {
+                    // TODO: safe 29 Game.pdf
+                }
                 if(unit.getHowManyTurnWeKeepAction() == 3){
                     if(unit.getUnitAction() == UnitType.UnitAction.BUILD_BRIDGE){
                         ///TODO:kojaro bayad tagir bedim?
@@ -91,7 +97,6 @@ public class CivilizationController extends AbstractGameController {
                 }
             }
         // TODO: turn badi nobat kie?
-        return null;
     }
 
     public void selectCity(Civilization civilization, City city)
