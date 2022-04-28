@@ -259,8 +259,8 @@ public class UnitController extends AbstractGameController {
 
         unit.setHowManyTurnWeKeepAction(0);
         if (unit == null || !(unit.getUnitType() == UnitType.SETTLER))
-
             return false;
+
         Tile target = unit.getTile();
         if (target == null || target.hasCity())
             return false;
@@ -291,6 +291,8 @@ public class UnitController extends AbstractGameController {
         if (civilization == null) return false;
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
+        Tile tile = unit.getTile();
+        if (tile == null || tile.getHasRoad()) return false;
         unit.setHowManyTurnWeKeepAction(0);
         if(unit.getUnitType() != UnitType.WORKER) return false;
 
@@ -302,6 +304,8 @@ public class UnitController extends AbstractGameController {
     {
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
+        Tile tile = unit.getTile();
+        if (tile == null || tile.getHasRailRoad()) return false;
         unit.setHowManyTurnWeKeepAction(0);
         if(unit.getUnitType() != UnitType.WORKER) return false;
 
@@ -314,6 +318,8 @@ public class UnitController extends AbstractGameController {
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
         unit.setHowManyTurnWeKeepAction(0);
+        Tile tile = unit.getTile();
+        if (tile == null || tile.hasImprovement()) return false;
 
         if(improvement == Improvement.FARM)
             unit.setUnitAction(UnitType.UnitAction.BUILD_FARM);
