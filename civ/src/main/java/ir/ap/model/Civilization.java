@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Civilization {
+    private int index;
     private String name;
     private City capital;
 
@@ -25,7 +26,8 @@ public class Civilization {
     int[] accessibleResourceCount;
     boolean[] technologyReached;
 
-    public Civilization() {
+    public Civilization(int index) {
+        this.index = index;
         name = null;
         capital = null;
 
@@ -47,7 +49,8 @@ public class Civilization {
         technologyReached = new boolean[60];
     }
 
-    public Civilization(String name, City capital) {
+    public Civilization(int index, String name, City capital) {
+        this.index = index;
         this.name = name;
         this.capital = capital;
 
@@ -67,6 +70,10 @@ public class Civilization {
 
         accessibleResourceCount = new int[40];
         technologyReached = new boolean[60];
+    }
+
+    public int getIndex() {
+        return index;
     }
 
     public String getName() {

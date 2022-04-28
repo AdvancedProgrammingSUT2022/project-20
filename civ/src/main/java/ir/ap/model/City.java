@@ -8,16 +8,15 @@ public class City {
     private static ArrayList<City> cities = new ArrayList<>();
     private static ArrayList<String> cityNames = new ArrayList<>();
 
-    private static final int DEFAULT_HP = 60;
+    private static final int DEFAULT_HP = 20;
+    private static final int DEFAULT_TERRITORY_RANGE = 5;
 
     private String name;
     private Civilization civilization;
 
     private Tile tile;
 
-    private Unit combatUnit;
-    private Unit nonCombatUnit;
-
+    private int territoryRange;
     private ArrayList<Tile> territory;
     private ArrayList<Tile> workingTiles;
 
@@ -40,9 +39,8 @@ public class City {
         civilization = null;
 
         tile = null;
-        combatUnit = null;
-        nonCombatUnit = null;
 
+        territoryRange = DEFAULT_TERRITORY_RANGE;
         territory = new ArrayList<>();
         workingTiles = new ArrayList<>();
 
@@ -66,9 +64,8 @@ public class City {
         this.civilization = civilization;
 
         this.tile = tile;
-        combatUnit = null;
-        nonCombatUnit = null;
 
+        territoryRange = DEFAULT_TERRITORY_RANGE;
         territory = new ArrayList<>();
         workingTiles = new ArrayList<>();
 
@@ -105,10 +102,14 @@ public class City {
     }
 
     public static boolean addCity(City city) {
-        if (hasCity(city))
+        if (city == null || hasCity(city))
             return false;
         cities.add(city);
         return true;
+    }
+
+    public static boolean removeCity(City city) {
+        return cities.remove(city);
     }
 
     public static void addCityName(String name) {
@@ -136,23 +137,31 @@ public class City {
     }
 
     public Unit getCombatUnit() {
-        return this.combatUnit;
+        return this.tile.getCombatUnit();
     }
 
     public void setCombatUnit(Unit combatUnit) {
-        this.combatUnit = combatUnit;
+        this.tile.setCombatUnit(combatUnit);
     }
 
     public Unit getNonCombatUnit() {
-        return this.nonCombatUnit;
+        return this.tile.getNonCombatUnit();
     }
 
     public void setNonCombatUnit(Unit nonCombatUnit) {
-        this.nonCombatUnit = nonCombatUnit;
+        this.tile.setNonCombatUnit(nonCombatUnit);
     }
 
     public ArrayList<Tile> getTerritory() {
         return new ArrayList<>(this.territory);
+    }
+
+    public void resetTerritory() {
+        this.territory = new ArrayList<>();
+    }
+
+    public int getTerritoryRange() {
+        return territoryRange;
     }
 
     public void addToTerritory(Tile tile) {
@@ -184,7 +193,7 @@ public class City {
     }
 
     public int getCombatStrength() {
-        return this.population * 3 + (this.combatUnit != null ? this.combatUnit.getCombatStrength() / 3 : 0);
+        return this.population * 3 + (getCombatUnit() != null ? getCombatUnit().getCombatStrength() / 3 : 0);
     }
 
     public int getHp() {
@@ -192,11 +201,15 @@ public class City {
     }
 
     public void setHp(int hp) {
-        this.hp = hp;
+        this.hp = Math.max(0, hp);
     }
 
     public void addToHp(int delta) {
         this.hp += delta;
+    }
+
+    public boolean isDead() {
+        return this.hp <= 0;
     }
 
     public int getPopulation() {
@@ -302,7 +315,7 @@ public class City {
         }
         return improvedRscCnt;
     }
-    
+
     public ArrayList<Resource> getResourcesInCity() {
         ArrayList<Resource> resources = new ArrayList<>();
         for (Tile tile : territory) {

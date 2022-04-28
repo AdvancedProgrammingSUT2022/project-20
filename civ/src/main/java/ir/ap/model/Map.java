@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import ir.ap.model.TerrainType.TerrainFeature;
-
 public class Map {
     private  ArrayList<Tile> tiles ;
     private  ArrayList<Tile> khoshkiHa ;
@@ -26,9 +24,8 @@ public class Map {
             }
         }
 
-        TerrainType[] allTerrainTypes = new  TerrainType[]{TerrainType.COAST, TerrainType.DESERT, TerrainType.GRASSLAND, TerrainType.HILL, TerrainType.MOUNTAIN, TerrainType.PLAINS, TerrainType.SNOW, TerrainType.TUNDRA};
-        Resource[] allResources = new Resource[]{Resource.BANANAS, Resource.CATTLE, Resource.COAL, Resource.COTTON, Resource.DEER, Resource.DYES, Resource.FURS, Resource.GEMS, Resource.GOLD, Resource.HORSES, Resource.INCENSE,
-             Resource.IRON, Resource.IVORY, Resource.MARBLE, Resource.SHEEP, Resource.SILK, Resource.SILVER, Resource.SUGAR, Resource.WHEAT};
+        TerrainType[] allTerrainTypes = TerrainType.values();
+        Resource[] allResources = Resource.values();
 
         for(int i = 10 ; i < 20 ; i ++){
             for(int j = 5 ; j < 25 ; j ++){

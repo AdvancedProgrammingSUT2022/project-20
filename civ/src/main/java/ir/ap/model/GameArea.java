@@ -1,10 +1,6 @@
 package ir.ap.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Random;
 
 import ir.ap.model.Tile.TileKnowledge;
 
@@ -15,7 +11,7 @@ public class GameArea {
     private Map map;
     private HashMap<User,Civilization> user2civ;
     private HashMap<Civilization,User> civ2user;
-    private Tile.TileKnowledge[][] tilesKnowledges = new Tile.TileKnowledge[ MAX_USERS ][ MAX_LAND_TILES ] ;
+    private TileKnowledge[][] tilesKnowledges = new TileKnowledge[ MAX_USERS ][ MAX_LAND_TILES ] ;
 
     private int turn;
     private int year;
@@ -26,6 +22,9 @@ public class GameArea {
         map = new Map( seed );
         user2civ = new HashMap<>();
         civ2user = new HashMap<>();
+        for (int i = 0; i < MAX_USERS; i++)
+            for (int j = 0; j < MAX_LAND_TILES; j++)
+                tilesKnowledges[i][j] = TileKnowledge.FOG_OF_WAR;
         turn = 0;
         year = -4000; // 4000 BC
         era = Era.ANCIENT;
@@ -58,6 +57,16 @@ public class GameArea {
 
     public long getSeed() {
         return seed;
+    }
+
+    public void setTileKnowledgeByCivilization(Civilization civ, Tile tile, TileKnowledge tileKnowledge) {
+        if (civ == null || tile == null || tileKnowledge == null) return;
+        tilesKnowledges[civ.getIndex()][tile.getIndex()] = tileKnowledge;
+    }
+
+    public TileKnowledge getTileKnowledgeByCivilization(Civilization civ, Tile tile) {
+        if (civ == null || tile == null) return null;
+        return tilesKnowledges[civ.getIndex()][tile.getIndex()];
     }
 
     public boolean addUser(User user, Civilization civilization)
@@ -94,17 +103,5 @@ public class GameArea {
     public Civilization getCivilizationByUser(User user)
     {
         return user2civ.get(user);
-    }
-
-    public int getDistance(Tile fTile, Tile sTile) {
-        // TODO
-    }
-
-    public Tile[] getTilesInDistance(Unit unit, int dist) {
-        // TODO
-    }
-
-    public Tile[] getTilesInDistance(City city, int dist) {
-        
     }
 }

@@ -5,6 +5,7 @@ import ir.ap.model.UnitType.UnitAction;
 
 public class Unit {
     private static final int MAX_HP = 10;
+    private static final int DEFAULT_VISITING_RANGE = 2;
 
     private final UnitType unitType;
     private UnitAction unitAction;
@@ -12,6 +13,15 @@ public class Unit {
     private int hp;
     private Civilization civilization;
     private Tile tile;
+    private int howManyTurnWeKeepAction;
+
+    public int getHowManyTurnWeKeepAction() {
+        return this.howManyTurnWeKeepAction;
+    }
+
+    public void setHowManyTurnWeKeepAction(int howManyTurnWeKeepAction) {
+        this.howManyTurnWeKeepAction = howManyTurnWeKeepAction;
+    }
 
     public Unit(UnitType unitType, Civilization civilization, Tile tile) {
         this.unitType = unitType;
@@ -48,6 +58,10 @@ public class Unit {
 
     public void resetMp() {
         mp = unitType.getMovement();
+    }
+
+    public boolean canMove() {
+        return mp > 0;
     }
 
     public int getHp() {
@@ -104,6 +118,10 @@ public class Unit {
 
     public int getRange() {
         return unitType.getRange();
+    }
+    
+    public int getVisitingRange() {
+        return DEFAULT_VISITING_RANGE;
     }
 
     public int getMovement() {

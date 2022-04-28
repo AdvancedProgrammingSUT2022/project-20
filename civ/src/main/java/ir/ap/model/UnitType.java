@@ -84,6 +84,7 @@ public enum UnitType implements Production {
         }
     }
 
+    public static final int MAX_MOVEMENT = 5;
     private int id;
     private int cost;
     private CombatType combatType; 
