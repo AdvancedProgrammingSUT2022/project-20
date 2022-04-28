@@ -1,6 +1,7 @@
 package ir.ap.controller;
 
 import ir.ap.model.*;
+import ir.ap.model.TerrainType.TerrainFeature;
 import ir.ap.model.Tile.TileKnowledge;
 
 public class UnitController extends AbstractGameController {
@@ -69,8 +70,8 @@ public class UnitController extends AbstractGameController {
     {
         if (civilization == null || target == null) return false;
         Unit unit = civilization.getSelectedUnit();
-        unit.setHowManyTurnWeKeepAction(0);
         if(unit == null) return false;
+        unit.setHowManyTurnWeKeepAction(0);
         Tile tile = unit.getTile();
         if (tile == null) return false;
         int dist = mapController.getWeightedDistance(tile, target);
@@ -90,8 +91,8 @@ public class UnitController extends AbstractGameController {
     public boolean unitSleep(Civilization civilization)
     {
         Unit unit = civilization.getSelectedUnit();
-        unit.setHowManyTurnWeKeepAction(0);
         if(unit == null) return false;
+        unit.setHowManyTurnWeKeepAction(0);
         unit.setUnitAction(UnitType.UnitAction.SLEEP);
         return true;
     }
@@ -99,8 +100,8 @@ public class UnitController extends AbstractGameController {
     public boolean unitFortify(Civilization civilization)
     {
         Unit unit = civilization.getSelectedUnit();
-        unit.setHowManyTurnWeKeepAction(0);
         if(unit == null) return false;
+        unit.setHowManyTurnWeKeepAction(0);
         if(unit.getUnitType().getCombatType() == UnitType.CombatType.CIVILIAN) return false;
         if(unit.getUnitType().getCombatType() == UnitType.CombatType.MOUNTED)  return false;
         if(unit.getUnitType().getCombatType() == UnitType.CombatType.ARMORED) return false;
@@ -112,8 +113,8 @@ public class UnitController extends AbstractGameController {
     public boolean unitGarrison(Civilization civilization)
     {
         Unit unit = civilization.getSelectedUnit();
-        unit.setHowManyTurnWeKeepAction(0);
         if(unit == null) return false;
+        unit.setHowManyTurnWeKeepAction(0);
         City city = unit.getTile().getCity();
         if (city == null || city.getCivilization() != civilization || city.getCombatUnit() != unit) return false;
         // GARISSON to tabe city.getCombatStrength lahaz shode
@@ -123,8 +124,8 @@ public class UnitController extends AbstractGameController {
     public boolean unitSetupForRangedAttack(Civilization civilization)
     {
         Unit unit = civilization.getSelectedUnit();
-        unit.setHowManyTurnWeKeepAction(0);
         if(unit == null) return false;
+        unit.setHowManyTurnWeKeepAction(0);
 
         unit.setUnitAction(UnitType.UnitAction.SETUP_RANGED);
         return true;
@@ -277,8 +278,8 @@ public class UnitController extends AbstractGameController {
     public boolean unitCancelMission(Civilization civilization)
     {
         Unit unit = civilization.getSelectedUnit();
-        unit.setHowManyTurnWeKeepAction(0);
         if(unit == null) return false;
+        unit.setHowManyTurnWeKeepAction(0);
 
         unit.setUnitAction(UnitType.UnitAction.CANCEL_MISSION);
         // TODO: kar dige i lazeme anjam bedim?
@@ -289,8 +290,8 @@ public class UnitController extends AbstractGameController {
     {
         if (civilization == null) return false;
         Unit unit = civilization.getSelectedUnit();
-        unit.setHowManyTurnWeKeepAction(0);
         if(unit == null) return false;
+        unit.setHowManyTurnWeKeepAction(0);
         if(unit.getUnitType() != UnitType.WORKER) return false;
 
         unit.setUnitAction(UnitType.UnitAction.BUILD_ROAD);
@@ -300,8 +301,8 @@ public class UnitController extends AbstractGameController {
     public boolean unitBuildRailRoad(Civilization civilization)
     {
         Unit unit = civilization.getSelectedUnit();
-        unit.setHowManyTurnWeKeepAction(0);
         if(unit == null) return false;
+        unit.setHowManyTurnWeKeepAction(0);
         if(unit.getUnitType() != UnitType.WORKER) return false;
 
         unit.setUnitAction(UnitType.UnitAction.BUILD_RAILROAD);
@@ -311,8 +312,8 @@ public class UnitController extends AbstractGameController {
     public boolean unitBuildImprovement(Civilization civilization, Improvement improvement)
     {
         Unit unit = civilization.getSelectedUnit();
-        unit.setHowManyTurnWeKeepAction(0);
         if(unit == null) return false;
+        unit.setHowManyTurnWeKeepAction(0);
 
         if(improvement == Improvement.FARM)
             unit.setUnitAction(UnitType.UnitAction.BUILD_FARM);
@@ -335,8 +336,10 @@ public class UnitController extends AbstractGameController {
     public boolean unitRemoveJungle(Civilization civilization)
     {
         Unit unit = civilization.getSelectedUnit();
-        unit.setHowManyTurnWeKeepAction(0);
         if(unit == null) return false;
+        Tile tile = unit.getTile();
+        if (tile == null || tile.getTerrainFeature() != TerrainFeature.JUNGLE) return false;
+        unit.setHowManyTurnWeKeepAction(0);
 
         unit.setUnitAction(UnitType.UnitAction.REMOVE_JUNGLE);
         return true;
@@ -344,17 +347,33 @@ public class UnitController extends AbstractGameController {
     public boolean unitRemoveForest(Civilization civilization)
     {
         Unit unit = civilization.getSelectedUnit();
-        unit.setHowManyTurnWeKeepAction(0);
         if(unit == null) return false;
+        Tile tile = unit.getTile();
+        if (tile == null || tile.getTerrainFeature() != TerrainFeature.FOREST) return false;
+        unit.setHowManyTurnWeKeepAction(0);
 
         unit.setUnitAction(UnitType.UnitAction.REMOVE_FOREST);
         return true;
     }
+
+    public boolean unitRemoveMarsh(Civilization civilization) {
+        Unit unit = civilization.getSelectedUnit();
+        if (unit == null) return false;
+        unit.setHowManyTurnWeKeepAction(0);
+        Tile tile = unit.getTile();
+        if (tile == null || tile.getTerrainFeature() != TerrainFeature.MARSH) return false;
+
+        unit.setUnitAction(UnitType.UnitAction.REMOVE_MARSH);
+        return true;
+    }
+
     public boolean unitRemoveRoute(Civilization civilization)
     {
         Unit unit = civilization.getSelectedUnit();
-        unit.setHowManyTurnWeKeepAction(0);
         if(unit == null) return false;
+        Tile tile = unit.getTile();
+        if (tile == null || (!tile.getHasRoad() && !tile.getHasRailRoad())) return false;
+        unit.setHowManyTurnWeKeepAction(0);
 
         unit.setUnitAction(UnitType.UnitAction.REMOVE_ROUTE);
         return true;
@@ -363,10 +382,12 @@ public class UnitController extends AbstractGameController {
     public boolean unitRepair(Civilization civilization)
     {
         Unit unit = civilization.getSelectedUnit();
-        unit.setHowManyTurnWeKeepAction(0);
         if(unit == null) return false;
+        Tile tile = unit.getTile();
+        if (tile == null || (!tile.hasCity() && !tile.hasBuilding() && !tile.hasImprovement())) return false;
+        unit.setHowManyTurnWeKeepAction(0);
 
-        unit.setHp(unit.getHp()+3);
+        // TODO: repair city/building/improvement
         unit.setUnitAction(UnitType.UnitAction.REPAIR);
         return true;
     }

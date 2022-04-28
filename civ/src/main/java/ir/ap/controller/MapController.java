@@ -10,6 +10,7 @@ import java.util.Random;
 import ir.ap.model.City;
 import ir.ap.model.Civilization;
 import ir.ap.model.GameArea;
+import ir.ap.model.Improvement;
 import ir.ap.model.Tile;
 import ir.ap.model.Unit;
 import ir.ap.model.UnitType;
@@ -29,6 +30,43 @@ public class MapController extends AbstractGameController {
             unitController.addUnit(civilization, khoshkiHas.get( i ), UnitType.WARRIOR);
             i ++;
         }
+    }
+
+    public boolean addImprovement(Tile tile, Improvement impr) {
+        if (tile == null || impr == null) return false;
+        tile.setImprovement(impr);
+        return true;
+    }
+
+    public boolean addRoad(Tile tile) {
+        if (tile == null) return false;
+        tile.setHasRoad(true);
+        return true;
+    }
+
+    public boolean addRailRoad(Tile tile) {
+        if (tile == null) return false;
+        tile.setHasRailRoad(true);
+        return true;
+    }
+
+    public boolean removeRoad(Tile tile) {
+        if (tile == null) return false;
+        tile.setHasRoad(false);
+        return true;
+    }
+
+    public boolean removeRailRoad(Tile tile) {
+        if (tile == null) return false;
+        tile.setHasRailRoad(false);
+        return true;
+    }
+
+    public boolean removeTerrainFeature(Tile tile) {
+        if (tile == null) return false;
+        tile.setTerrainFeature(null);
+        gameArea.getMap().updateDistances();
+        return true;
     }
 
     public int getDistanceInTiles(Tile fTile, Tile sTile) {

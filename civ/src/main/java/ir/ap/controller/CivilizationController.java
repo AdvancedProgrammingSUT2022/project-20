@@ -42,46 +42,47 @@ public class CivilizationController extends AbstractGameController {
                         ///TODO:kojaro bayad tagir bedim?
                     }
                     if(unit.getUnitAction() == UnitType.UnitAction.BUILD_CAMP){
-                        tile.setImprovement(Improvement.CAMP);
+                        mapController.addImprovement(tile, Improvement.CAMP);
                     }
                     if(unit.getUnitAction() == UnitType.UnitAction.BUILD_FARM){
-                        tile.setImprovement(Improvement.FARM);
+                        mapController.addImprovement(tile, Improvement.FARM);
                     }
                     if(unit.getUnitAction() == UnitType.UnitAction.BUILD_LUMBERMILL){
-                        tile.setImprovement(Improvement.LUMBER_MILL);
+                        mapController.addImprovement(tile, Improvement.LUMBER_MILL);
                     }
                     if(unit.getUnitAction() == UnitType.UnitAction.BUILD_MINE){
-                        tile.setImprovement(Improvement.MINE);
+                        mapController.addImprovement(tile, Improvement.MINE);
                     }
                     if(unit.getUnitAction() == UnitType.UnitAction.BUILD_PASTURE){
-                        tile.setImprovement(Improvement.PASTURE);
+                        mapController.addImprovement(tile, Improvement.PASTURE);
                     }
                     if(unit.getUnitAction() == UnitType.UnitAction.BUILD_PLANTATION){
-                        tile.setImprovement(Improvement.PLANTATION);
+                        mapController.addImprovement(tile, Improvement.PLANTATION);
                     }
                     if(unit.getUnitAction() == UnitType.UnitAction.BUILD_QUARRY){
-                        tile.setImprovement(Improvement.QUARRY);
+                        mapController.addImprovement(tile, Improvement.QUARRY);
                     }
                     if(unit.getUnitAction() == UnitType.UnitAction.BUILD_RAILROAD){
-                        tile.setHasRailRoad(true);
+                        mapController.addRailRoad(tile);
                     }
                     if(unit.getUnitAction() == UnitType.UnitAction.BUILD_ROAD){
-                        tile.setHasRoad(true);
+                        mapController.addRoad(tile);
                     }
                     if(unit.getUnitAction() == UnitType.UnitAction.BUILD_TRADINGPOST){
-                        tile.setImprovement(Improvement.TRADING_POST);
+                        mapController.addImprovement(tile, Improvement.TRADING_POST);
                     }
                     if(unit.getUnitAction() == UnitType.UnitAction.REMOVE_FOREST){
-                        tile.setTerrainFeature(null);
+                        mapController.removeTerrainFeature(tile);
                     }
                     if(unit.getUnitAction() == UnitType.UnitAction.REMOVE_JUNGLE){
-                        tile.setTerrainFeature(null);
+                        mapController.removeTerrainFeature(tile);
                     }
                     if(unit.getUnitAction() == UnitType.UnitAction.REMOVE_ROUTE){
-                        //TODO: what should i do?
+                        mapController.removeRoad(tile);
+                        mapController.removeRailRoad(tile);
                     }
                     if(unit.getUnitAction() == UnitType.UnitAction.REMOVE_MARSH){
-                        tile.setTerrainFeature(null);
+                        mapController.removeTerrainFeature(tile);
                     }
                     unit.setHowManyTurnWeKeepAction(0);
                 }
