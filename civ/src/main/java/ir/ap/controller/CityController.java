@@ -14,6 +14,10 @@ public class CityController extends AbstractGameController {
         super(gameArea);
     }
 
+    public void nextTurn(City city) {
+        // TODO
+    }
+
     public boolean addCityToMap(City city) {
         if (city == null)
             return false;
