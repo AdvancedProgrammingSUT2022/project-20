@@ -12,7 +12,6 @@ public class Civilization {
     private ArrayList<City> cities;
     private ArrayList<City> citiesDestroyed;
     private ArrayList<City> citiesAnnexed;
-    private ArrayList<City> citiesPuppeted;
     private ArrayList<Unit> units;
 
     private City selectedCity;
@@ -35,7 +34,6 @@ public class Civilization {
         cities = new ArrayList<>();
         citiesDestroyed = new ArrayList<>();
         citiesAnnexed = new ArrayList<>();
-        citiesPuppeted = new ArrayList<>();
         units = new ArrayList<>();
 
         selectedCity = null;
@@ -59,7 +57,6 @@ public class Civilization {
         cities = new ArrayList<>(Arrays.asList(capital));
         citiesDestroyed = new ArrayList<>();
         citiesAnnexed = new ArrayList<>();
-        citiesPuppeted = new ArrayList<>();
         units = new ArrayList<>();
 
         selectedCity = null;
@@ -113,14 +110,6 @@ public class Civilization {
 
     public void addCitiesAnnexed(City city) {
         citiesAnnexed.add(city);
-    }
-
-    public ArrayList<City> getCitiesPuppeted() {
-        return citiesPuppeted;
-    }
-
-    public void addCitiesPuppeted(City city) {
-        citiesPuppeted.add(city);
     }
 
     public ArrayList<Unit> getUnits() {

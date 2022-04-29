@@ -159,14 +159,12 @@ public class CityController extends AbstractGameController {
     }
 
     public boolean cityDestroy(City city, Civilization civ) {
-        // TODO
+        civ.addCityDestroyed(city);
+        return removeCity(city);
     }
 
     public boolean cityAnnex(City city, Civilization civ) {
-        // TODO
-    }
-
-    public boolean cityPuppet(City city, Civilization civ) {
-        // TODO
+        civ.addCitiesAnnexed(city);
+        return changeCityOwner(city, civ);
     }
 }
