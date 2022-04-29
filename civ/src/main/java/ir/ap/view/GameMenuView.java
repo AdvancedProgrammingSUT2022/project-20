@@ -66,4 +66,34 @@ public class GameMenuView extends AbstractMenuView {
     public Menu showMenu(Matcher matcher) {
         return responseAndGo("Game Menu", Menu.GAME);
     }
+
+    public Menu info(Matcher matcher) {
+        // TODO
+        return responseAndGo(null, Menu.GAME);
+    }
+
+    public Menu select(Matcher matcher) {
+        // TODO 
+        return responseAndGo(null, Menu.GAME);
+    }
+
+    public Menu unitAction(Matcher matcher) {
+        // TODO
+        return responseAndGo(null, Menu.GAME);
+    }
+
+    public Menu cityAction(Matcher matcher) {
+        // TODO
+        return responseAndGo(null, Menu.GAME);
+    }
+
+    public Menu showMap(Matcher matcher) {
+        // TODO
+        return responseAndGo(null, Menu.GAME);
+    }
+
+    public Menu moveMap(Matcher matcher) {
+        // TODO
+        return responseAndGo(null, Menu.GAME);
+    }
 }

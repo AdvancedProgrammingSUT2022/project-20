@@ -364,8 +364,11 @@ public class Tile {
     }
 
     public int getMovementCost() {
-        return (terrainType != null ? terrainType.getMovementCost() : 0) +
+        int cost = (terrainType != null ? terrainType.getMovementCost() : 0) +
                 (terrainFeature != null ? terrainFeature.getMovementCost() : 0);
+        if (getHasRoad() || getHasRailRoad())
+            cost = (cost + 1) / 2;
+        return cost;
     }
 
     public boolean resourceIsImproved(Resource resource) {
