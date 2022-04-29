@@ -24,6 +24,7 @@ public abstract class AbstractMenuView {
 
     public static void close() {
         USER_CONTROLLER.close();
+        GAME_CONTROLLER.close();
     }
 
     public static String constantCaseToCamelCase(String constCaseStr) {
