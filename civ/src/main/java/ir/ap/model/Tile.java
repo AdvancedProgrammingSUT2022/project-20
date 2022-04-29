@@ -198,8 +198,7 @@ public class Tile {
     }
 
     public int getImprovedResourceCount(Resource resource) {
-        return (resourceIsImproved(resource) ?
-            getResourceCount(resource) : 0);
+        return (resourceIsImproved(resource) ? getResourceCount(resource) : 0);
     }
 
     public ArrayList<Resource> getResources() {
@@ -252,7 +251,8 @@ public class Tile {
     }
 
     public boolean civilizationIsVisiting(Civilization civ) {
-        if (civ == null) return false;
+        if (civ == null)
+            return false;
         if (ownerCity != null && ownerCity.getCivilization().equals(civ))
             return true;
         for (Unit unit : getVisitingUnits())
@@ -326,18 +326,36 @@ public class Tile {
     }
 
     public int getFoodYield() {
-        return (terrainType != null ? terrainType.getFoodYield() : 0) +
-                (terrainFeature != null ? terrainFeature.getFoodYield() : 0);
+        int foodYield = (terrainType != null ? terrainType.getFoodYield() : 0) +
+                (terrainFeature != null ? terrainFeature.getFoodYield() : 0) +
+                (improvement != null ? improvement.getFoodYield() : 0) +
+                (building != null ? building.getFoodYield() : 0);
+        for (Resource rsrc : resources) {
+            foodYield += rsrc.getFoodYield();
+        }
+        return foodYield;
     }
 
     public int getGoldYield() {
-        return (terrainType != null ? terrainType.getGoldYield() : 0) +
-                (terrainFeature != null ? terrainFeature.getGoldYield() : 0);
+        int goldYield = (terrainType != null ? terrainType.getGoldYield() : 0) +
+                (terrainFeature != null ? terrainFeature.getGoldYield() : 0) +
+                (improvement != null ? improvement.getGoldYield() : 0) +
+                (building != null ? building.getGoldYield() : 0);
+        for (Resource rsrc : resources) {
+            goldYield += rsrc.getGoldYield();
+        }
+        return goldYield;
     }
 
     public int getProductionYield() {
-        return (terrainType != null ? terrainType.getProductionYield() : 0) +
-                (terrainFeature != null ? terrainFeature.getProductionYield() : 0);
+        int productionYield = (terrainType != null ? terrainType.getProductionYield() : 0) +
+                (terrainFeature != null ? terrainFeature.getProductionYield() : 0) +
+                (improvement != null ? improvement.getProductionYield() : 0) +
+                (building != null ? building.getProductionYield() : 0);
+        for (Resource rsrc : resources) {
+            productionYield += rsrc.getProductionYield();
+        }
+        return productionYield;
     }
 
     public int getCombatModifier() {
@@ -349,7 +367,7 @@ public class Tile {
         return (terrainType != null ? terrainType.getMovementCost() : 0) +
                 (terrainFeature != null ? terrainFeature.getMovementCost() : 0);
     }
-    
+
     public boolean resourceIsImproved(Resource resource) {
         return this.improvement == resource.getImprovementRequired();
     }

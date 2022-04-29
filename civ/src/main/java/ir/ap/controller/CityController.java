@@ -1,9 +1,12 @@
 package ir.ap.controller;
 
+import ir.ap.model.BuildingType;
 import ir.ap.model.City;
 import ir.ap.model.Civilization;
 import ir.ap.model.GameArea;
+import ir.ap.model.Production;
 import ir.ap.model.Tile;
+import ir.ap.model.UnitType;
 import ir.ap.model.Tile.TileKnowledge;
 
 public class CityController extends AbstractGameController {
@@ -106,12 +109,12 @@ public class CityController extends AbstractGameController {
         return true;
     }
 
-    public boolean cityLockCitizenToTile(City city, Tile tile) {
+    public boolean cityAddCitizenToWorkOnTile(City city, Tile tile) {
         if (city == null || tile == null)
             return false;
         if (city.getWorkingTiles().size() >= city.getPopulation())
             return false;
-        if (!city.getTerritory().contains(tile))
+        if (tile.getOwnerCity() != city)
             return false;
         return city.addToWorkingTiles(tile);
     }
@@ -126,5 +129,40 @@ public class CityController extends AbstractGameController {
         if (!tileIsNearTerritoryOfCity(city, tile))
             return false;
         return addTileToTerritoryOfCity(city, tile);
+    }
+
+    public boolean cityChangeCurrentProduction(City city, Production production) {
+        if (city == null) return false;
+        city.setProductionSpent(0);
+        city.setCurrentProduction(production);
+        return true;
+    }
+
+    public boolean cityConstructProduction(City city) {
+        if (city == null || city.getCurrentProduction() == null)
+            return false;
+        Production production = city.getCurrentProduction();
+        if (city.getCostLeftForProductionConstruction() > 0)
+            return false;
+        city.setProductionSpent(0);
+        city.setCurrentProduction(null);
+        if (production instanceof UnitType) {
+            unitController.addUnit(city.getCivilization(), city.getTile(), (UnitType) production);
+        } else if (production instanceof BuildingType) {
+            // TODO
+        }
+        return true;
+    }
+
+    public boolean cityDestroy(City city, Civilization civ) {
+        // TODO
+    }
+
+    public boolean cityAnnex(City city, Civilization civ) {
+        // TODO
+    }
+
+    public boolean cityPuppet(City city, Civilization civ) {
+        // TODO
     }
 }

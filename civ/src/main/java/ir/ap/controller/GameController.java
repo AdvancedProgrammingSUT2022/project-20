@@ -115,7 +115,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         return messageToJsonObj(Message.GAME_STARTED, true);
     }
 
-    public JsonObject nextTurn() {
+    public JsonObject nextTurn(String username) {
         return JSON_FALSE;
     }
 }

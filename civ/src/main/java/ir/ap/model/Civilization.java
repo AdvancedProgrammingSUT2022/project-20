@@ -19,6 +19,7 @@ public class Civilization {
     private Unit selectedUnit;
 
     private Technology currentResearch;
+    private int scienceSpentForResearch;
 
     private int gold;
     private int science;
@@ -41,6 +42,7 @@ public class Civilization {
         selectedUnit = null;
 
         currentResearch = null;
+        scienceSpentForResearch = 0;
 
         gold = 0;
         science = 0;
@@ -64,6 +66,7 @@ public class Civilization {
         selectedUnit = null;
 
         currentResearch = null;
+        scienceSpentForResearch = 0;
 
         gold = 0;
         science = 0;
@@ -82,6 +85,10 @@ public class Civilization {
 
     public City getCapital() {
         return capital;
+    }
+
+    public boolean hasCapital() {
+        return getCapital() != null;
     }
 
     public ArrayList<City> getCities() {
@@ -148,6 +155,18 @@ public class Civilization {
         this.currentResearch = currentResearch;
     }
 
+    public int getScienceSpentForCurrentResearch() {
+        return this.scienceSpentForResearch;
+    }
+
+    public void setScienceSpentForCurrentResearch(int value) {
+        this.scienceSpentForResearch = value;
+    }
+
+    public void addToScienceSpentForCurrentResearch(int delta) {
+        this.scienceSpentForResearch += delta;
+    }
+
     public int getGold() {
         return this.gold;
     }
@@ -160,6 +179,14 @@ public class Civilization {
         this.gold += delta;
     }
 
+    public int getGoldYield() {
+        int goldYield = 0;
+        for (City city : cities) {
+            goldYield += city.getGoldYield();
+        }
+        return goldYield;
+    }
+
     public int getScience() {
         return this.science;
     }
@@ -170,6 +197,14 @@ public class Civilization {
 
     public void addToScience(int delta) {
         this.science += delta;
+    }
+
+    public int getScienceYield() {
+        int scienceYield = (hasCapital() ? 3 : 0);
+        for (City city : cities) {
+            scienceYield += city.getScienceYield();
+        }
+        return scienceYield;
     }
 
     public boolean getTechnologyReached(Technology tech) {

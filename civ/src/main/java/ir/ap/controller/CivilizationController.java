@@ -96,7 +96,9 @@ public class CivilizationController extends AbstractGameController {
                     unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction()+1);
                 }
             }
-        // TODO: turn badi nobat kie?
+        for (City city : civilization.getCities()) {
+            cityController.nextTurn(city);
+        }
     }
 
     public void selectCity(Civilization civilization, City city)

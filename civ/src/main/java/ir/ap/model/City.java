@@ -21,18 +21,11 @@ public class City {
     private ArrayList<Tile> workingTiles;
 
     private Production currentProduction;
-    private int[] turnsLeftForProductionConstruction;
+    private int productionSpent;
 
     private int hp;
 
     private int population;
-    private int food;
-    private int production;
-
-    private double foodYield;
-    private double goldYield;
-    private double productionYield;
-    private double scienceYield;
 
     public City(String name) {
         this.name = name;
@@ -45,18 +38,11 @@ public class City {
         workingTiles = new ArrayList<>();
 
         currentProduction = null;
-        turnsLeftForProductionConstruction = new int[100];
+        productionSpent = 0;
 
         hp = DEFAULT_HP;
 
         population = 1;
-        food = 0;
-        production = 0;
-
-        foodYield = 0;
-        goldYield = 0;
-        productionYield = 0;
-        scienceYield = 0;
     }
 
     public City(String name, Civilization civilization, Tile tile) {
@@ -70,18 +56,11 @@ public class City {
         workingTiles = new ArrayList<>();
 
         currentProduction = null;
-        turnsLeftForProductionConstruction = new int[100];
+        productionSpent = 0;
 
         hp = DEFAULT_HP;
 
         population = 1;
-        food = 0;
-        production = 0;
-
-        foodYield = 0;
-        goldYield = 0;
-        productionYield = 0;
-        scienceYield = 0;
     }
 
     public static City getCityByName(String cityName) {
@@ -181,7 +160,7 @@ public class City {
     }
 
     public boolean addToWorkingTiles(Tile tile) {
-        if (hasWorkingTile(tile))
+        if (tile.getOwnerCity() != this || hasWorkingTile(tile))
             return false;
         workingTiles.add(tile);
         return true;
@@ -203,12 +182,26 @@ public class City {
         this.currentProduction = currentProduction;
     }
 
-    public int getTurnsLeftForProductionConstruction(Production production) {
-        return this.turnsLeftForProductionConstruction[production.getId()];
+    public int getProductionSpent() {
+        return this.productionSpent;
     }
 
-    public void setTurnsLeftForProductionConstruction(Production production, int turns) {
-        this.turnsLeftForProductionConstruction[production.getId()] = turns;
+    public void setProductionSpent(int value) {
+        this.productionSpent = value;
+    }
+
+    public void addToProductionSpent(int delta) {
+        this.productionSpent += delta;
+    }
+
+    public int getCostLeftForProductionConstruction() {
+        if (getCurrentProduction() == null)
+            return 0;
+        return Math.max(0, getCurrentProduction().getCost() - getProductionSpent());
+    }
+
+    public int getTurnsLeftForProductionConstruction() {
+        return getCostLeftForProductionConstruction() / getProductionYield();
     }
 
     public int getCombatStrength() {
@@ -225,6 +218,10 @@ public class City {
 
     public void addToHp(int delta) {
         this.hp += delta;
+    }
+
+    public void resetHp() {
+        this.hp = DEFAULT_HP;
     }
 
     public boolean isDead() {
@@ -247,76 +244,32 @@ public class City {
         return (int) Math.round(1000 * Math.pow(getPopulation(), 2.8));
     }
 
-    public int getFood() {
-        return this.food;
+    public int getFoodYield() {
+        int foodYield = 2;
+        for (Tile tile : territory) {
+            foodYield += tile.getFoodYield();
+        }
+        return foodYield;
     }
 
-    public void setFood(int food) {
-        this.food = food;
+    public int getGoldYield() {
+        int goldYield = 0;
+        for (Tile tile : territory) {
+            goldYield += tile.getGoldYield();
+        }
+        return goldYield;
     }
 
-    public void addToFood(int delta) {
-        this.food += delta;
+    public int getProductionYield() {
+        int productionYield = 1 + (tile.getTerrainType() == TerrainType.HILL ? 1 : 0);
+        for (Tile tile : territory) {
+            productionYield += tile.getProductionYield();
+        }
+        return productionYield;
     }
 
-    public int getProduction() {
-        return this.production;
-    }
-
-    public void setProduction(int production) {
-        this.production = production;
-    }
-
-    public void addToProduction(int delta) {
-        this.production += delta;
-    }
-
-    public double getFoodYield() {
-        return this.foodYield;
-    }
-
-    public void setFoodYield(double foodYield) {
-        this.foodYield = foodYield;
-    }
-
-    public void addToFoodYield(double delta) {
-        this.foodYield += delta;
-    }
-
-    public double getGoldYield() {
-        return this.goldYield;
-    }
-
-    public void setGoldYield(double goldYield) {
-        this.goldYield = goldYield;
-    }
-
-    public void addToGoldYield(double delta) {
-        this.goldYield += delta;
-    }
-
-    public double getProductionYield() {
-        return this.productionYield;
-    }
-
-    public void setProductionYield(double productionYield) {
-        this.productionYield = productionYield;
-    }
-
-    public void addToProductionYield(double delta) {
-        this.productionYield += delta;
-    }
-
-    public double getScienceYield() {
-        return this.scienceYield;
-    }
-
-    public void setScienceYield(double scienceYield) {
-        this.scienceYield = scienceYield;
-    }
-
-    public void addToScienceYield(double delta) {
-        this.scienceYield += delta;
+    public int getScienceYield() {
+        return getPopulation();
     }
 
     public int getResourceCount(Resource rsc) {
