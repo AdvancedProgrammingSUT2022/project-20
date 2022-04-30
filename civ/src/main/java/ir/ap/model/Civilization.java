@@ -12,13 +12,13 @@ public class Civilization {
     private ArrayList<City> cities;
     private ArrayList<City> citiesDestroyed;
     private ArrayList<City> citiesAnnexed;
-    private ArrayList<City> citiesPuppeted;
     private ArrayList<Unit> units;
 
     private City selectedCity;
     private Unit selectedUnit;
 
     private Technology currentResearch;
+    private int scienceSpentForResearch;
 
     private int gold;
     private int science;
@@ -34,13 +34,13 @@ public class Civilization {
         cities = new ArrayList<>();
         citiesDestroyed = new ArrayList<>();
         citiesAnnexed = new ArrayList<>();
-        citiesPuppeted = new ArrayList<>();
         units = new ArrayList<>();
 
         selectedCity = null;
         selectedUnit = null;
 
         currentResearch = null;
+        scienceSpentForResearch = 0;
 
         gold = 0;
         science = 0;
@@ -57,13 +57,13 @@ public class Civilization {
         cities = new ArrayList<>(Arrays.asList(capital));
         citiesDestroyed = new ArrayList<>();
         citiesAnnexed = new ArrayList<>();
-        citiesPuppeted = new ArrayList<>();
         units = new ArrayList<>();
 
         selectedCity = null;
         selectedUnit = null;
 
         currentResearch = null;
+        scienceSpentForResearch = 0;
 
         gold = 0;
         science = 0;
@@ -84,8 +84,12 @@ public class Civilization {
         return capital;
     }
 
+    public boolean hasCapital() {
+        return getCapital() != null;
+    }
+
     public ArrayList<City> getCities() {
-        return new ArrayList<>(cities);
+        return cities;
     }
 
     public void addCity(City city) {
@@ -93,7 +97,7 @@ public class Civilization {
     }
 
     public ArrayList<City> getCitiesDestroyed() {
-        return new ArrayList<>(citiesDestroyed);
+        return citiesDestroyed;
     }
 
     public void addCityDestroyed(City city) {
@@ -101,23 +105,15 @@ public class Civilization {
     }
 
     public ArrayList<City> getCitiesAnnexed() {
-        return new ArrayList<>(citiesAnnexed);
+        return citiesAnnexed;
     }
 
     public void addCitiesAnnexed(City city) {
         citiesAnnexed.add(city);
     }
 
-    public ArrayList<City> getCitiesPuppeted() {
-        return new ArrayList<>(citiesPuppeted);
-    }
-
-    public void addCitiesPuppeted(City city) {
-        citiesPuppeted.add(city);
-    }
-
     public ArrayList<Unit> getUnits() {
-        return new ArrayList<>(units);
+        return units;
     }
 
     public void addUnit(Unit unit) {
@@ -148,6 +144,18 @@ public class Civilization {
         this.currentResearch = currentResearch;
     }
 
+    public int getScienceSpentForCurrentResearch() {
+        return this.scienceSpentForResearch;
+    }
+
+    public void setScienceSpentForCurrentResearch(int value) {
+        this.scienceSpentForResearch = value;
+    }
+
+    public void addToScienceSpentForCurrentResearch(int delta) {
+        this.scienceSpentForResearch += delta;
+    }
+
     public int getGold() {
         return this.gold;
     }
@@ -160,6 +168,14 @@ public class Civilization {
         this.gold += delta;
     }
 
+    public int getGoldYield() {
+        int goldYield = 0;
+        for (City city : cities) {
+            goldYield += city.getGoldYield();
+        }
+        return goldYield;
+    }
+
     public int getScience() {
         return this.science;
     }
@@ -170,6 +186,14 @@ public class Civilization {
 
     public void addToScience(int delta) {
         this.science += delta;
+    }
+
+    public int getScienceYield() {
+        int scienceYield = (hasCapital() ? 3 : 0);
+        for (City city : cities) {
+            scienceYield += city.getScienceYield();
+        }
+        return scienceYield;
     }
 
     public boolean getTechnologyReached(Technology tech) {

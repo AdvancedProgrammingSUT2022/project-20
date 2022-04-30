@@ -17,4 +17,6 @@ public abstract interface Production {
     }
 
     public abstract int getId();
+
+    public abstract int getCost();
 }

@@ -77,14 +77,17 @@ public class GameController extends AbstractGameController implements JsonRespon
     }
 
     public JsonObject getCivilizationByUsername(String username) {
+        // TODO
         return JSON_FALSE;
     }
 
     public JsonObject getAllCivilizations() {
+        // TODO
         return JSON_FALSE;
     }
 
     public JsonObject getAllPlayers() {
+        // TODO
         return JSON_FALSE;
     }
 
@@ -115,7 +118,267 @@ public class GameController extends AbstractGameController implements JsonRespon
         return messageToJsonObj(Message.GAME_STARTED, true);
     }
 
-    public JsonObject nextTurn() {
+    public JsonObject nextTurn(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject infoResearch(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject infoUnits(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject infoCities(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject infoVictory(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject infoDemographics(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject infoNotifications(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject infoMilitary(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject infoEconomic(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject infoDiplomatic(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject infoDeals(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject selectCombatUnit(String username, int tileId) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject selectNonCombatUnit(String username, int tileId) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject selectCity(String username, int tileId) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject selectCity(String username, String cityName) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject unitMoveTo(String username, int tileId) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject unitSleep(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject unitAlert(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject unitFortify(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject unitFortifyUntilHeal(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject unitGarrison(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject unitSetupRanged(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject unitAttack(String username, int tileId) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject unitFoundCity(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject unitCancelMission(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject unitWake(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject unitDelete(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject unitBuildRoad(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject unitBuildRailRoad(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject unitBuildBridge(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject unitBuildImprovement(String username, int imprId) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject unitRemoveJungle(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject unitRemoveForest(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject unitRemoveMarsh(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject unitRemoveRoute(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject unitRepair(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject mapShow(String username, int tileId) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject mapShow(String username, String cityName) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject mapMove(String username, int dirId, int count) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject mapMove(String username, int dirId) {
+        return mapMove(username, dirId, 1);
+    }
+
+    public JsonObject cityAddCitizenToWorkOnTile(String username, int tileId) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject cityRemoveCitizenFromWorkOnTile(String username, int tileId) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject cityGetOutput(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject cityGetUnemployedCitizens(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject cityGetBuildings(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject cityPurchaseTile(String username, int tileId) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject cityGetCurrentProduction(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject citySetCurrentProduction(String username, int prodId) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject cityBuyProduction(String username, int prodId) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject cityGetAllAvailableProductions(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject cityGetWorkingTiles(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject cityDestroy(String username, int tileId) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject cityAnnex(String username, int tileId) {
+        // TODO
         return JSON_FALSE;
     }
 }
