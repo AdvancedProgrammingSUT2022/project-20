@@ -156,6 +156,11 @@ public class Civilization {
         this.scienceSpentForResearch += delta;
     }
 
+    public int getScienceLeftForResearchFinish() {
+        if (currentResearch == null) return 0;
+        return Math.max(0, currentResearch.getCost() - scienceSpentForResearch);
+    }
+
     public int getGold() {
         return this.gold;
     }
@@ -276,6 +281,14 @@ public class Civilization {
         }
 
         return happiness;
+    }
+
+    public void finishResearch() {
+        if (currentResearch == null) return;
+        technologyReached[currentResearch.getId()] = true;
+        scienceSpentForResearch = 0;
+        science = 0;
+        currentResearch = null;
     }
 
     @Override
