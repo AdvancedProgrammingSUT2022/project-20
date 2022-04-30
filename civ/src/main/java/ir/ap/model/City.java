@@ -25,7 +25,7 @@ public class City {
 
     private int hp;
 
-    private int population;
+    private double population;
 
     public City(String name) {
         this.name = name;
@@ -205,7 +205,7 @@ public class City {
     }
 
     public int getCombatStrength() {
-        return this.population * 3 + (getCombatUnit() != null ? getCombatUnit().getCombatStrength() / 3 : 0);
+        return getPopulation() * 3 + (getCombatUnit() != null ? getCombatUnit().getCombatStrength() / 3 : 0);
     }
 
     public int getHp() {
@@ -229,11 +229,23 @@ public class City {
     }
 
     public int getPopulation() {
+        return (int) Math.floor(this.population);
+    }
+
+    public double getPopulationAsDouble() {
         return this.population;
     }
 
     public void setPopulation(int population) {
         this.population = population;
+    }
+
+    public void setPopulation(double population) {
+        this.population = population;
+    }
+
+    public void addToPopulation(double delta) {
+        this.population += delta;
     }
 
     public void addToPopulation(int delta) {

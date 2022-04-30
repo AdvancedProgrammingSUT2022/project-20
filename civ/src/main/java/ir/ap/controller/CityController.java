@@ -15,7 +15,16 @@ public class CityController extends AbstractGameController {
     }
 
     public void nextTurn(City city) {
-        // TODO
+        if (city == null) return;
+        city.addToHp(1);
+        if (city.getCurrentProduction() != null) {
+            city.addToProductionSpent(city.getProductionYield());
+            if (city.getCostLeftForProductionConstruction() <= 0) {
+                cityConstructProduction(city);
+            }
+        }
+        int extraFood = city.getFoodYield() - 2 * city.getPopulation();
+        city.addToPopulation(extraFood / 4.0 / city.getPopulation());
     }
 
     public boolean addCityToMap(City city) {

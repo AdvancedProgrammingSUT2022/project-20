@@ -33,6 +33,15 @@ public class CivilizationController extends AbstractGameController {
     public void nextTurn(Civilization civilization)
     {
         if (civilization == null) return;
+        civilization.addToGold(civilization.getGoldYield());
+        civilization.addToScience(civilization.getScienceYield());
+        if (civilization.getCurrentResearch() != null) {
+            civilization.addToScienceSpentForCurrentResearch(civilization.getScience());
+            civilization.setScience(0);
+            if (civilization.getScienceLeftForResearchFinish() <= 0) {
+                civilization.finishResearch();
+            }
+        }
         for(Unit unit : civilization.getUnits())
             if(unit.getUnitType() == UnitType.WORKER)
             {
