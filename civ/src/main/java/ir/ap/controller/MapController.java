@@ -69,14 +69,12 @@ public class MapController extends AbstractGameController {
         return true;
     }
 
-    public int getDistanceInTiles(Tile fTile, Tile sTile) {
-        // TODO
-        return 0;
+    public int getDistanceInTiles(Tile tile1, Tile tile2) {
+        return gameArea.getDistanceInTiles(tile1, tile2);
     }
-
-    public int getWeightedDistance(Tile fTile, Tile sTile) {
-        // TODO
-        return 0;
+    
+    public int getWeightedDistance(Tile tile1, Tile tile2) {
+        return gameArea.getWeightedDistance(tile1, tile2);
     }
 
     public ArrayList<Tile> getTilesInRange(Tile tile, int range, boolean checkIsNonBlock) {

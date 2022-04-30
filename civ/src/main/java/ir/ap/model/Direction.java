@@ -1,11 +1,11 @@
 package ir.ap.model;
 
 public enum Direction {
-    UP_RIGHT(0),
-    RIGHT(1),
+    UP(0),
+    UP_RIGHT(1),
     DOWN_RIGHT(2),
-    DOWN_LEFT(3),
-    LEFT(4),
+    DOWN(3),
+    DOWN_LEFT(4),
     UP_LEFT(5);
 
     private final int id;
@@ -17,15 +17,15 @@ public enum Direction {
     public static Direction getDirectionById(int id) {
         switch (id) {
             case 0:
-                return UP_RIGHT;
+                return UP;
             case 1:
-                return RIGHT;
+                return UP_RIGHT;
             case 2:
                 return DOWN_RIGHT;
             case 3:
-                return DOWN_LEFT;
+                return DOWN;
             case 4:
-                return LEFT;
+                return DOWN_LEFT;
             case 5:
                 return UP_LEFT;
             default:

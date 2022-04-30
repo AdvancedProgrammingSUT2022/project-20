@@ -376,11 +376,11 @@ public class Tile {
     }
 
     public boolean hasRiver() {
-        return getHasRiverOnSide(Direction.UP_RIGHT) ||
-                getHasRiverOnSide(Direction.RIGHT) ||
+        return getHasRiverOnSide(Direction.UP) ||
+                getHasRiverOnSide(Direction.UP_RIGHT) ||
                 getHasRiverOnSide(Direction.DOWN_RIGHT) ||
+                getHasRiverOnSide(Direction.DOWN) ||
                 getHasRiverOnSide(Direction.DOWN_LEFT) ||
-                getHasRiverOnSide(Direction.LEFT) ||
                 getHasRiverOnSide(Direction.UP_LEFT);
     }
 

@@ -104,4 +104,16 @@ public class GameArea {
     {
         return user2civ.get(user);
     }
+
+    public void updateDistancesInMap(){
+        map.updateDistances();
+    }
+
+    public int getDistanceInTiles(Tile tile1, Tile tile2){
+        return map.getDistanceInTiles(tile1, tile2);
+    }
+
+    public int getWeightedDistance(Tile tile1, Tile tile2){
+        return map.getWeightedDistance(tile1, tile2);
+    }
 }
