@@ -246,7 +246,13 @@ public class UnitController extends AbstractGameController {
             else
                 unit.setMp(unit.getMp() - dist);
 
-
+            if(unit.getTile() == target) {
+                if(target.hasImprovement() && target.getOwnerCity().getCivilization() != civilization){
+                    Improvement improvement = target.getImprovement();
+                    improvement.setIsDead(true);
+                    target.setImprovement(improvement);
+                }
+            }
             unit.setUnitAction(UnitType.UnitAction.ATTACK);
         }
         return false;
@@ -393,7 +399,17 @@ public class UnitController extends AbstractGameController {
         if (tile == null || (!tile.hasCity() && !tile.hasBuilding() && !tile.hasImprovement())) return false;
         unit.setHowManyTurnWeKeepAction(0);
 
-        // TODO: repair city/building/improvement
+        // TODO: repair building
+        if(tile.hasImprovement()){
+            Improvement improvement = tile.getImprovement();
+            improvement.setIsDead(false);
+            tile.setImprovement(improvement);
+        }
+        if(tile.hasCity()){
+            City city = tile.getCity();
+            city.setHp(Math.min(city.getHp()+3,20));
+            tile.setCity(city);
+        }
         unit.setUnitAction(UnitType.UnitAction.REPAIR);
         return true;
     }
