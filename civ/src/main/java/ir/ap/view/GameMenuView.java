@@ -12,7 +12,8 @@ public class GameMenuView extends AbstractMenuView {
         SHOW_MENU("menu show-current"),
         INFO("info (?<arg>\\S+)"),
         SELECT_UNIT("select unit (?<type>combat|noncombat) (?<tileId>\\d+))"),
-        SELECT_CITY("select city (?<nameOrId>\\S+)");
+        SELECT_CITY("select city (?<nameOrId>\\S+)"),
+        UNIT_ACTION("unit (?<args>.*)");
 
         private final String regex;
 
@@ -109,8 +110,10 @@ public class GameMenuView extends AbstractMenuView {
     }
 
     public Menu unitAction(Matcher matcher) {
-        // TODO
-        return responseAndGo(null, Menu.GAME);
+        String[] args = matcher.group("args").trim().split("\\s+");
+        JsonObject response = getUnitActionResponse(args);
+        String msg = getField(response, "msg", String.class);
+        return responseAndGo(msg, Menu.GAME);
     }
 
     public Menu cityAction(Matcher matcher) {
@@ -166,5 +169,9 @@ public class GameMenuView extends AbstractMenuView {
             default:
                 return null;
         }
+    }
+
+    public JsonObject getUnitActionResponse(String[] args) {
+
     }
 }
