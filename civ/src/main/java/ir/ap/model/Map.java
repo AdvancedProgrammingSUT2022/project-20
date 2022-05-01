@@ -5,10 +5,12 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class Map {
-    private  ArrayList<Tile> tiles = new ArrayList<>();
-    private  ArrayList<Tile> khoshkiHa = new ArrayList<>();
-    private int[][] dist = new int[910][910] ;
-    private int[][] distNonWeighted = new int[910][910] ;
+    private Tile[][] tiles = new Tile[ 30 ][ 30 ];
+    private ArrayList<Tile> khoshkiHa = new ArrayList<>();
+    private int[][] dist = new int[905][905] ;// INF if no path
+    private int[][] distNonWeighted = new int[905][905] ;// INF if no path
+    private int[][] nextWeightedDist = new int[905][905] ;// -1 if no path
+    private int[][] nextNonWeightedDist = new int[905][905] ;// -1 if no path
     private final int INF = 1000000000 ;
     
     private void generateRandomMap(long seed){
@@ -21,7 +23,7 @@ public class Map {
             for(int j = 0 ; j < 30 ; j ++){
                 if( (i >= 10 && i < 20) || (j >= 5 && j < 25) )continue ;
                 Tile tile = new Tile( (i*30)+j, TerrainType.OCEAN, null, new ArrayList<>(Arrays.asList(new Resource[]{})));
-                tiles.add( tile );
+                tiles[ i ][ j ] = tile;
             }
         }
 
@@ -29,6 +31,8 @@ public class Map {
             for(int j = 0 ; j < 30*30 ; j ++){
                 dist[ i ][ j ] = INF;
                 distNonWeighted[ i ][ j ] = INF;
+                nextWeightedDist[ i ][ j ] = -1;
+                nextNonWeightedDist[ i ][ j ] = -1;
             }
         }
 
@@ -42,9 +46,9 @@ public class Map {
                 ArrayList<Resource> resources = new ArrayList<>() ;
                 
                 terrainType = allTerrainTypes[ randomobj.nextInt(allTerrainTypes.length) ] ;
-                // TODO no terrain feature?
-                if (terrainType.getFeaturesPossible().size() > 0)
-                    terrainFeature = terrainType.getFeaturesPossible().get( randomobj.nextInt( terrainType.getFeaturesPossible().size() ) );
+                if (terrainType.getFeaturesPossible().size() > 0){
+                    if( randomobj.nextInt( 2 ) == 0 )terrainFeature = terrainType.getFeaturesPossible().get( randomobj.nextInt( terrainType.getFeaturesPossible().size() ) );
+                }
                 for(int z = 0 ; z < allResources.length; z ++){
                     if( (terrainType.isResourcePossible( allResources[ z ] ) == true) ||
                         (terrainFeature != null && terrainFeature.isResourcePossible( allResources[ z ] ) == true) ){
@@ -54,39 +58,39 @@ public class Map {
                     }
                 }
                 Tile tile = new Tile((i*30)+j, terrainType, terrainFeature, resources) ;
-                tiles.add( tile );
+                tiles[ i ][ j ] = tile;
                 khoshkiHa.add( tile );
             }
         }
         
         // add neighborhoods
-        for(int i = 0 ; i < 30 ; i ++){
-            for(int j = 0 ; j < 30 ; j ++){
+        for(int i = 10 ; i < 20 ; i ++){
+            for(int j = 5 ; j < 25 ; j ++){
                 Tile tile = this.getTileByIndex( (i*30)+j );
-                int index = tile.getIndex() ;
-                if( i != 0 )addNeighborAndWeight(tile, this.getTileByIndex(index-1), Direction.UP);
-                if( i != 29 )addNeighborAndWeight(tile, this.getTileByIndex(index+1), Direction.DOWN);
-                if( j != 0 && !(i == 0 && j%2 == 1) ){
+                int index = tile.getIndex();
+                if( i != 10 )addNeighborAndWeight(tile, this.getTileByIndex(index-1), Direction.UP);
+                if( i != 19 )addNeighborAndWeight(tile, this.getTileByIndex(index+1), Direction.DOWN);
+                if( j != 5 && !(i == 10 && j%2 == 1) ){
                     if( j%2 == 0 )addNeighborAndWeight(tile, this.getTileByIndex(index-30), Direction.UP_LEFT);
                     else addNeighborAndWeight(tile, this.getTileByIndex(index-31), Direction.UP_LEFT);
                 }
-                if( j != 0 && !(i == 0 && j%2 == 0) ){
+                if( j != 5 && !(i == 10 && j%2 == 0) ){
                     if( j%2 == 0 )addNeighborAndWeight(tile, this.getTileByIndex(index-29), Direction.DOWN_LEFT);
                     else addNeighborAndWeight(tile, this.getTileByIndex(index-30), Direction.DOWN_LEFT);
                 }
-                if( j != 29 && !(i == 0 && j%2 == 1) ){
-                    if( j%2 == 0 )addNeighborAndWeight(tile, this.getTileByIndex(index-30), Direction.UP_RIGHT);
-                    else addNeighborAndWeight(tile, this.getTileByIndex(index-31), Direction.UP_RIGHT);
+                if( j != 19 && !(i == 10 && j%2 == 1) ){
+                    if( j%2 == 0 )addNeighborAndWeight(tile, this.getTileByIndex(index+30), Direction.UP_RIGHT);
+                    else addNeighborAndWeight(tile, this.getTileByIndex(index+29), Direction.UP_RIGHT);
                 }
-                if( j != 29 && !(i == 0 && j%2 == 0) ){
-                    if( j%2 == 0 )addNeighborAndWeight(tile, this.getTileByIndex(index-29), Direction.DOWN_RIGHT);
-                    else addNeighborAndWeight(tile, this.getTileByIndex(index-30), Direction.DOWN_RIGHT);
+                if( j != 19 && !(i == 10 && j%2 == 0) ){
+                    if( j%2 == 0 )addNeighborAndWeight(tile, this.getTileByIndex(index+31), Direction.DOWN_RIGHT);
+                    else addNeighborAndWeight(tile, this.getTileByIndex(index+30), Direction.DOWN_RIGHT);
                 }
             }
         }
         // add rivers and its weight's changes
-        for(int i = 0 ; i < 30 ; i ++){
-            for(int j = 0 ; j < 30 ; j ++){
+        for(int i = 10 ; i < 20 ; i ++){
+            for(int j = 5 ; j < 25 ; j ++){                
                 Tile tile = this.getTileByIndex( (i*30)+j );
                 for(int z = 1 ; z <= 3 ; z ++){
                     boolean is_river = false;
@@ -95,12 +99,19 @@ public class Map {
                     }
                     tile.setHasRiverOnSide(z, is_river);
                     Tile neighbor = tile.getNeighborOnSide( z );
-                    if( neighbor != null )neighbor.setHasRiverOnSide((z+3)%6, is_river);
+                    if( neighbor == null )continue;
+                    neighbor.setHasRiverOnSide((z+3)%6, is_river);
                     if( is_river == true ){
-                        tile.setWeightOnSide(z, 5);
-                        dist[ tile.getIndex() ][ neighbor.getIndex() ] = Math.min(dist[ tile.getIndex() ][ neighbor.getIndex() ], 5);
-                        if( neighbor != null )neighbor.setWeightOnSide((z+3)%6, 5);
-                        dist[ neighbor.getIndex() ][ tile.getIndex() ] = Math.min(dist[ neighbor.getIndex() ][ tile.getIndex() ], 5);
+                        if ( (tile.getHasRoad() && neighbor.getHasRoad()) || (tile.getHasRailRoad() && neighbor.getHasRailRoad()) ){
+                            dist[ tile.getIndex() ][ neighbor.getIndex() ] = neighbor.getMovementCostWithoutRoadAndRailRoad();
+                            dist[ neighbor.getIndex() ][ tile.getIndex() ] = tile.getMovementCostWithoutRoadAndRailRoad() ;
+                        }
+                        else{
+                            tile.setWeightOnSide(z, 5);
+                            dist[ tile.getIndex() ][ neighbor.getIndex() ] = Math.min(dist[ tile.getIndex() ][ neighbor.getIndex() ], 5);
+                            if( neighbor != null )neighbor.setWeightOnSide((z+3)%6, 5);
+                            dist[ neighbor.getIndex() ][ tile.getIndex() ] = Math.min(dist[ neighbor.getIndex() ][ tile.getIndex() ], 5);
+                        }
                     }
                 }    
             }
@@ -114,15 +125,19 @@ public class Map {
     }
 
     private void addNeighborAndWeight(Tile tile, Tile neighbor, Direction direction){
+        if( tile == null || neighbor == null )return;       
         tile.setNeighborOnSide(direction, neighbor);
         int weight1 = neighbor.getMovementCost();
         tile.setWeightOnSide(direction, weight1);
-        dist[ tile.getIndex() ][ neighbor.getIndex() ] = Math.min(dist[ tile.getIndex() ][ neighbor.getIndex() ], weight1);
-        distNonWeighted[ tile.getIndex() ][ neighbor.getIndex() ] = Math.min(distNonWeighted[ tile.getIndex() ][ neighbor.getIndex() ], 1);
+        dist[ tile.getIndex() ][ neighbor.getIndex() ] = weight1;
+        distNonWeighted[ tile.getIndex() ][ neighbor.getIndex() ] = 1;
+        nextNonWeightedDist[ tile.getIndex() ][ neighbor.getIndex() ] = neighbor.getIndex();
+        nextWeightedDist[ tile.getIndex() ][ neighbor.getIndex() ] = neighbor.getIndex();
     }
 
     public Tile getTileByIndex( int index ){
-        return tiles.get(index);
+        if( index < 0 || index > 900 )return null;
+        return tiles[ index/30 ][ index%30 ];
     }
 
     public void updateNonWeightedDistances(){
@@ -134,6 +149,7 @@ public class Map {
                     int k1 = khoshkiHa.get( k ).getIndex() ;
                     if( distNonWeighted[ i1 ][ j1 ] > (distNonWeighted[ i1 ][ k1 ] + distNonWeighted[ k1 ][ j1 ]) && (distNonWeighted[ k1 ][ j1 ] != INF && distNonWeighted[ i1 ][ k1 ] != INF) ){
                         distNonWeighted[ i1 ][ j1 ] = distNonWeighted[ i1 ][ k1 ] + distNonWeighted[ k1 ][ j1 ] ;
+                        nextNonWeightedDist[ i1 ][ j1 ] = nextNonWeightedDist[ i1 ][ k1 ];
                     }
                 }
             }
@@ -149,6 +165,7 @@ public class Map {
                     int k1 = khoshkiHa.get( k ).getIndex() ;
                     if( dist[ i1 ][ j1 ] > (dist[ i1 ][ k1 ] + dist[ k1 ][ j1 ]) && (dist[ k1 ][ j1 ] != INF && dist[ i1 ][ k1 ] != INF) ){
                         dist[ i1 ][ j1 ] = dist[ i1 ][ k1 ] + dist[ k1 ][ j1 ] ;
+                        nextWeightedDist[ i1 ][ j1 ] = nextWeightedDist[ i1 ][ k1 ] ;
                     }
                 }
             }
@@ -163,11 +180,15 @@ public class Map {
         return dist[ tile1.getIndex() ][ tile2.getIndex() ];
     }
 
-    public void moveUnit(int index1, int index2){
-        
+    public Tile getNextTileInWeightedShortestPath(Tile tile1, Tile tile2){
+        return getTileByIndex( nextWeightedDist[ tile1.getIndex() ][ tile2.getIndex() ] );
     }
- 
-    public ArrayList<Tile> getTiles() {
+
+    public Tile getNextTileInNonWeightedShortestPath(Tile tile1, Tile tile2){
+        return getTileByIndex( nextNonWeightedDist[ tile1.getIndex() ][ tile2.getIndex() ] );
+    }
+    
+    public Tile[][] getTiles() {
         return tiles;
     }
 

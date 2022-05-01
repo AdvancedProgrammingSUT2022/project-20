@@ -29,6 +29,16 @@ public enum Improvement {
     }
 
     private int id;
+    private boolean isDead;
+
+    public void setIsDead(boolean isDead) {
+        this.isDead = isDead;
+    }
+
+    public boolean getIsDead() {
+        return isDead;
+    }
+
     private int foodYield;
     private int productionYield;
     private int goldYield;
@@ -47,12 +57,15 @@ public enum Improvement {
         return id;
     }
     public int getFoodYield() {
+        if(isDead == true) return 0;
         return foodYield;
     }
-    public int getProductionYield() {
+    public int getProductionYield(){
+        if(isDead == true) return 0;
         return productionYield;
     }
     public int getGoldYield() {
+        if(isDead == true) return 0;
         return goldYield;
     }
     public Technology getTechnologyRequired() {

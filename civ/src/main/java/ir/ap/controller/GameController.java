@@ -96,7 +96,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         int cnt = 0;
         for (String username : players) {
             User curUser = User.getUser(username);
-            if (curUser == null || !curUser.isLogin())
+            if (curUser == null) // TODO login in server
             return messageToJsonObj(Message.USER_NOT_LOGGED_IN, false);
             Civilization curCiv = new Civilization(cnt++, curUser.getNickname() + ".civ", null);
             gameArea.addUser(curUser, curCiv);
