@@ -88,7 +88,7 @@ public class MapController extends AbstractGameController {
         dist.put(tile, 0);
         while (!queue.isEmpty()) {
             Tile curTile = queue.poll();
-            if (visited.get(curTile))
+            if (visited.get(curTile) != null)
                 continue;
             visited.put(curTile, true);
             retTiles.add(curTile);
@@ -97,7 +97,7 @@ public class MapController extends AbstractGameController {
             for (Tile tileInDepth : curTile.getNeighbors()) {
                 int curDist = dist.get(curTile);
                 int depthDist = curDist + 1;
-                if (!visited.get(tileInDepth) && depthDist <= range) {
+                if (visited.get(tileInDepth) != null && depthDist <= range) {
                     dist.put(tileInDepth, depthDist);
                     queue.add(tileInDepth);
                 }
