@@ -87,7 +87,7 @@ public abstract class AbstractMenuView {
         String input = SCANNER.nextLine();
         Matcher matcher;
         for (Enum<?> command : getCommands()) {
-            matcher = getCommandMatcher(command.toString(), input);
+            matcher = getCommandMatcher(command.toString(), input.toLowerCase());
             if (matcher != null) {
                 String methodName = constantCaseToCamelCase(command.name());
                 try {

@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class Map {
-    private  ArrayList<Tile> tiles ;
-    private  ArrayList<Tile> khoshkiHa ;
+    private  ArrayList<Tile> tiles = new ArrayList<>();
+    private  ArrayList<Tile> khoshkiHa = new ArrayList<>();
     private int[][] dist = new int[910][910] ;
     private int[][] distNonWeighted = new int[910][910] ;
     private final int INF = 1000000000 ;
@@ -38,13 +38,16 @@ public class Map {
         for(int i = 10 ; i < 20 ; i ++){
             for(int j = 5 ; j < 25 ; j ++){
                 TerrainType terrainType ;
-                TerrainType.TerrainFeature terrainFeature ;
+                TerrainType.TerrainFeature terrainFeature = null;
                 ArrayList<Resource> resources = new ArrayList<>() ;
                 
                 terrainType = allTerrainTypes[ randomobj.nextInt(allTerrainTypes.length) ] ;
-                terrainFeature = terrainType.getFeaturesPossible().get( randomobj.nextInt( terrainType.getFeaturesPossible().size() ) );
+                // TODO no terrain feature?
+                if (terrainType.getFeaturesPossible().size() > 0)
+                    terrainFeature = terrainType.getFeaturesPossible().get( randomobj.nextInt( terrainType.getFeaturesPossible().size() ) );
                 for(int z = 0 ; z < allResources.length; z ++){
-                    if( (terrainType.isResourcePossible( allResources[ z ] ) == true) || (terrainFeature.isResourcePossible( allResources[ z ] ) == true) ){
+                    if( (terrainType.isResourcePossible( allResources[ z ] ) == true) ||
+                        (terrainFeature != null && terrainFeature.isResourcePossible( allResources[ z ] ) == true) ){
                         if( randomobj.nextInt( 2 ) == 0 ){
                             resources.add( allResources[ z ] );
                         }
@@ -112,19 +115,14 @@ public class Map {
 
     private void addNeighborAndWeight(Tile tile, Tile neighbor, Direction direction){
         tile.setNeighborOnSide(direction, neighbor);
-        int weight1 = neighbor.getTerrainType().getMovementCost() + neighbor.getTerrainFeature().getMovementCost();
+        int weight1 = neighbor.getMovementCost();
         tile.setWeightOnSide(direction, weight1);
         dist[ tile.getIndex() ][ neighbor.getIndex() ] = Math.min(dist[ tile.getIndex() ][ neighbor.getIndex() ], weight1);
         distNonWeighted[ tile.getIndex() ][ neighbor.getIndex() ] = Math.min(distNonWeighted[ tile.getIndex() ][ neighbor.getIndex() ], 1);
     }
 
     public Tile getTileByIndex( int index ){
-        for(int i = 0 ; i < tiles.size() ; i ++){
-            if(tiles.get( i ).getIndex() == index){
-                return tiles.get( i );
-            }
-        }
-        return null;
+        return tiles.get(index);
     }
 
     public void updateNonWeightedDistances(){

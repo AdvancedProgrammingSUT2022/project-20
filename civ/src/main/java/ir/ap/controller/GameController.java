@@ -97,7 +97,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         for (String username : players) {
             User curUser = User.getUser(username);
             if (curUser == null || !curUser.isLogin())
-                return messageToJsonObj(Message.USER_NOT_LOGGED_IN, false);
+            return messageToJsonObj(Message.USER_NOT_LOGGED_IN, false);
             Civilization curCiv = new Civilization(cnt++, curUser.getNickname() + ".civ", null);
             gameArea.addUser(curUser, curCiv);
         }
@@ -134,6 +134,11 @@ public class GameController extends AbstractGameController implements JsonRespon
     }
 
     public JsonObject infoCities(String username) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject infoDiplomacy(String username) {
         // TODO
         return JSON_FALSE;
     }
