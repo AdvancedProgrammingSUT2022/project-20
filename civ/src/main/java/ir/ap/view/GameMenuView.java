@@ -12,7 +12,8 @@ public class GameMenuView extends AbstractMenuView {
         SHOW_MENU("menu show-current"),
         INFO("info (?<arg>\\S+)"),
         SELECT_UNIT("select unit (?<type>combat|noncombat) (?<tileId>\\d+))"),
-        SELECT_CITY("select city (?<nameOrId>\\S+)");
+        SELECT_CITY("select city (?<nameOrId>\\S+)"),
+        UNIT_ACTION("unit (?<args>.*)");
 
         private final String regex;
 
@@ -109,8 +110,10 @@ public class GameMenuView extends AbstractMenuView {
     }
 
     public Menu unitAction(Matcher matcher) {
-        // TODO
-        return responseAndGo(null, Menu.GAME);
+        String[] args = matcher.group("args").trim().split("\\s+");
+        JsonObject response = getUnitActionResponse(args);
+        String msg = getField(response, "msg", String.class);
+        return responseAndGo(msg, Menu.GAME);
     }
 
     public Menu cityAction(Matcher matcher) {
@@ -163,6 +166,107 @@ public class GameMenuView extends AbstractMenuView {
             case "deals":
                 return GAME_CONTROLLER.infoDeals(currentUsername);
 
+            default:
+                return null;
+        }
+    }
+
+    public JsonObject getUnitActionResponse(String[] args) {
+        int tileId;
+        switch (args[0]) {
+            case "moveto":
+                try {
+                    tileId = Integer.parseInt(args[1]);
+                } catch (Exception ex) {
+                    return null;
+                }
+                return GAME_CONTROLLER.unitMoveTo(currentUsername, tileId);
+            case "sleep":
+                return GAME_CONTROLLER.unitSleep(currentUsername);
+            case "alert":
+                return GAME_CONTROLLER.unitAlert(currentUsername);
+            case "fortify":
+                if (args.length > 1 && args[1].equals("heal"))
+                    return GAME_CONTROLLER.unitFortifyUntilHeal(currentUsername);
+                return GAME_CONTROLLER.unitFortify(currentUsername);
+            case "garrison":
+                return GAME_CONTROLLER.unitGarrison(currentUsername);
+            case "setup":
+                if (args.length > 1 && args[1].equals("ranged"))
+                    return GAME_CONTROLLER.unitSetupRanged(currentUsername);
+                return null;
+            case "attack":
+                try {
+                    tileId = Integer.parseInt(args[1]);
+                } catch (Exception ex) {
+                    return null;
+                }
+                return GAME_CONTROLLER.unitAttack(currentUsername, tileId);
+            case "found":
+                if (args.length > 1 && args[1].equals("city"))
+                    return GAME_CONTROLLER.unitFoundCity(currentUsername);
+                return null;
+            case "cancel":
+                if (args.length > 1 && args[1].equals("mission"))
+                    return GAME_CONTROLLER.unitCancelMission(currentUsername);
+                return null;
+            case "wake":
+                return GAME_CONTROLLER.unitWake(currentUsername);
+            case "delete":
+                return GAME_CONTROLLER.unitDelete(currentUsername);
+            case "build":
+                if (args.length == 1)
+                    return null;
+                switch (args[1]) {
+                    case "road":
+                        return GAME_CONTROLLER.unitBuildRoad(currentUsername);
+                    case "railroad":
+                        return GAME_CONTROLLER.unitBuildRailRoad(currentUsername);
+                    default:
+                        return getUnitBuildImprovement(args);
+                }
+            case "remove":
+                if (args.length == 1)
+                    return null;
+                switch (args[1]) {
+                    case "jungle":
+                        return GAME_CONTROLLER.unitRemoveJungle(currentUsername);
+                    case "forest":
+                        return GAME_CONTROLLER.unitRemoveForest(currentUsername);
+                    case "marsh":
+                        return GAME_CONTROLLER.unitRemoveMarsh(currentUsername);
+                    case "route":
+                        return GAME_CONTROLLER.unitRemoveRoute(currentUsername);
+                    default:
+                        return null;
+                }
+            case "repair":
+                return GAME_CONTROLLER.unitRepair(currentUsername);
+            default:
+                return null;
+        }
+    }
+
+    public JsonObject getUnitBuildImprovement(String[] args) {
+        switch (args[1]) {
+            case "camp":
+                return GAME_CONTROLLER.unitBuildImprovement(currentUsername, 1);
+            case "farm":
+                return GAME_CONTROLLER.unitBuildImprovement(currentUsername, 2);
+            case "lumbermill":
+                return GAME_CONTROLLER.unitBuildImprovement(currentUsername, 3);
+            case "mine":
+                return GAME_CONTROLLER.unitBuildImprovement(currentUsername, 4);
+            case "pasture":
+                return GAME_CONTROLLER.unitBuildImprovement(currentUsername, 5);
+            case "plantation":
+                return GAME_CONTROLLER.unitBuildImprovement(currentUsername, 6);
+            case "quarry":
+                return GAME_CONTROLLER.unitBuildImprovement(currentUsername, 7);
+            case "tradingpost":
+                return GAME_CONTROLLER.unitBuildImprovement(currentUsername, 8);
+            case "factory":
+                return GAME_CONTROLLER.unitBuildImprovement(currentUsername, 9);
             default:
                 return null;
         }

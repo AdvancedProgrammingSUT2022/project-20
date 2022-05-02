@@ -79,6 +79,7 @@ public class UserController implements JsonResponsor, AutoCloseable {
             Reader usersReader = new FileReader(PLAYERS_CONF_FILE);
             User[] curUsers = GSON.fromJson(usersReader, User[].class);
             for (User user : curUsers) {
+                user.setLogin(false);
                 User.addUser(user);
             }
             usersReader.close();
@@ -89,6 +90,7 @@ public class UserController implements JsonResponsor, AutoCloseable {
     }
 
     public boolean writeUsers() {
+        // TODO islogin
         try {
             Writer usersWriter = new FileWriter(PLAYERS_CONF_FILE);
             GSON.toJson(User.getUsers(), usersWriter);
