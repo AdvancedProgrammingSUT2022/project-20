@@ -68,7 +68,6 @@ public class UnitController extends AbstractGameController {
 
     public boolean unitMoveTo(Civilization civilization, Tile target)
     {
-        // TODO
         if (civilization == null || target == null) return false;
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
@@ -298,7 +297,6 @@ public class UnitController extends AbstractGameController {
         unit.setHowManyTurnWeKeepAction(0);
 
         unit.setUnitAction(UnitType.UnitAction.CANCEL_MISSION);
-        // TODO: kar dige i lazeme anjam bedim?
         return true;
     }
 
@@ -440,6 +438,21 @@ public class UnitController extends AbstractGameController {
         // TODO: repair building
 
         unit.setUnitAction(UnitType.UnitAction.REPAIR);
+        return true;
+    }
+
+    public boolean unitWake(Civilization civilization)
+    {
+        Unit unit = civilization.getSelectedUnit();
+        if(unit == null) return false;
+        unit.setHowManyTurnWeKeepAction(0);
+        unit.setUnitAction(UnitType.UnitAction.WAKE);
+        return true;
+    }
+
+    public boolean unitBuildBridge(Civilization civilization)
+    {
+        //TODO
         return true;
     }
 }
