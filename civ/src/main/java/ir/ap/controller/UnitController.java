@@ -109,6 +109,15 @@ public class UnitController extends AbstractGameController {
         // combat Strengh ziad mishe va lahaz shode to unit.getCombatStrengh
         return true;
     }
+    public boolean unitFortifyHeal(Civilization civilization)
+    {
+        Unit unit = civilization.getSelectedUnit();
+        if(unit == null) return false;
+        if(unit.getCombatType() == UnitType.CombatType.CIVILIAN) return false;
+        unit.setHowManyTurnWeKeepAction(0);
+        unit.setUnitAction(UnitType.UnitAction.FORTIFY_HEAL);
+        return true;
+    }
 
     public boolean unitGarrison(Civilization civilization)
     {
@@ -301,6 +310,7 @@ public class UnitController extends AbstractGameController {
         if (tile == null || tile.getHasRoad()) return false;
         unit.setHowManyTurnWeKeepAction(0);
         if(unit.getUnitType() != UnitType.WORKER) return false;
+        if(civilization.getTechnologyReached(Technology.THE_WHEEL) == false) return false;
 
         unit.setUnitAction(UnitType.UnitAction.BUILD_ROAD);
         return true;
@@ -314,6 +324,7 @@ public class UnitController extends AbstractGameController {
         if (tile == null || tile.getHasRailRoad()) return false;
         unit.setHowManyTurnWeKeepAction(0);
         if(unit.getUnitType() != UnitType.WORKER) return false;
+        if(civilization.getTechnologyReached(Technology.RAILROAD) == false) return false;
 
         unit.setUnitAction(UnitType.UnitAction.BUILD_RAILROAD);
         return true;
@@ -327,22 +338,45 @@ public class UnitController extends AbstractGameController {
         Tile tile = unit.getTile();
         if (tile == null || tile.hasImprovement()) return false;
 
-        if(improvement == Improvement.FARM)
+        if(civilization.getTechnologyReached(improvement.getTechnologyRequired()) == false)
+            return false;
+        if(tile.getTerrainFeature() == TerrainFeature.FOREST) return false;
+        if(tile.getTerrainFeature() == TerrainFeature.JUNGLE) return false;
+        if(tile.getTerrainFeature() == TerrainFeature.MARSH) return false;
+
+        if(improvement == Improvement.FARM) {
+            if(tile.getTerrainFeature() == TerrainFeature.ICE) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_FARM);
-        if(improvement == Improvement.MINE)
+        }
+        if(improvement == Improvement.MINE){
+            // TODO: we can build MINE on Resource what??? Resource whaaatt?????? Resource
+            if(tile.getTerrainType() != TerrainType.HILL) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_MINE);
-        if(improvement == Improvement.TRADING_POST)
+        }
+        if(improvement == Improvement.TRADING_POST) {
+            if(civilization.getTechnologyReached(Technology.TRAPPING) == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_TRADINGPOST);
-        if(improvement == Improvement.LUMBER_MILL)
+        }
+        if(improvement == Improvement.LUMBER_MILL) {
+            if(civilization.getTechnologyReached(Technology.CONSTRUCTION) == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_LUMBERMILL);
-        if(improvement == Improvement.PASTURE)
+        }
+        if(improvement == Improvement.PASTURE) {
+            if(civilization.getTechnologyReached(Technology.ANIMAL_HUSBANDRY) == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_PASTURE);
-        if(improvement == Improvement.CAMP)
+        }
+        if(improvement == Improvement.CAMP) {
+            if(civilization.getTechnologyReached(Technology.TRAPPING) == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_CAMP);
-        if(improvement == Improvement.PLANTATION)
+        }
+        if(improvement == Improvement.PLANTATION) {
+            if(civilization.getTechnologyReached(Technology.CALENDAR) == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_PLANTATION);
-        if(improvement == Improvement.QUARRY)
+        }
+        if(improvement == Improvement.QUARRY) {
+            if(civilization.getTechnologyReached(Technology.ENGINEERING) == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_QUARRY);
+        }
         return true;
     }
     public boolean unitRemoveJungle(Civilization civilization)
@@ -352,6 +386,7 @@ public class UnitController extends AbstractGameController {
         Tile tile = unit.getTile();
         if (tile == null || tile.getTerrainFeature() != TerrainFeature.JUNGLE) return false;
         unit.setHowManyTurnWeKeepAction(0);
+        if(civilization.getTechnologyReached(Technology.BRONZE_WORKING) == false) return false;
 
         unit.setUnitAction(UnitType.UnitAction.REMOVE_JUNGLE);
         return true;
@@ -363,6 +398,7 @@ public class UnitController extends AbstractGameController {
         Tile tile = unit.getTile();
         if (tile == null || tile.getTerrainFeature() != TerrainFeature.FOREST) return false;
         unit.setHowManyTurnWeKeepAction(0);
+        if(civilization.getTechnologyReached(Technology.MINING) == false) return false;
 
         unit.setUnitAction(UnitType.UnitAction.REMOVE_FOREST);
         return true;
@@ -374,6 +410,7 @@ public class UnitController extends AbstractGameController {
         unit.setHowManyTurnWeKeepAction(0);
         Tile tile = unit.getTile();
         if (tile == null || tile.getTerrainFeature() != TerrainFeature.MARSH) return false;
+        if(civilization.getTechnologyReached(Technology.MASONRY) == false) return false;
 
         unit.setUnitAction(UnitType.UnitAction.REMOVE_MARSH);
         return true;
@@ -400,16 +437,7 @@ public class UnitController extends AbstractGameController {
         unit.setHowManyTurnWeKeepAction(0);
 
         // TODO: repair building
-        if(tile.hasImprovement()){
-            Improvement improvement = tile.getImprovement();
-            improvement.setIsDead(false);
-            tile.setImprovement(improvement);
-        }
-        if(tile.hasCity()){
-            City city = tile.getCity();
-            city.setHp(Math.min(city.getHp()+3,20));
-            tile.setCity(city);
-        }
+
         unit.setUnitAction(UnitType.UnitAction.REPAIR);
         return true;
     }

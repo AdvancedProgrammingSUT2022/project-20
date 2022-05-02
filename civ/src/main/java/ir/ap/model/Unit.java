@@ -22,7 +22,9 @@ public class Unit {
     public void setHowManyTurnWeKeepAction(int howManyTurnWeKeepAction) {
         this.howManyTurnWeKeepAction = howManyTurnWeKeepAction;
     }
-
+    public static int getMaxHp(){
+        return MAX_HP;
+    }
     public Unit(UnitType unitType, Civilization civilization, Tile tile) {
         this.unitType = unitType;
         unitAction = null;
@@ -109,7 +111,7 @@ public class Unit {
     }
 
     public int getCombatStrength() {
-        return unitType.getCombatStrength() + (unitAction == UnitAction.FORTIFY ? 3 : 0);
+        return unitType.getCombatStrength() + (unitAction == UnitAction.FORTIFY || unitAction == UnitAction.FORTIFY_HEAL ? 3 : 0);
     }
 
     public int getRangedCombatStrength() {

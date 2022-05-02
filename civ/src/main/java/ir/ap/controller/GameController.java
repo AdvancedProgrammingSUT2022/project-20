@@ -5,10 +5,7 @@ import java.io.Reader;
 
 import com.google.gson.JsonObject;
 
-import ir.ap.model.City;
-import ir.ap.model.Civilization;
-import ir.ap.model.GameArea;
-import ir.ap.model.User;
+import ir.ap.model.*;
 
 public class GameController extends AbstractGameController implements JsonResponsor, AutoCloseable {
 
@@ -120,7 +117,8 @@ public class GameController extends AbstractGameController implements JsonRespon
 
     public JsonObject nextTurn(String username) {
         // TODO
-        return JSON_FALSE;
+        civController.nextTurn(civController.getCivilizationByUsername(username));
+        return JSON_TRUE;
     }
 
     public JsonObject infoResearch(String username) {
@@ -200,7 +198,14 @@ public class GameController extends AbstractGameController implements JsonRespon
 
     public JsonObject unitMoveTo(String username, int tileId) {
         // TODO
-        return JSON_FALSE;
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        Tile tile = gameArea.getTileByIndex(tileId);
+        if(civilization == null)
+            return messageToJsonObj("invalid civUsername",false);
+        if(tile == null)
+            return messageToJsonObj("invalid tileId",false);
+        unitController.unitMoveTo(civilization,tile);
+        return messageToJsonObj("unit moved",true);
     }
 
     public JsonObject unitSleep(String username) {
