@@ -348,7 +348,6 @@ public class UnitController extends AbstractGameController {
             unit.setUnitAction(UnitType.UnitAction.BUILD_FARM);
         }
         if(improvement == Improvement.MINE){
-            // TODO: we can build MINE on Resource what??? Resource whaaatt?????? Resource
             if(tile.getTerrainType() != TerrainType.HILL) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_MINE);
         }
@@ -450,9 +449,14 @@ public class UnitController extends AbstractGameController {
         return true;
     }
 
-    public boolean unitBuildBridge(Civilization civilization)
+    public boolean unitAlert(Civilization civilization)
     {
-        //TODO
+        Unit unit = civilization.getSelectedUnit();
+        if(unit == null) return false;
+        unit.setHowManyTurnWeKeepAction(0);
+        unit.setUnitAction(UnitType.UnitAction.ALERT);
+        //TODO: what change?
         return true;
     }
+
 }

@@ -46,9 +46,10 @@ public class CivilizationController extends AbstractGameController {
             if(unit.getUnitType() == UnitType.WORKER)
             {
                 Tile tile = unit.getTile();
-                if (unit.getUnitAction() == UnitType.UnitAction.REPAIR) {
-                    // TODO: safe 28 Game.pdf
-                    if(tile.hasImprovement()){
+                if (unit.getUnitAction() == UnitType.UnitAction.REPAIR)
+                {
+                    if (tile.hasImprovement())
+                    {
                         Improvement improvement = tile.getImprovement();
                         improvement.setIsDead(false);
                         tile.setImprovement(improvement);
@@ -56,75 +57,111 @@ public class CivilizationController extends AbstractGameController {
                         unit.setUnitAction(null);
                         return;
                     }
-                    if(tile.hasCity()){
+                    if (tile.hasCity())
+                    {
                         City city = tile.getCity();
-                        city.setHp(Math.min(city.getHp()+3,20));
+                        city.setHp(Math.min(city.getHp() + 3, 20));
                         tile.setCity(city);
-                        if(city.getHp() == 20) {
+                        if (city.getHp() == 20) {
                             unit.setHowManyTurnWeKeepAction(0);
                             unit.setUnitAction(null);
                             return;
                         }
                     }
                 }
-                if (unit.getUnitAction() == UnitType.UnitAction.FORTIFY_HEAL) {
-                    // TODO: safe 29 Game.pdf
-                    unit.setHp(Math.min(unit.getHp()+3,Unit.getMaxHp()));
-                    if(unit.getHp() == Unit.getMaxHp()) {
+                if (unit.getUnitAction() == UnitType.UnitAction.FORTIFY_HEAL)
+                {
+                    unit.setHp(Math.min(unit.getHp() + 3, Unit.getMaxHp()));
+                    if (unit.getHp() == Unit.getMaxHp()) {
                         unit.setHowManyTurnWeKeepAction(0);
                         unit.setUnitAction(null);
                         return;
                     }
                 }
-                if (unit.getUnitAction() == UnitType.UnitAction.BUILD_BRIDGE) {
-                    ///TODO:kojaro bayad tagir bedim?
-                }
 
-                if (unit.getUnitAction() == UnitType.UnitAction.BUILD_CAMP) {
-                    mapController.addImprovement(tile, Improvement.CAMP);
+                if (unit.getHowManyTurnWeKeepAction() == 6)
+                {
+                    if (unit.getUnitAction() == UnitType.UnitAction.BUILD_CAMP) {
+                        mapController.addImprovement(tile, Improvement.CAMP);
+                        unit.setHowManyTurnWeKeepAction(0);
+                    }
+                    if (unit.getUnitAction() == UnitType.UnitAction.BUILD_FARM) {
+                        mapController.addImprovement(tile, Improvement.FARM);
+                        unit.setHowManyTurnWeKeepAction(0);
+                    }
+                    if (unit.getUnitAction() == UnitType.UnitAction.BUILD_LUMBERMILL) {
+                        mapController.addImprovement(tile, Improvement.LUMBER_MILL);
+                        unit.setHowManyTurnWeKeepAction(0);
+                    }
+                    if (unit.getUnitAction() == UnitType.UnitAction.BUILD_MINE) {
+                        mapController.addImprovement(tile, Improvement.MINE);
+                        unit.setHowManyTurnWeKeepAction(0);
+                    }
+                    if (unit.getUnitAction() == UnitType.UnitAction.BUILD_PASTURE) {
+                        mapController.addImprovement(tile, Improvement.PASTURE);
+                        unit.setHowManyTurnWeKeepAction(0);
+                    }
+                    if (unit.getUnitAction() == UnitType.UnitAction.BUILD_PLANTATION) {
+                        mapController.addImprovement(tile, Improvement.PLANTATION);
+                        unit.setHowManyTurnWeKeepAction(0);
+                    }
+                    if (unit.getUnitAction() == UnitType.UnitAction.BUILD_QUARRY) {
+                        mapController.addImprovement(tile, Improvement.QUARRY);
+                        unit.setHowManyTurnWeKeepAction(0);
+                    }
+                    if (unit.getUnitAction() == UnitType.UnitAction.BUILD_TRADINGPOST) {
+                        mapController.addImprovement(tile, Improvement.TRADING_POST);
+                        unit.setHowManyTurnWeKeepAction(0);
+                    }
                 }
-                if (unit.getUnitAction() == UnitType.UnitAction.BUILD_FARM) {
-                    mapController.addImprovement(tile, Improvement.FARM);
-                }
-                if (unit.getUnitAction() == UnitType.UnitAction.BUILD_LUMBERMILL) {
-                    mapController.addImprovement(tile, Improvement.LUMBER_MILL);
-                }
-                if (unit.getUnitAction() == UnitType.UnitAction.BUILD_MINE) {
-                    mapController.addImprovement(tile, Improvement.MINE);
-                }
-                if (unit.getUnitAction() == UnitType.UnitAction.BUILD_PASTURE) {
-                    mapController.addImprovement(tile, Improvement.PASTURE);
-                }
-                if (unit.getUnitAction() == UnitType.UnitAction.BUILD_PLANTATION) {
-                    mapController.addImprovement(tile, Improvement.PLANTATION);
-                }
-                if (unit.getUnitAction() == UnitType.UnitAction.BUILD_QUARRY) {
-                    mapController.addImprovement(tile, Improvement.QUARRY);
-                }
+                else
+                    unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction()+1);
+
                 if (unit.getUnitAction() == UnitType.UnitAction.BUILD_RAILROAD) {
-                    mapController.addRailRoad(tile);
+                    if(unit.getHowManyTurnWeKeepAction() == 3) {
+                        mapController.addRailRoad(tile);
+                        unit.setHowManyTurnWeKeepAction(0);
+                    }
+                    else
+                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction()+1);
                 }
                 if (unit.getUnitAction() == UnitType.UnitAction.BUILD_ROAD) {
-                    mapController.addRoad(tile);
-                }
-                if (unit.getUnitAction() == UnitType.UnitAction.BUILD_TRADINGPOST) {
-                    mapController.addImprovement(tile, Improvement.TRADING_POST);
-                }
-                if (unit.getUnitAction() == UnitType.UnitAction.REMOVE_FOREST) {
-                    mapController.removeTerrainFeature(tile);
-                }
-                if (unit.getUnitAction() == UnitType.UnitAction.REMOVE_JUNGLE) {
-                    mapController.removeTerrainFeature(tile);
+                    if(unit.getHowManyTurnWeKeepAction() == 3) {
+                        mapController.addRoad(tile);
+                        unit.setHowManyTurnWeKeepAction(0);
+                    }
+                    else
+                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction()+1);
                 }
                 if (unit.getUnitAction() == UnitType.UnitAction.REMOVE_ROUTE) {
                     mapController.removeRoad(tile);
                     mapController.removeRailRoad(tile);
+                    unit.setHowManyTurnWeKeepAction(0);
+                }
+                if (unit.getUnitAction() == UnitType.UnitAction.REMOVE_FOREST) {
+                    if(unit.getHowManyTurnWeKeepAction() == 4) {
+                        mapController.removeTerrainFeature(tile);
+                        unit.setHowManyTurnWeKeepAction(0);
+                    }
+                    else
+                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction()+1);
+                }
+                if (unit.getUnitAction() == UnitType.UnitAction.REMOVE_JUNGLE) {
+                    if(unit.getHowManyTurnWeKeepAction() == 7){
+                        mapController.removeTerrainFeature(tile);
+                        unit.setHowManyTurnWeKeepAction(0);
+                    }
+                    else
+                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction()+1);
                 }
                 if (unit.getUnitAction() == UnitType.UnitAction.REMOVE_MARSH) {
-                    mapController.removeTerrainFeature(tile);
+                    if(unit.getHowManyTurnWeKeepAction() == 6) {
+                        mapController.removeTerrainFeature(tile);
+                        unit.setHowManyTurnWeKeepAction(0);
+                    }
+                    else
+                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction()+1);
                 }
-                unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction()+1);
-
             }
         for (City city : civilization.getCities()) {
             cityController.nextTurn(city);

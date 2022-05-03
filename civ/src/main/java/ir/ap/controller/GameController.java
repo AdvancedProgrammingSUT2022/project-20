@@ -2,6 +2,7 @@ package ir.ap.controller;
 
 import java.io.FileReader;
 import java.io.Reader;
+import java.util.ArrayList;
 
 import com.google.gson.JsonObject;
 
@@ -84,7 +85,7 @@ public class GameController extends AbstractGameController implements JsonRespon
     }
 
     public JsonObject getAllCivilizations() {
-        // TODO
+        //TODO
         return JSON_FALSE;
     }
 
@@ -125,7 +126,9 @@ public class GameController extends AbstractGameController implements JsonRespon
     }
 
     public JsonObject nextTurn(String username) {
-        // TODO
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if(civilization == null)
+            return messageToJsonObj("invalid username",false);
         civController.nextTurn(civController.getCivilizationByUsername(username));
         return JSON_TRUE;
     }
@@ -260,8 +263,13 @@ public class GameController extends AbstractGameController implements JsonRespon
     }
 
     public JsonObject unitAlert(String username) {
-    //TODO
-            return messageToJsonObj("unit ",true);
+
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if(civilization == null)
+            return messageToJsonObj("invalid civUsername",false);
+        if(unitController.unitAlert(civilization) == false)
+            return messageToJsonObj("something is invalid",false);
+        return messageToJsonObj("unit Alerted",true);
     }
 
     public JsonObject unitFortify(String username) {
@@ -366,15 +374,6 @@ public class GameController extends AbstractGameController implements JsonRespon
         if(unitController.unitBuildRailRoad(civilization) == false)
             return messageToJsonObj("something is invalid",false);
         return messageToJsonObj("unit built rail road",true);
-    }
-
-    public JsonObject unitBuildBridge(String username) {
-        Civilization civilization = civController.getCivilizationByUsername(username);
-        if(civilization == null)
-            return messageToJsonObj("invalid civUsername",false);
-        if(unitController.unitBuildBridge(civilization) == false)
-            return messageToJsonObj("something is invalid",false);
-        return messageToJsonObj("unit built bridge",true);
     }
 
     public JsonObject unitBuildImprovement(String username, int imprId) {
