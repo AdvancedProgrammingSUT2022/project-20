@@ -278,14 +278,14 @@ public class GameController extends AbstractGameController implements JsonRespon
         return messageToJsonObj("city selected", true);
     }
 
-    public JsonObject unitMoveTo(String username, int tileId) {
+    public JsonObject unitMoveTo(String username, int tileId, boolean cheat) {
         Civilization civilization = civController.getCivilizationByUsername(username);
         Tile tile = gameArea.getMap().getTileByIndex(tileId);
         if (civilization == null)
             return messageToJsonObj("invalid civUsername", false);
         if (tile == null)
             return messageToJsonObj("invalid tileId", false);
-        if (unitController.unitMoveTo(civilization, tile) == false)
+        if (unitController.unitMoveTo(civilization, tile, cheat) == false)
             return messageToJsonObj("something is invalid", false);
         return messageToJsonObj("unit moved", true);
     }
@@ -345,23 +345,23 @@ public class GameController extends AbstractGameController implements JsonRespon
         return messageToJsonObj("unit has been set up ranged", true);
     }
 
-    public JsonObject unitAttack(String username, int tileId) {
+    public JsonObject unitAttack(String username, int tileId, boolean cheat) {
         Civilization civilization = civController.getCivilizationByUsername(username);
         Tile tile = gameArea.getMap().getTileByIndex(tileId);
         if (civilization == null)
             return messageToJsonObj("invalid civUsername", false);
         if (tile == null)
             return messageToJsonObj("invalid tileId", false);
-        if (unitController.unitAttack(civilization, tile) == false)
+        if (unitController.unitAttack(civilization, tile, cheat) == false)
             return messageToJsonObj("something is invalid", false);
         return messageToJsonObj("unit Attacked", true);
     }
 
-    public JsonObject unitFoundCity(String username) {
+    public JsonObject unitFoundCity(String username, boolean cheat) {
         Civilization civilization = civController.getCivilizationByUsername(username);
         if (civilization == null)
             return messageToJsonObj("invalid civUsername", false);
-        if (unitController.unitFoundCity(civilization) == false)
+        if (unitController.unitFoundCity(civilization, cheat) == false)
             return messageToJsonObj("something is invalid", false);
         return messageToJsonObj("unit found city", true);
     }
@@ -395,79 +395,94 @@ public class GameController extends AbstractGameController implements JsonRespon
         return messageToJsonObj("has been deleted successfully", true);
     }
 
-    public JsonObject unitBuildRoad(String username) {
+    public JsonObject unitBuildRoad(String username, boolean cheat) {
         Civilization civilization = civController.getCivilizationByUsername(username);
         if (civilization == null)
             return messageToJsonObj("invalid civUsername", false);
-        if (unitController.unitBuildRoad(civilization) == false)
+        if (unitController.unitBuildRoad(civilization, cheat) == false)
             return messageToJsonObj("something is invalid", false);
         return messageToJsonObj("unit built road", true);
     }
 
-    public JsonObject unitBuildRailRoad(String username) {
+    public JsonObject unitBuildRailRoad(String username, boolean cheat) {
         Civilization civilization = civController.getCivilizationByUsername(username);
         if (civilization == null)
             return messageToJsonObj("invalid civUsername", false);
-        if (unitController.unitBuildRailRoad(civilization) == false)
+        if (unitController.unitBuildRailRoad(civilization, cheat) == false)
             return messageToJsonObj("something is invalid", false);
         return messageToJsonObj("unit built rail road", true);
     }
 
-    public JsonObject unitBuildImprovement(String username, int imprId) {
+    public JsonObject unitBuildImprovement(String username, int imprId, boolean cheat) {
         Civilization civilization = civController.getCivilizationByUsername(username);
         Improvement improvement = Improvement.getImprovementById(imprId);
         if (civilization == null)
             return messageToJsonObj("invalid civUsername", false);
         if (improvement == null)
             return messageToJsonObj("invalid imprID", false);
-        if (unitController.unitBuildImprovement(civilization, improvement) == false)
+        if (unitController.unitBuildImprovement(civilization, improvement, cheat) == false)
             return messageToJsonObj("something is invalid", false);
         return messageToJsonObj("unit built improvement", true);
     }
 
-    public JsonObject unitRemoveJungle(String username) {
+    public JsonObject unitRemoveJungle(String username, boolean cheat) {
         Civilization civilization = civController.getCivilizationByUsername(username);
         if (civilization == null)
             return messageToJsonObj("invalid civUsername", false);
-        if (unitController.unitRemoveJungle(civilization) == false)
+        if (unitController.unitRemoveJungle(civilization, cheat) == false)
             return messageToJsonObj("something is invalid", false);
         return messageToJsonObj("unit removed jungle", true);
     }
 
-    public JsonObject unitRemoveForest(String username) {
+    public JsonObject unitRemoveForest(String username, boolean cheat) {
         Civilization civilization = civController.getCivilizationByUsername(username);
         if (civilization == null)
             return messageToJsonObj("invalid civUsername", false);
-        if (unitController.unitRemoveForest(civilization) == false)
+        if (unitController.unitRemoveForest(civilization, cheat) == false)
             return messageToJsonObj("something is invalid", false);
         return messageToJsonObj("unit removed forest", true);
     }
 
-    public JsonObject unitRemoveMarsh(String username) {
+    public JsonObject unitRemoveMarsh(String username, boolean cheat) {
         Civilization civilization = civController.getCivilizationByUsername(username);
         if (civilization == null)
             return messageToJsonObj("invalid civUsername", false);
-        if (unitController.unitRemoveMarsh(civilization) == false)
+        if (unitController.unitRemoveMarsh(civilization, cheat) == false)
             return messageToJsonObj("something is invalid", false);
         return messageToJsonObj("unit removed marsh", true);
     }
 
-    public JsonObject unitRemoveRoute(String username) {
+    public JsonObject unitRemoveRoute(String username, boolean cheat) {
         Civilization civilization = civController.getCivilizationByUsername(username);
         if (civilization == null)
             return messageToJsonObj("invalid civUsername", false);
-        if (unitController.unitRemoveRoute(civilization) == false)
+        if (unitController.unitRemoveRoute(civilization, cheat) == false)
             return messageToJsonObj("something is invalid", false);
         return messageToJsonObj("unit removed route", true);
     }
 
-    public JsonObject unitRepair(String username) {
+    public JsonObject unitRepair(String username, boolean cheat) {
         Civilization civilization = civController.getCivilizationByUsername(username);
         if (civilization == null)
             return messageToJsonObj("invalid civUsername", false);
-        if (unitController.unitRepair(civilization) == false)
+        if (unitController.unitRepair(civilization, cheat) == false)
             return messageToJsonObj("something is invalid", false);
         return messageToJsonObj("unit repaired", true);
+    }
+
+    public JsonObject increaseGold(String username, int amount) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject increaseTurn(String username, int amount) {
+        // TODO
+        return JSON_FALSE;
+    }
+
+    public JsonObject increaseHappiness(String username, int amount) {
+        // TODO
+        return JSON_FALSE;
     }
 
     public JsonObject mapShow(String username, int tileId) {
@@ -514,7 +529,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         return JSON_FALSE;
     }
 
-    public JsonObject cityPurchaseTile(String username, int tileId) {
+    public JsonObject cityPurchaseTile(String username, int tileId, boolean cheat) {
         // TODO
         return JSON_FALSE;
     }
@@ -524,17 +539,17 @@ public class GameController extends AbstractGameController implements JsonRespon
         return JSON_FALSE;
     }
 
-    public JsonObject citySetCurrentProduction(String username, int prodId) {
+    public JsonObject citySetCurrentProduction(String username, int prodId, boolean cheat) {
         // TODO
         return JSON_FALSE;
     }
 
-    public JsonObject cityBuyProduction(String username, int prodId) {
+    public JsonObject cityBuyProduction(String username, int prodId, boolean cheat) {
         // TODO
         return JSON_FALSE;
     }
 
-    public JsonObject cityGetAllAvailableProductions(String username) {
+    public JsonObject cityGetAllAvailableProductions(String username, boolean cheat) {
         // TODO
         return JSON_FALSE;
     }
@@ -544,12 +559,12 @@ public class GameController extends AbstractGameController implements JsonRespon
         return JSON_FALSE;
     }
 
-    public JsonObject cityDestroy(String username, int tileId) {
+    public JsonObject cityDestroy(String username, int tileId, boolean cheat) {
         // TODO
         return JSON_FALSE;
     }
 
-    public JsonObject cityAnnex(String username, int tileId) {
+    public JsonObject cityAnnex(String username, int tileId, boolean cheat) {
         // TODO
         return JSON_FALSE;
     }

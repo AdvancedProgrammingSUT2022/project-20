@@ -66,7 +66,7 @@ public class UnitController extends AbstractGameController {
         return true;
     }
 
-    public boolean unitMoveTo(Civilization civilization, Tile target)
+    public boolean unitMoveTo(Civilization civilization, Tile target, boolean cheat)
     {
         if (civilization == null || target == null) return false;
         Unit unit = civilization.getSelectedUnit();
@@ -140,7 +140,7 @@ public class UnitController extends AbstractGameController {
         return true;
     }
 
-    public boolean unitAttack(Civilization civilization, Tile target)
+    public boolean unitAttack(Civilization civilization, Tile target, boolean cheat)
     {
         if (civilization == null || target == null) return false;
         Unit unit = civilization.getSelectedUnit();
@@ -208,7 +208,7 @@ public class UnitController extends AbstractGameController {
                         unit.setHp(unit.getHp() - enemyUnit.getCombatStrength());
                         if (enemyUnit.getHp() <= 0) {
                             removeUnit(enemyUnit);
-                            unitMoveTo(civilization, target);
+                            unitMoveTo(civilization, target, cheat);
                         }
                         if (unit.getHp() <= 0) {
                             removeUnit(unit);
@@ -237,7 +237,7 @@ public class UnitController extends AbstractGameController {
                     enemyCity.setHp(enemyCity.getHp() - unit.getCombatStrength());
                     unit.setHp(unit.getHp() - enemyCity.getCombatStrength());
                     if (enemyCity.getHp() <= 0) {
-                        unitMoveTo(civilization, target);
+                        unitMoveTo(civilization, target, cheat);
                         cityController.changeCityOwner(enemyCity, civilization);
                         if(enemyUnit.getUnitType().getCombatType() == UnitType.CombatType.CIVILIAN)
                         {
@@ -267,7 +267,7 @@ public class UnitController extends AbstractGameController {
         return false;
     }
 
-    public boolean unitFoundCity(Civilization civilization)
+    public boolean unitFoundCity(Civilization civilization, boolean cheat)
     {
         if (civilization == null) return false;
         Unit unit = civilization.getSelectedUnit();
@@ -300,7 +300,7 @@ public class UnitController extends AbstractGameController {
         return true;
     }
 
-    public boolean unitBuildRoad(Civilization civilization)
+    public boolean unitBuildRoad(Civilization civilization, boolean cheat)
     {
         if (civilization == null) return false;
         Unit unit = civilization.getSelectedUnit();
@@ -315,7 +315,7 @@ public class UnitController extends AbstractGameController {
         return true;
     }
 
-    public boolean unitBuildRailRoad(Civilization civilization)
+    public boolean unitBuildRailRoad(Civilization civilization, boolean cheat)
     {
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
@@ -329,7 +329,7 @@ public class UnitController extends AbstractGameController {
         return true;
     }
 
-    public boolean unitBuildImprovement(Civilization civilization, Improvement improvement)
+    public boolean unitBuildImprovement(Civilization civilization, Improvement improvement, boolean cheat)
     {
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
@@ -377,7 +377,7 @@ public class UnitController extends AbstractGameController {
         }
         return true;
     }
-    public boolean unitRemoveJungle(Civilization civilization)
+    public boolean unitRemoveJungle(Civilization civilization, boolean cheat)
     {
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
@@ -389,7 +389,7 @@ public class UnitController extends AbstractGameController {
         unit.setUnitAction(UnitType.UnitAction.REMOVE_JUNGLE);
         return true;
     }
-    public boolean unitRemoveForest(Civilization civilization)
+    public boolean unitRemoveForest(Civilization civilization, boolean cheat)
     {
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
@@ -402,7 +402,7 @@ public class UnitController extends AbstractGameController {
         return true;
     }
 
-    public boolean unitRemoveMarsh(Civilization civilization) {
+    public boolean unitRemoveMarsh(Civilization civilization, boolean cheat) {
         Unit unit = civilization.getSelectedUnit();
         if (unit == null) return false;
         unit.setHowManyTurnWeKeepAction(0);
@@ -414,7 +414,7 @@ public class UnitController extends AbstractGameController {
         return true;
     }
 
-    public boolean unitRemoveRoute(Civilization civilization)
+    public boolean unitRemoveRoute(Civilization civilization, boolean cheat)
     {
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
@@ -426,7 +426,7 @@ public class UnitController extends AbstractGameController {
         return true;
     }
 
-    public boolean unitRepair(Civilization civilization)
+    public boolean unitRepair(Civilization civilization, boolean cheat)
     {
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;

@@ -16,8 +16,7 @@ public class GameMenuView extends AbstractMenuView {
         UNIT_ACTION("unit (?<args>.*)"),
         CITY_ACTION("city (?<args>.*)"),
         NEXT_TURN("next turn"),
-        INCREASE("increase (?<args>.*)"),
-        GET_ALL_CIV("getallciv");
+        INCREASE("increase (?<args>.*)");
 
         private final String regex;
 
@@ -32,7 +31,9 @@ public class GameMenuView extends AbstractMenuView {
     }
 
     public enum Validator {
-        ;
+        ARG_GOLD("--gold"),
+        ARG_TURN("--turn"),
+        ARG_HAPPINESS("--happiness");
 
         private final String regex;
 
@@ -66,8 +67,10 @@ public class GameMenuView extends AbstractMenuView {
     }
 
     private String[] usersInGame;
+    private String[] civsInGame;
     private int currentTurnId;
     private String currentPlayer;
+    private String currentCiv;
     // TODO: cheat
 
     public Enum<?>[] getCommands() {
@@ -76,9 +79,15 @@ public class GameMenuView extends AbstractMenuView {
 
     public void init(String[] users) {
         usersInGame = users;
+        civsInGame = new String[usersInGame.length];
+        for (int i = 0; i < users.length; i++) {
+            civsInGame[i] = getField(GAME_CONTROLLER.getCivilizationByUsername(users[i]),
+                    "civName", String.class);
+        }
         currentTurnId = 0;
         currentPlayer = usersInGame[currentTurnId];
-        System.out.format("Turn: %s\n", currentPlayer);
+        currentCiv = civsInGame[currentTurnId];
+        System.out.format("Turn: %s\n", currentCiv);
     }
 
     public Menu nextTurn(Matcher matcher) {
@@ -88,10 +97,11 @@ public class GameMenuView extends AbstractMenuView {
             ++currentTurnId;
             currentTurnId %= usersInGame.length;
             currentPlayer = usersInGame[currentTurnId];
+            currentCiv = civsInGame[currentTurnId];
             if (getField(response, "end", Boolean.class) == true) {
                 return responseAndGo(msg, Menu.MAIN);
             }
-            System.out.format("Turn: %s\n", currentPlayer);
+            System.out.format("Turn: %s\n", currentCiv);
         }
         return responseAndGo(msg, Menu.GAME);
     }
@@ -147,7 +157,11 @@ public class GameMenuView extends AbstractMenuView {
 
     public Menu unitAction(Matcher matcher) {
         String[] args = matcher.group("args").trim().split("\\s+");
-        JsonObject response = getUnitActionResponse(args);
+        boolean cheat = false;
+        for (String arg : args) {
+            cheat |= arg.matches("(--cheat|-c)");
+        }
+        JsonObject response = getUnitActionResponse(args, cheat);
         if (response == null)
             return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         String msg = getField(response, "msg", String.class);
@@ -156,7 +170,11 @@ public class GameMenuView extends AbstractMenuView {
 
     public Menu cityAction(Matcher matcher) {
         String[] args = matcher.group("args").trim().split("\\s+");
-        JsonObject response = getCityActionResponse(args);
+        boolean cheat = false;
+        for (String arg : args) {
+            cheat |= arg.matches("(--cheat|-c)");
+        }
+        JsonObject response = getCityActionResponse(args, cheat);
         if (response == null)
             return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         String msg = getField(response, "msg", String.class);
@@ -174,13 +192,53 @@ public class GameMenuView extends AbstractMenuView {
     }
 
     public Menu increase(Matcher matcher) {
-        // TODO
+        String[] args = matcher.group("args").trim().split("\\s+");
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].matches(Validator.ARG_GOLD.toString())) {
+                if (i + 1 == args.length || !args[i + 1].matches("-?\\d+")) {
+                    return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
+                } else {
+                    int amount = Integer.parseInt(args[i + 1]);
+                    JsonObject response = GAME_CONTROLLER.increaseGold(currentPlayer, amount);
+                    if (!responseOk(response)) {
+                        System.out.println(Message.E500);
+                        continue;
+                    }
+                    String msg = getField(response, "msg", String.class);
+                    System.out.println(msg);
+                }
+            } else if (args[i].matches(Validator.ARG_TURN.toString())) {
+                if (i + 1 == args.length || !args[i + 1].matches("\\d+")) {
+                    return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
+                } else {
+                    int amount = Integer.parseInt(args[i + 1]);
+                    JsonObject response = GAME_CONTROLLER.increaseTurn(currentPlayer, amount);
+                    if (!responseOk(response)) {
+                        System.out.println(Message.E500);
+                        continue;
+                    }
+                    String msg = getField(response, "msg", String.class);
+                    System.out.println(msg);
+                }
+            } else if (args[i].matches(Validator.ARG_HAPPINESS.toString())) {
+                if (i + 1 == args.length || !args[i + 1].matches("\\d+")) {
+                    return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
+                } else {
+                    int amount = Integer.parseInt(args[i + 1]);
+                    JsonObject response = GAME_CONTROLLER.increaseHappiness(currentPlayer, amount);
+                    if (!responseOk(response)) {
+                        System.out.println(Message.E500);
+                        continue;
+                    }
+                    String msg = getField(response, "msg", String.class);
+                    System.out.println(msg);
+                }
+            } else {
+                return responseAndGo(Message.ARG_INVALID.toString()
+                        .replace("%s", args[i]), Menu.GAME);
+            }
+        }
         return responseAndGo(null, Menu.GAME);
-    }
-
-    public Menu getAllCiv(Matcher matcher) {
-        System.out.println(GAME_CONTROLLER.getAllCivilizations(currentPlayer));
-        return Menu.GAME;
     }
 
     public JsonObject getInfoResponse(String arg) {
@@ -212,7 +270,7 @@ public class GameMenuView extends AbstractMenuView {
         }
     }
 
-    public JsonObject getUnitActionResponse(String[] args) {
+    public JsonObject getUnitActionResponse(String[] args, boolean cheat) {
         int tileId;
         switch (args[0]) {
             case "moveto":
@@ -221,7 +279,7 @@ public class GameMenuView extends AbstractMenuView {
                 } catch (Exception ex) {
                     return null;
                 }
-                return GAME_CONTROLLER.unitMoveTo(currentPlayer, tileId);
+                return GAME_CONTROLLER.unitMoveTo(currentPlayer, tileId, cheat);
             case "sleep":
                 return GAME_CONTROLLER.unitSleep(currentPlayer);
             case "alert":
@@ -242,10 +300,10 @@ public class GameMenuView extends AbstractMenuView {
                 } catch (Exception ex) {
                     return null;
                 }
-                return GAME_CONTROLLER.unitAttack(currentPlayer, tileId);
+                return GAME_CONTROLLER.unitAttack(currentPlayer, tileId, cheat);
             case "found":
                 if (args.length > 1 && args[1].equals("city"))
-                    return GAME_CONTROLLER.unitFoundCity(currentPlayer);
+                    return GAME_CONTROLLER.unitFoundCity(currentPlayer, cheat);
                 return null;
             case "cancel":
                 if (args.length > 1 && args[1].equals("mission"))
@@ -256,61 +314,61 @@ public class GameMenuView extends AbstractMenuView {
             case "delete":
                 return GAME_CONTROLLER.unitDelete(currentPlayer);
             case "build":
-                return getUnitBuildResponse(args);
+                return getUnitBuildResponse(args, cheat);
             case "remove":
                 if (args.length == 1)
                     return null;
                 switch (args[1]) {
                     case "jungle":
-                        return GAME_CONTROLLER.unitRemoveJungle(currentPlayer);
+                        return GAME_CONTROLLER.unitRemoveJungle(currentPlayer, cheat);
                     case "forest":
-                        return GAME_CONTROLLER.unitRemoveForest(currentPlayer);
+                        return GAME_CONTROLLER.unitRemoveForest(currentPlayer, cheat);
                     case "marsh":
-                        return GAME_CONTROLLER.unitRemoveMarsh(currentPlayer);
+                        return GAME_CONTROLLER.unitRemoveMarsh(currentPlayer, cheat);
                     case "route":
-                        return GAME_CONTROLLER.unitRemoveRoute(currentPlayer);
+                        return GAME_CONTROLLER.unitRemoveRoute(currentPlayer, cheat);
                     default:
                         return null;
                 }
             case "repair":
-                return GAME_CONTROLLER.unitRepair(currentPlayer);
+                return GAME_CONTROLLER.unitRepair(currentPlayer, cheat);
             default:
                 return null;
         }
     }
 
-    public JsonObject getUnitBuildResponse(String[] args) {
+    public JsonObject getUnitBuildResponse(String[] args, boolean cheat) {
         if (args.length <= 1 || !args[0].equals("build"))
             return null;
         switch (args[1]) {
             case "road":
-                return GAME_CONTROLLER.unitBuildRoad(currentPlayer);
+                return GAME_CONTROLLER.unitBuildRoad(currentPlayer, cheat);
             case "railroad":
-                return GAME_CONTROLLER.unitBuildRailRoad(currentPlayer);
+                return GAME_CONTROLLER.unitBuildRailRoad(currentPlayer, cheat);
             case "camp":
-                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 1);
+                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 1, cheat);
             case "farm":
-                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 2);
+                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 2, cheat);
             case "lumbermill":
-                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 3);
+                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 3, cheat);
             case "mine":
-                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 4);
+                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 4, cheat);
             case "pasture":
-                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 5);
+                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 5, cheat);
             case "plantation":
-                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 6);
+                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 6, cheat);
             case "quarry":
-                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 7);
+                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 7, cheat);
             case "tradingpost":
-                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 8);
+                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 8, cheat);
             case "factory":
-                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 9);
+                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 9, cheat);
             default:
                 return null;
         }
     }
 
-    public JsonObject getCityActionResponse(String[] args) {
+    public JsonObject getCityActionResponse(String[] args, boolean cheat) {
         int tileId;
         switch (args[0]) {
             case "work":
@@ -348,7 +406,7 @@ public class GameMenuView extends AbstractMenuView {
                     } catch (Exception ex) {
                         return null;
                     }
-                    return GAME_CONTROLLER.cityPurchaseTile(currentPlayer, tileId);
+                    return GAME_CONTROLLER.cityPurchaseTile(currentPlayer, tileId, cheat);
                 } else if (args[1].equals("production")) {
                     int prodId;
                     try {
@@ -356,7 +414,7 @@ public class GameMenuView extends AbstractMenuView {
                     } catch (Exception ex) {
                         return null;
                     }
-                    return GAME_CONTROLLER.cityBuyProduction(currentPlayer, prodId);
+                    return GAME_CONTROLLER.cityBuyProduction(currentPlayer, prodId, cheat);
                 } else {
                     return null;
                 }
@@ -372,23 +430,23 @@ public class GameMenuView extends AbstractMenuView {
                     } catch (Exception ex) {
                         return null;
                     }
-                    return GAME_CONTROLLER.citySetCurrentProduction(currentPlayer, prodId);
+                    return GAME_CONTROLLER.citySetCurrentProduction(currentPlayer, prodId, cheat);
                 } else if (args[1].equals("all")) {
-                    return GAME_CONTROLLER.cityGetAllAvailableProductions(currentPlayer);
+                    return GAME_CONTROLLER.cityGetAllAvailableProductions(currentPlayer, cheat);
                 } else {
                     return null;
                 }
             case "destroy":
                 try {
                     tileId = Integer.parseInt(args[1]);
-                    return GAME_CONTROLLER.cityDestroy(currentPlayer, tileId);
+                    return GAME_CONTROLLER.cityDestroy(currentPlayer, tileId, cheat);
                 } catch (Exception ex) {
                     return null;
                 }
             case "annex":
                 try {
                     tileId = Integer.parseInt(args[1]);
-                    return GAME_CONTROLLER.cityAnnex(currentPlayer, tileId);
+                    return GAME_CONTROLLER.cityAnnex(currentPlayer, tileId, cheat);
                 } catch (Exception ex) {
                     return null;
                 }
