@@ -179,11 +179,11 @@ public class GameController extends AbstractGameController implements JsonRespon
     public JsonObject selectCombatUnit(String username, int tileId) {
         Civilization civilization = civController.getCivilizationByUsername(username);
         Tile tile = gameArea.getMap().getTileByIndex(tileId);
+        if(tile == null)
+            return messageToJsonObj("invalid tileID",false);
         Unit unit = tile.getCombatUnit();
         if(civilization == null)
             return messageToJsonObj("invalid civUsername",false);
-        if(tile == null)
-            return messageToJsonObj("invalid tileID",false);
         if(unit == null)
             return messageToJsonObj("selected tile doesn't have unit",false);
         civilization.setSelectedUnit(unit);
@@ -193,11 +193,11 @@ public class GameController extends AbstractGameController implements JsonRespon
     public JsonObject selectNonCombatUnit(String username, int tileId) {
         Civilization civilization = civController.getCivilizationByUsername(username);
         Tile tile = gameArea.getMap().getTileByIndex(tileId);
+        if(tile == null)
+            return messageToJsonObj("invalid tileID",false);
         Unit unit = tile.getNonCombatUnit();
         if(civilization == null)
             return messageToJsonObj("invalid civUsername",false);
-        if(tile == null)
-            return messageToJsonObj("invalid tileID",false);
         if(unit == null)
             return messageToJsonObj("selected tile doesn't have unit",false);
         civilization.setSelectedUnit(unit);
@@ -207,11 +207,11 @@ public class GameController extends AbstractGameController implements JsonRespon
     public JsonObject selectCity(String username, int tileId) {
         Civilization civilization = civController.getCivilizationByUsername(username);
         Tile tile = gameArea.getMap().getTileByIndex(tileId);
+        if(tile == null)
+            return messageToJsonObj("invalid tileID",false);
         City city = tile.getCity();
         if(civilization == null)
             return messageToJsonObj("invalid civUsername",false);
-        if(tile == null)
-            return messageToJsonObj("invalid tileID",false);
         if(city == null)
             return messageToJsonObj("selected tile doesn't have city",false);
         civilization.setSelectedCity(city);
@@ -337,7 +337,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         Unit unit = civilization.getSelectedUnit();
         if(unit == null)
             return messageToJsonObj("we don`t have selected unit",false);
-        civilization.removeUnit(unit);
+        unitController.removeUnit(unit);
         return messageToJsonObj("has been deleted successfully",true);
     }
 
