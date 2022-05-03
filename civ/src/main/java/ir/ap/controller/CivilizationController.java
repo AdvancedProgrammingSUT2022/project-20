@@ -43,13 +43,21 @@ public class CivilizationController extends AbstractGameController {
             }
         }
         for(Unit unit : civilization.getUnits())
-            if(unit.getUnitType() == UnitType.WORKER)
-            {
+        {
+            if(unit.getUnitAction() == UnitType.UnitAction.ALERT) {
                 Tile tile = unit.getTile();
-                if (unit.getUnitAction() == UnitType.UnitAction.REPAIR)
-                {
-                    if (tile.hasImprovement())
-                    {
+                for(Tile enemyTile : tile.getNeighbors()) {
+                    Unit enemyUnit = enemyTile.getCombatUnit();
+                    if(enemyUnit == null) enemyUnit = enemyTile.getNonCombatUnit();
+                    if(enemyUnit != null)
+                        unitController.unitWake(civilization);
+                }
+            }
+
+            if (unit.getUnitType() == UnitType.WORKER) {
+                Tile tile = unit.getTile();
+                if (unit.getUnitAction() == UnitType.UnitAction.REPAIR) {
+                    if (tile.hasImprovement()) {
                         Improvement improvement = tile.getImprovement();
                         improvement.setIsDead(false);
                         tile.setImprovement(improvement);
@@ -57,8 +65,7 @@ public class CivilizationController extends AbstractGameController {
                         unit.setUnitAction(null);
                         return;
                     }
-                    if (tile.hasCity())
-                    {
+                    if (tile.hasCity()) {
                         City city = tile.getCity();
                         city.setHp(Math.min(city.getHp() + 3, 20));
                         tile.setCity(city);
@@ -69,8 +76,7 @@ public class CivilizationController extends AbstractGameController {
                         }
                     }
                 }
-                if (unit.getUnitAction() == UnitType.UnitAction.FORTIFY_HEAL)
-                {
+                if (unit.getUnitAction() == UnitType.UnitAction.FORTIFY_HEAL) {
                     unit.setHp(Math.min(unit.getHp() + 3, Unit.getMaxHp()));
                     if (unit.getHp() == Unit.getMaxHp()) {
                         unit.setHowManyTurnWeKeepAction(0);
@@ -79,8 +85,7 @@ public class CivilizationController extends AbstractGameController {
                     }
                 }
 
-                if (unit.getHowManyTurnWeKeepAction() == 6)
-                {
+                if (unit.getHowManyTurnWeKeepAction() == 6) {
                     if (unit.getUnitAction() == UnitType.UnitAction.BUILD_CAMP) {
                         mapController.addImprovement(tile, Improvement.CAMP);
                         unit.setHowManyTurnWeKeepAction(0);
@@ -113,25 +118,22 @@ public class CivilizationController extends AbstractGameController {
                         mapController.addImprovement(tile, Improvement.TRADING_POST);
                         unit.setHowManyTurnWeKeepAction(0);
                     }
-                }
-                else
-                    unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction()+1);
+                } else
+                    unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
 
                 if (unit.getUnitAction() == UnitType.UnitAction.BUILD_RAILROAD) {
-                    if(unit.getHowManyTurnWeKeepAction() == 3) {
+                    if (unit.getHowManyTurnWeKeepAction() == 3) {
                         mapController.addRailRoad(tile);
                         unit.setHowManyTurnWeKeepAction(0);
-                    }
-                    else
-                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction()+1);
+                    } else
+                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
                 }
                 if (unit.getUnitAction() == UnitType.UnitAction.BUILD_ROAD) {
-                    if(unit.getHowManyTurnWeKeepAction() == 3) {
+                    if (unit.getHowManyTurnWeKeepAction() == 3) {
                         mapController.addRoad(tile);
                         unit.setHowManyTurnWeKeepAction(0);
-                    }
-                    else
-                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction()+1);
+                    } else
+                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
                 }
                 if (unit.getUnitAction() == UnitType.UnitAction.REMOVE_ROUTE) {
                     mapController.removeRoad(tile);
@@ -139,30 +141,28 @@ public class CivilizationController extends AbstractGameController {
                     unit.setHowManyTurnWeKeepAction(0);
                 }
                 if (unit.getUnitAction() == UnitType.UnitAction.REMOVE_FOREST) {
-                    if(unit.getHowManyTurnWeKeepAction() == 4) {
+                    if (unit.getHowManyTurnWeKeepAction() == 4) {
                         mapController.removeTerrainFeature(tile);
                         unit.setHowManyTurnWeKeepAction(0);
-                    }
-                    else
-                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction()+1);
+                    } else
+                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
                 }
                 if (unit.getUnitAction() == UnitType.UnitAction.REMOVE_JUNGLE) {
-                    if(unit.getHowManyTurnWeKeepAction() == 7){
+                    if (unit.getHowManyTurnWeKeepAction() == 7) {
                         mapController.removeTerrainFeature(tile);
                         unit.setHowManyTurnWeKeepAction(0);
-                    }
-                    else
-                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction()+1);
+                    } else
+                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
                 }
                 if (unit.getUnitAction() == UnitType.UnitAction.REMOVE_MARSH) {
-                    if(unit.getHowManyTurnWeKeepAction() == 6) {
+                    if (unit.getHowManyTurnWeKeepAction() == 6) {
                         mapController.removeTerrainFeature(tile);
                         unit.setHowManyTurnWeKeepAction(0);
-                    }
-                    else
-                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction()+1);
+                    } else
+                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
                 }
             }
+        }
         for (City city : civilization.getCities()) {
             cityController.nextTurn(city);
         }
