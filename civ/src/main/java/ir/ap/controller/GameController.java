@@ -27,6 +27,7 @@ public class GameController extends AbstractGameController implements JsonRespon
     public enum Message {
         GAME_STARTED("game started successfully"),
         USER_NOT_LOGGED_IN("user is not logged in"),
+        USER_NOT_ON_GAME("user is not on this game"),
 
         E500("Server error");
 
@@ -74,8 +75,12 @@ public class GameController extends AbstractGameController implements JsonRespon
     }
 
     public JsonObject getCivilizationByUsername(String username) {
-        // TODO
-        return JSON_FALSE;
+        Civilization civ = civController.getCivilizationByUsername(username);
+        if (civ == null)
+            return messageToJsonObj(Message.USER_NOT_ON_GAME, false);
+        JsonObject response = new JsonObject();
+        response.addProperty("civName", civ.getName());
+        return setOk(response, true);
     }
 
     public JsonObject getAllCivilizations() {
@@ -92,12 +97,16 @@ public class GameController extends AbstractGameController implements JsonRespon
         gameArea = new GameArea(System.currentTimeMillis());
         int cnt = 0;
         for (String username : players) {
+            if (gameArea.getUserByUsername(username) != null)
+                return messageToJsonObj("duplicate users", false);
             User curUser = User.getUser(username);
             if (curUser == null) // TODO login in server
             return messageToJsonObj(Message.USER_NOT_LOGGED_IN, false);
             Civilization curCiv = new Civilization(cnt++, curUser.getNickname() + ".civ", null);
             gameArea.addUser(curUser, curCiv);
         }
+        if (gameArea.getUserCount() < 2)
+            return messageToJsonObj("at least 2 players should be in game", false);
         civController = new CivilizationController(gameArea);
         mapController = new MapController(gameArea);
         unitController = new UnitController(gameArea);

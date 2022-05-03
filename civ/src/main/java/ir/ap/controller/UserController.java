@@ -120,9 +120,10 @@ public class UserController implements JsonResponsor, AutoCloseable {
         }
 
         User curUser = new User(username, nickname, password);
-        if (User.addUser(curUser))
+        if (User.addUser(curUser)) {
+            writeUsers();
             return messageToJsonObj(Message.USER_CREATED, true);
-        else
+        } else
             return messageToJsonObj(Message.E500, false);
     }
 

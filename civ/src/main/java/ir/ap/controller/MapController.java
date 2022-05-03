@@ -51,6 +51,7 @@ public class MapController extends AbstractGameController {
     }
 
     public boolean removeRoad(Tile tile) {
+        // TODO : udpate distance?
         if (tile == null) return false;
         tile.setHasRoad(false);
         return true;

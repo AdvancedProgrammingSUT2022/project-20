@@ -35,6 +35,10 @@ public class GameArea {
         return map;
     }
 
+    public int getUserCount() {
+        return user2civ.size();
+    }
+
     public HashMap<User, Civilization> getUser2civ() {
         return user2civ;
     }

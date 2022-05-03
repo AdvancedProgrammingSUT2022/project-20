@@ -11,7 +11,7 @@ public class GameMenuView extends AbstractMenuView {
         EXIT_MENU("menu exit"),
         SHOW_MENU("menu show-current"),
         INFO("info (?<arg>\\S+)"),
-        SELECT_UNIT("select unit (?<type>combat|noncombat) (?<tileId>\\d+))"),
+        SELECT_UNIT("select unit (?<type>combat|noncombat) (?<tileId>\\d+)"),
         SELECT_CITY("select city (?<nameOrId>\\S+)"),
         UNIT_ACTION("unit (?<args>.*)"),
         CITY_ACTION("city (?<args>.*)");
@@ -46,6 +46,7 @@ public class GameMenuView extends AbstractMenuView {
     public enum Message {
         MENU_NAVIGATION_IMPOSSIBLE("menu navigation is not possible"),
 
+        INVALID_REQUEST("invalid request"),
         ARG_INVALID("argument %s invalid"),
         E500("Server error");
 
@@ -94,6 +95,8 @@ public class GameMenuView extends AbstractMenuView {
         JsonObject response = (type.equals("combat")
                 ? GAME_CONTROLLER.selectCombatUnit(currentUsername, tileId)
                 : GAME_CONTROLLER.selectNonCombatUnit(currentUsername, tileId));
+        if (response == null)
+            return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         String msg = getField(response, "msg", String.class);
         return responseAndGo(msg, Menu.GAME);
     }
@@ -106,6 +109,8 @@ public class GameMenuView extends AbstractMenuView {
         } else {
             response = GAME_CONTROLLER.selectCity(currentUsername, nameOrId);
         }
+        if (response == null)
+            return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         String msg = getField(response, "msg", String.class);
         return responseAndGo(msg, Menu.GAME);
     }
@@ -113,6 +118,8 @@ public class GameMenuView extends AbstractMenuView {
     public Menu unitAction(Matcher matcher) {
         String[] args = matcher.group("args").trim().split("\\s+");
         JsonObject response = getUnitActionResponse(args);
+        if (response == null)
+            return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         String msg = getField(response, "msg", String.class);
         return responseAndGo(msg, Menu.GAME);
     }
@@ -120,6 +127,8 @@ public class GameMenuView extends AbstractMenuView {
     public Menu cityAction(Matcher matcher) {
         String[] args = matcher.group("args").trim().split("\\s+");
         JsonObject response = getCityActionResponse(args);
+        if (response == null)
+            return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         String msg = getField(response, "msg", String.class);
         return responseAndGo(msg, Menu.GAME);
     }
