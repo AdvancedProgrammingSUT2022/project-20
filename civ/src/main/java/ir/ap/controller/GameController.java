@@ -337,7 +337,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         Unit unit = civilization.getSelectedUnit();
         if(unit == null)
             return messageToJsonObj("we don`t have selected unit",false);
-        civilization.removeUnit(unit);
+        unitController.removeUnit(unit);
         return messageToJsonObj("has been deleted successfully",true);
     }
 
