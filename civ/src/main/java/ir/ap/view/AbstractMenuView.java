@@ -56,11 +56,11 @@ public abstract class AbstractMenuView {
             return null;
         if (classOfT.equals(String.class))
             return classOfT.cast(field.getAsString());
-        if (classOfT.equals(int.class))
+        if (classOfT.equals(Integer.class))
             return classOfT.cast(field.getAsInt());
-        if (classOfT.equals(boolean.class))
+        if (classOfT.equals(Boolean.class))
             return classOfT.cast(field.getAsBoolean());
-        if (classOfT.equals(double.class))
+        if (classOfT.equals(Double.class))
             return classOfT.cast(field.getAsDouble());
         throw new RuntimeException();
     }

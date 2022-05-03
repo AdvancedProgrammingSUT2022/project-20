@@ -129,8 +129,13 @@ public class GameController extends AbstractGameController implements JsonRespon
         Civilization civilization = civController.getCivilizationByUsername(username);
         if(civilization == null)
             return messageToJsonObj("invalid username",false);
-        civController.nextTurn(civController.getCivilizationByUsername(username));
-        return JSON_TRUE;
+        boolean end = civController.nextTurn(civController.getCivilizationByUsername(username));
+        JsonObject response = new JsonObject();
+        response.addProperty("end", end);
+        if (end)
+            response.addProperty("msg", "Game Ended");
+        setOk(response, true);
+        return response;
     }
 
     public JsonObject infoResearch(String username) {

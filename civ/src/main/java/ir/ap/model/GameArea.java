@@ -5,6 +5,7 @@ import java.util.HashMap;
 import ir.ap.model.Tile.TileKnowledge;
 
 public class GameArea {
+    private static final int MAX_TURN = 100;
     private static final int MAX_USERS = 10;
     private static final int MAX_LAND_TILES = 1000;
 
@@ -49,6 +50,14 @@ public class GameArea {
 
     public int getTurn() {
         return turn;
+    }
+
+    public void nextTurn() {
+        ++turn;
+    }
+
+    public boolean end() {
+        return (turn == MAX_TURN * getUserCount());
     }
 
     public int getYear() {

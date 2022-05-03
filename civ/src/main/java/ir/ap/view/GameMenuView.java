@@ -14,7 +14,8 @@ public class GameMenuView extends AbstractMenuView {
         SELECT_UNIT("select unit (?<type>combat|noncombat) (?<tileId>\\d+)"),
         SELECT_CITY("select city (?<nameOrId>\\S+)"),
         UNIT_ACTION("unit (?<args>.*)"),
-        CITY_ACTION("city (?<args>.*)");
+        CITY_ACTION("city (?<args>.*)"),
+        NEXT_TURN("next turn");
 
         private final String regex;
 
@@ -62,8 +63,35 @@ public class GameMenuView extends AbstractMenuView {
         }
     }
 
+    private String[] usersInGame;
+    private int currentTurnId;
+    private String currentPlayer;
+    // TODO: cheat
+
     public Enum<?>[] getCommands() {
         return Command.values();
+    }
+
+    public void init(String[] users) {
+        usersInGame = users;
+        currentTurnId = 0;
+        currentPlayer = usersInGame[currentTurnId];
+        System.out.format("Turn: %s\n", currentPlayer);
+    }
+
+    public Menu nextTurn(Matcher matcher) {
+        JsonObject response = GAME_CONTROLLER.nextTurn(currentPlayer);
+        String msg = getField(response, "msg", String.class);
+        if (responseOk(response)) {
+            ++currentTurnId;
+            currentTurnId %= usersInGame.length;
+            currentPlayer = usersInGame[currentTurnId];
+            if (getField(response, "end", Boolean.class) == true) {
+                return responseAndGo(msg, Menu.MAIN);
+            }
+            System.out.format("Turn: %s\n", currentPlayer);
+        }
+        return responseAndGo(msg, Menu.GAME);
     }
 
     public Menu enterMenu(Matcher matcher) {
@@ -93,8 +121,8 @@ public class GameMenuView extends AbstractMenuView {
         String type = matcher.group("type");
         int tileId = Integer.parseInt(matcher.group("tileId"));
         JsonObject response = (type.equals("combat")
-                ? GAME_CONTROLLER.selectCombatUnit(currentUsername, tileId)
-                : GAME_CONTROLLER.selectNonCombatUnit(currentUsername, tileId));
+                ? GAME_CONTROLLER.selectCombatUnit(currentPlayer, tileId)
+                : GAME_CONTROLLER.selectNonCombatUnit(currentPlayer, tileId));
         if (response == null)
             return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         String msg = getField(response, "msg", String.class);
@@ -105,9 +133,9 @@ public class GameMenuView extends AbstractMenuView {
         String nameOrId = matcher.group("nameOrId");
         JsonObject response;
         if (nameOrId.matches("\\d+")) {
-            response = GAME_CONTROLLER.selectCity(currentUsername, Integer.parseInt(nameOrId));
+            response = GAME_CONTROLLER.selectCity(currentPlayer, Integer.parseInt(nameOrId));
         } else {
-            response = GAME_CONTROLLER.selectCity(currentUsername, nameOrId);
+            response = GAME_CONTROLLER.selectCity(currentPlayer, nameOrId);
         }
         if (response == null)
             return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
@@ -146,27 +174,27 @@ public class GameMenuView extends AbstractMenuView {
     public JsonObject getInfoResponse(String arg) {
         switch (arg) {
             case "research":
-                return GAME_CONTROLLER.infoResearch(currentUsername);
+                return GAME_CONTROLLER.infoResearch(currentPlayer);
             case "units":
-                return GAME_CONTROLLER.infoUnits(currentUsername);
+                return GAME_CONTROLLER.infoUnits(currentPlayer);
             case "cities":
-                return GAME_CONTROLLER.infoCities(currentUsername);
+                return GAME_CONTROLLER.infoCities(currentPlayer);
             case "diplomacy":
-                return GAME_CONTROLLER.infoDiplomacy(currentUsername);
+                return GAME_CONTROLLER.infoDiplomacy(currentPlayer);
             case "victory":
-                return GAME_CONTROLLER.infoVictory(currentUsername);
+                return GAME_CONTROLLER.infoVictory(currentPlayer);
             case "demographics":
-                return GAME_CONTROLLER.infoDemographics(currentUsername);
+                return GAME_CONTROLLER.infoDemographics(currentPlayer);
             case "notifications":
-                return GAME_CONTROLLER.infoNotifications(currentUsername);
+                return GAME_CONTROLLER.infoNotifications(currentPlayer);
             case "military":
-                return GAME_CONTROLLER.infoMilitary(currentUsername);
+                return GAME_CONTROLLER.infoMilitary(currentPlayer);
             case "economic":
-                return GAME_CONTROLLER.infoEconomic(currentUsername);
+                return GAME_CONTROLLER.infoEconomic(currentPlayer);
             case "diplomatic":
-                return GAME_CONTROLLER.infoDiplomatic(currentUsername);
+                return GAME_CONTROLLER.infoDiplomatic(currentPlayer);
             case "deals":
-                return GAME_CONTROLLER.infoDeals(currentUsername);
+                return GAME_CONTROLLER.infoDeals(currentPlayer);
             default:
                 return null;
         }
@@ -181,20 +209,20 @@ public class GameMenuView extends AbstractMenuView {
                 } catch (Exception ex) {
                     return null;
                 }
-                return GAME_CONTROLLER.unitMoveTo(currentUsername, tileId);
+                return GAME_CONTROLLER.unitMoveTo(currentPlayer, tileId);
             case "sleep":
-                return GAME_CONTROLLER.unitSleep(currentUsername);
+                return GAME_CONTROLLER.unitSleep(currentPlayer);
             case "alert":
-                return GAME_CONTROLLER.unitAlert(currentUsername);
+                return GAME_CONTROLLER.unitAlert(currentPlayer);
             case "fortify":
                 if (args.length > 1 && args[1].equals("heal"))
-                    return GAME_CONTROLLER.unitFortifyUntilHeal(currentUsername);
-                return GAME_CONTROLLER.unitFortify(currentUsername);
+                    return GAME_CONTROLLER.unitFortifyUntilHeal(currentPlayer);
+                return GAME_CONTROLLER.unitFortify(currentPlayer);
             case "garrison":
-                return GAME_CONTROLLER.unitGarrison(currentUsername);
+                return GAME_CONTROLLER.unitGarrison(currentPlayer);
             case "setup":
                 if (args.length > 1 && args[1].equals("ranged"))
-                    return GAME_CONTROLLER.unitSetupRanged(currentUsername);
+                    return GAME_CONTROLLER.unitSetupRanged(currentPlayer);
                 return null;
             case "attack":
                 try {
@@ -202,19 +230,19 @@ public class GameMenuView extends AbstractMenuView {
                 } catch (Exception ex) {
                     return null;
                 }
-                return GAME_CONTROLLER.unitAttack(currentUsername, tileId);
+                return GAME_CONTROLLER.unitAttack(currentPlayer, tileId);
             case "found":
                 if (args.length > 1 && args[1].equals("city"))
-                    return GAME_CONTROLLER.unitFoundCity(currentUsername);
+                    return GAME_CONTROLLER.unitFoundCity(currentPlayer);
                 return null;
             case "cancel":
                 if (args.length > 1 && args[1].equals("mission"))
-                    return GAME_CONTROLLER.unitCancelMission(currentUsername);
+                    return GAME_CONTROLLER.unitCancelMission(currentPlayer);
                 return null;
             case "wake":
-                return GAME_CONTROLLER.unitWake(currentUsername);
+                return GAME_CONTROLLER.unitWake(currentPlayer);
             case "delete":
-                return GAME_CONTROLLER.unitDelete(currentUsername);
+                return GAME_CONTROLLER.unitDelete(currentPlayer);
             case "build":
                 return getUnitBuildResponse(args);
             case "remove":
@@ -222,18 +250,18 @@ public class GameMenuView extends AbstractMenuView {
                     return null;
                 switch (args[1]) {
                     case "jungle":
-                        return GAME_CONTROLLER.unitRemoveJungle(currentUsername);
+                        return GAME_CONTROLLER.unitRemoveJungle(currentPlayer);
                     case "forest":
-                        return GAME_CONTROLLER.unitRemoveForest(currentUsername);
+                        return GAME_CONTROLLER.unitRemoveForest(currentPlayer);
                     case "marsh":
-                        return GAME_CONTROLLER.unitRemoveMarsh(currentUsername);
+                        return GAME_CONTROLLER.unitRemoveMarsh(currentPlayer);
                     case "route":
-                        return GAME_CONTROLLER.unitRemoveRoute(currentUsername);
+                        return GAME_CONTROLLER.unitRemoveRoute(currentPlayer);
                     default:
                         return null;
                 }
             case "repair":
-                return GAME_CONTROLLER.unitRepair(currentUsername);
+                return GAME_CONTROLLER.unitRepair(currentPlayer);
             default:
                 return null;
         }
@@ -244,27 +272,27 @@ public class GameMenuView extends AbstractMenuView {
             return null;
         switch (args[1]) {
             case "road":
-                return GAME_CONTROLLER.unitBuildRoad(currentUsername);
+                return GAME_CONTROLLER.unitBuildRoad(currentPlayer);
             case "railroad":
-                return GAME_CONTROLLER.unitBuildRailRoad(currentUsername);
+                return GAME_CONTROLLER.unitBuildRailRoad(currentPlayer);
             case "camp":
-                return GAME_CONTROLLER.unitBuildImprovement(currentUsername, 1);
+                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 1);
             case "farm":
-                return GAME_CONTROLLER.unitBuildImprovement(currentUsername, 2);
+                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 2);
             case "lumbermill":
-                return GAME_CONTROLLER.unitBuildImprovement(currentUsername, 3);
+                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 3);
             case "mine":
-                return GAME_CONTROLLER.unitBuildImprovement(currentUsername, 4);
+                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 4);
             case "pasture":
-                return GAME_CONTROLLER.unitBuildImprovement(currentUsername, 5);
+                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 5);
             case "plantation":
-                return GAME_CONTROLLER.unitBuildImprovement(currentUsername, 6);
+                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 6);
             case "quarry":
-                return GAME_CONTROLLER.unitBuildImprovement(currentUsername, 7);
+                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 7);
             case "tradingpost":
-                return GAME_CONTROLLER.unitBuildImprovement(currentUsername, 8);
+                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 8);
             case "factory":
-                return GAME_CONTROLLER.unitBuildImprovement(currentUsername, 9);
+                return GAME_CONTROLLER.unitBuildImprovement(currentPlayer, 9);
             default:
                 return null;
         }
@@ -276,7 +304,7 @@ public class GameMenuView extends AbstractMenuView {
             case "work":
                 try {
                     tileId = Integer.parseInt(args[1]);
-                    return GAME_CONTROLLER.cityAddCitizenToWorkOnTile(currentUsername, tileId);
+                    return GAME_CONTROLLER.cityAddCitizenToWorkOnTile(currentPlayer, tileId);
                 } catch (Exception ex) {
                 }
                 if (args.length <= 1)
@@ -287,18 +315,18 @@ public class GameMenuView extends AbstractMenuView {
                     } catch (Exception ex) {
                         return null;
                     }
-                    return GAME_CONTROLLER.cityRemoveCitizenFromWorkOnTile(currentUsername, tileId);
+                    return GAME_CONTROLLER.cityRemoveCitizenFromWorkOnTile(currentPlayer, tileId);
                 } else if (args[1].equals("all")) {
-                    return GAME_CONTROLLER.cityGetWorkingTiles(currentUsername);
+                    return GAME_CONTROLLER.cityGetWorkingTiles(currentPlayer);
                 } else {
                     return null;
                 }
             case "output":
-                return GAME_CONTROLLER.cityGetOutput(currentUsername);
+                return GAME_CONTROLLER.cityGetOutput(currentPlayer);
             case "unemployed":
-                return GAME_CONTROLLER.cityGetUnemployedCitizens(currentUsername);
+                return GAME_CONTROLLER.cityGetUnemployedCitizens(currentPlayer);
             case "buildings":
-                return GAME_CONTROLLER.cityGetBuildings(currentUsername);
+                return GAME_CONTROLLER.cityGetBuildings(currentPlayer);
             case "purchase":
                 if (args.length <= 1)
                     return null;
@@ -308,7 +336,7 @@ public class GameMenuView extends AbstractMenuView {
                     } catch (Exception ex) {
                         return null;
                     }
-                    return GAME_CONTROLLER.cityPurchaseTile(currentUsername, tileId);
+                    return GAME_CONTROLLER.cityPurchaseTile(currentPlayer, tileId);
                 } else if (args[1].equals("production")) {
                     int prodId;
                     try {
@@ -316,15 +344,15 @@ public class GameMenuView extends AbstractMenuView {
                     } catch (Exception ex) {
                         return null;
                     }
-                    return GAME_CONTROLLER.cityBuyProduction(currentUsername, prodId);
+                    return GAME_CONTROLLER.cityBuyProduction(currentPlayer, prodId);
                 } else {
                     return null;
                 }
             case "production":
                 if (args.length == 1)
-                    return GAME_CONTROLLER.cityGetCurrentProduction(currentUsername);
+                    return GAME_CONTROLLER.cityGetCurrentProduction(currentPlayer);
                 if (args[1].equals("show")) {
-                    return GAME_CONTROLLER.cityGetCurrentProduction(currentUsername);
+                    return GAME_CONTROLLER.cityGetCurrentProduction(currentPlayer);
                 } else if (args[1].equals("set")) {
                     int prodId;
                     try {
@@ -332,23 +360,23 @@ public class GameMenuView extends AbstractMenuView {
                     } catch (Exception ex) {
                         return null;
                     }
-                    return GAME_CONTROLLER.citySetCurrentProduction(currentUsername, prodId);
+                    return GAME_CONTROLLER.citySetCurrentProduction(currentPlayer, prodId);
                 } else if (args[1].equals("all")) {
-                    return GAME_CONTROLLER.cityGetAllAvailableProductions(currentUsername);
+                    return GAME_CONTROLLER.cityGetAllAvailableProductions(currentPlayer);
                 } else {
                     return null;
                 }
             case "destroy":
                 try {
                     tileId = Integer.parseInt(args[1]);
-                    return GAME_CONTROLLER.cityDestroy(currentUsername, tileId);
+                    return GAME_CONTROLLER.cityDestroy(currentPlayer, tileId);
                 } catch (Exception ex) {
                     return null;
                 }
             case "annex":
                 try {
                     tileId = Integer.parseInt(args[1]);
-                    return GAME_CONTROLLER.cityAnnex(currentUsername, tileId);
+                    return GAME_CONTROLLER.cityAnnex(currentPlayer, tileId);
                 } catch (Exception ex) {
                     return null;
                 }

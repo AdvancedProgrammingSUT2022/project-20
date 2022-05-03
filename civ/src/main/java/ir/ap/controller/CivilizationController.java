@@ -30,9 +30,9 @@ public class CivilizationController extends AbstractGameController {
         return Users;
     }
 
-    public void nextTurn(Civilization civilization)
+    public boolean nextTurn(Civilization civilization)
     {
-        if (civilization == null) return;
+        if (civilization == null) return false;
         civilization.addToGold(civilization.getGoldYield());
         civilization.addToScience(civilization.getScienceYield());
         if (civilization.getCurrentResearch() != null) {
@@ -63,7 +63,6 @@ public class CivilizationController extends AbstractGameController {
                         tile.setImprovement(improvement);
                         unit.setHowManyTurnWeKeepAction(0);
                         unit.setUnitAction(null);
-                        return;
                     }
                     if (tile.hasCity()) {
                         City city = tile.getCity();
@@ -71,8 +70,7 @@ public class CivilizationController extends AbstractGameController {
                         tile.setCity(city);
                         if (city.getHp() == 20) {
                             unit.setHowManyTurnWeKeepAction(0);
-                            unit.setUnitAction(null);
-                            return;
+                            unit.setUnitAction(null);;
                         }
                     }
                 }
@@ -81,7 +79,6 @@ public class CivilizationController extends AbstractGameController {
                     if (unit.getHp() == Unit.getMaxHp()) {
                         unit.setHowManyTurnWeKeepAction(0);
                         unit.setUnitAction(null);
-                        return;
                     }
                 }
 
@@ -166,6 +163,8 @@ public class CivilizationController extends AbstractGameController {
         for (City city : civilization.getCities()) {
             cityController.nextTurn(city);
         }
+        gameArea.nextTurn();
+        return gameArea.end();
     }
 
     public void selectCity(Civilization civilization, City city)

@@ -54,7 +54,9 @@ public class Civilization {
         this.name = name;
         this.capital = capital;
 
-        cities = new ArrayList<>(Arrays.asList(capital));
+        cities = new ArrayList<>();
+        if (capital != null)
+            addCity(capital);
         citiesDestroyed = new ArrayList<>();
         citiesAnnexed = new ArrayList<>();
         units = new ArrayList<>();

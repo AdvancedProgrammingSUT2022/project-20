@@ -111,7 +111,8 @@ public class MainMenuView extends AbstractMenuView {
                 players.add(args[++i]);
             }
         }
-        JsonObject response = GAME_CONTROLLER.newGame(players.toArray(new String[0]));
+        String[] usersInGame = players.toArray(new String[0]);
+        JsonObject response = GAME_CONTROLLER.newGame(usersInGame);
         String msg = getField(response, "msg", String.class);
         if (responseOk(response)) {
             System.out.format("New game started with players:\n");
@@ -123,6 +124,7 @@ public class MainMenuView extends AbstractMenuView {
                 }
                 System.out.format("\t%s as civ %s\n", username, civName);
             }
+            ((GameMenuView) Menu.GAME.getMenuView()).init(usersInGame);
             return responseAndGo(null, Menu.GAME);
         } else {
             return responseAndGo(msg, Menu.MAIN);

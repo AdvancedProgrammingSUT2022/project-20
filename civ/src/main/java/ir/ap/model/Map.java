@@ -21,7 +21,7 @@ public class Map {
 
         for(int i = 0 ; i < 30 ; i ++){
             for(int j = 0 ; j < 30 ; j ++){
-                if( (i >= 10 && i < 20) || (j >= 5 && j < 25) )continue ;
+                if( (i >= 10 && i < 20) && (j >= 5 && j < 25) )continue ;
                 Tile tile = new Tile( (i*30)+j, TerrainType.OCEAN, null, new ArrayList<>(Arrays.asList(new Resource[]{})));
                 tiles[ i ][ j ] = tile;
             }

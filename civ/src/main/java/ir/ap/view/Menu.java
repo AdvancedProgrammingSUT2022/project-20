@@ -27,6 +27,10 @@ public enum Menu {
         }
     }
 
+    public AbstractMenuView getMenuView() {
+        return menuView;
+    }
+
     public Menu runCommand() {
         return menuView.runCommand();
     }
