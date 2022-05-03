@@ -1,7 +1,6 @@
 package ir.ap.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Civilization {
     private int index;
