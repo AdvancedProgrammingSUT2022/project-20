@@ -15,7 +15,9 @@ public class GameMenuView extends AbstractMenuView {
         SELECT_CITY("select city (?<nameOrId>\\S+)"),
         UNIT_ACTION("unit (?<args>.*)"),
         CITY_ACTION("city (?<args>.*)"),
-        NEXT_TURN("next turn");
+        NEXT_TURN("next turn"),
+        INCREASE("increase (?<args>.*)"),
+        GET_ALL_CIV("getallciv");
 
         private final String regex;
 
@@ -169,6 +171,16 @@ public class GameMenuView extends AbstractMenuView {
     public Menu moveMap(Matcher matcher) {
         // TODO
         return responseAndGo(null, Menu.GAME);
+    }
+
+    public Menu increase(Matcher matcher) {
+        // TODO
+        return responseAndGo(null, Menu.GAME);
+    }
+
+    public Menu getAllCiv(Matcher matcher) {
+        System.out.println(GAME_CONTROLLER.getAllCivilizations(currentPlayer));
+        return Menu.GAME;
     }
 
     public JsonObject getInfoResponse(String arg) {

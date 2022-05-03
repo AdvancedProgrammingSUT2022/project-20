@@ -15,16 +15,6 @@ public class Unit {
     private Tile tile;
     private int howManyTurnWeKeepAction;
 
-    public int getHowManyTurnWeKeepAction() {
-        return this.howManyTurnWeKeepAction;
-    }
-
-    public void setHowManyTurnWeKeepAction(int howManyTurnWeKeepAction) {
-        this.howManyTurnWeKeepAction = howManyTurnWeKeepAction;
-    }
-    public static int getMaxHp(){
-        return MAX_HP;
-    }
     public Unit(UnitType unitType, Civilization civilization, Tile tile) {
         this.unitType = unitType;
         unitAction = null;
@@ -32,6 +22,18 @@ public class Unit {
         hp = (unitType.isCivilian() ? 0 : MAX_HP);
         this.civilization = civilization;
         this.tile = tile;
+    }
+
+    public static int getMaxHp() {
+        return MAX_HP;
+    }
+
+    public int getHowManyTurnWeKeepAction() {
+        return this.howManyTurnWeKeepAction;
+    }
+
+    public void setHowManyTurnWeKeepAction(int howManyTurnWeKeepAction) {
+        this.howManyTurnWeKeepAction = howManyTurnWeKeepAction;
     }
 
     public UnitType getUnitType() {
@@ -111,7 +113,10 @@ public class Unit {
     }
 
     public int getCombatStrength() {
-        return unitType.getCombatStrength() + (unitAction == UnitAction.FORTIFY || unitAction == UnitAction.FORTIFY_HEAL ? 3 : 0);
+        return unitType.getCombatStrength() +
+                (unitAction == UnitAction.FORTIFY
+                        || unitAction == UnitAction.FORTIFY_HEAL
+                        || unitAction == UnitAction.ALERT ? 3 : 0);
     }
 
     public int getRangedCombatStrength() {
@@ -121,7 +126,7 @@ public class Unit {
     public int getRange() {
         return unitType.getRange();
     }
-    
+
     public int getVisitingRange() {
         return DEFAULT_VISITING_RANGE;
     }

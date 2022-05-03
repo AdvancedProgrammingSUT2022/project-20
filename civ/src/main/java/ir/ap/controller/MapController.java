@@ -14,6 +14,7 @@ import ir.ap.model.Improvement;
 import ir.ap.model.Tile;
 import ir.ap.model.Unit;
 import ir.ap.model.UnitType;
+import ir.ap.model.Tile.TileKnowledge;
 
 public class MapController extends AbstractGameController {
     
@@ -30,6 +31,16 @@ public class MapController extends AbstractGameController {
             unitController.addUnit(civilization, khoshkiHas.get( i ), UnitType.WARRIOR);
             i ++;
         }
+    }
+
+    public boolean civCanSee(Civilization civ, Tile tile) {
+        return gameArea.getTileKnowledgeByCivilization(civ, tile) != TileKnowledge.FOG_OF_WAR;
+    }
+
+    public boolean civCanSee(Civilization civ, City city) {
+        if (city == null)
+            return false;
+        return civCanSee(civ, city.getTile());
     }
 
     public boolean addImprovement(Tile tile, Improvement impr) {
