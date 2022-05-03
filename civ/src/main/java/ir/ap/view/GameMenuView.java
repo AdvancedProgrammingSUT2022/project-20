@@ -11,9 +11,10 @@ public class GameMenuView extends AbstractMenuView {
         EXIT_MENU("menu exit"),
         SHOW_MENU("menu show-current"),
         INFO("info (?<arg>\\S+)"),
-        SELECT_UNIT("select unit (?<type>combat|noncombat) (?<tileId>\\d+))"),
+        SELECT_UNIT("select unit (?<type>combat|noncombat) (?<tileId>\\d+)"),
         SELECT_CITY("select city (?<nameOrId>\\S+)"),
-        UNIT_ACTION("unit (?<args>.*)");
+        UNIT_ACTION("unit (?<args>.*)"),
+        CITY_ACTION("city (?<args>.*)");
 
         private final String regex;
 
@@ -45,6 +46,7 @@ public class GameMenuView extends AbstractMenuView {
     public enum Message {
         MENU_NAVIGATION_IMPOSSIBLE("menu navigation is not possible"),
 
+        INVALID_REQUEST("invalid request"),
         ARG_INVALID("argument %s invalid"),
         E500("Server error");
 
@@ -93,6 +95,8 @@ public class GameMenuView extends AbstractMenuView {
         JsonObject response = (type.equals("combat")
                 ? GAME_CONTROLLER.selectCombatUnit(currentUsername, tileId)
                 : GAME_CONTROLLER.selectNonCombatUnit(currentUsername, tileId));
+        if (response == null)
+            return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         String msg = getField(response, "msg", String.class);
         return responseAndGo(msg, Menu.GAME);
     }
@@ -105,6 +109,8 @@ public class GameMenuView extends AbstractMenuView {
         } else {
             response = GAME_CONTROLLER.selectCity(currentUsername, nameOrId);
         }
+        if (response == null)
+            return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         String msg = getField(response, "msg", String.class);
         return responseAndGo(msg, Menu.GAME);
     }
@@ -112,13 +118,19 @@ public class GameMenuView extends AbstractMenuView {
     public Menu unitAction(Matcher matcher) {
         String[] args = matcher.group("args").trim().split("\\s+");
         JsonObject response = getUnitActionResponse(args);
+        if (response == null)
+            return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         String msg = getField(response, "msg", String.class);
         return responseAndGo(msg, Menu.GAME);
     }
 
     public Menu cityAction(Matcher matcher) {
-        // TODO
-        return responseAndGo(null, Menu.GAME);
+        String[] args = matcher.group("args").trim().split("\\s+");
+        JsonObject response = getCityActionResponse(args);
+        if (response == null)
+            return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
+        String msg = getField(response, "msg", String.class);
+        return responseAndGo(msg, Menu.GAME);
     }
 
     public Menu showMap(Matcher matcher) {
@@ -135,37 +147,26 @@ public class GameMenuView extends AbstractMenuView {
         switch (arg) {
             case "research":
                 return GAME_CONTROLLER.infoResearch(currentUsername);
-
             case "units":
                 return GAME_CONTROLLER.infoUnits(currentUsername);
-
             case "cities":
                 return GAME_CONTROLLER.infoCities(currentUsername);
-
             case "diplomacy":
                 return GAME_CONTROLLER.infoDiplomacy(currentUsername);
-
             case "victory":
                 return GAME_CONTROLLER.infoVictory(currentUsername);
-
             case "demographics":
                 return GAME_CONTROLLER.infoDemographics(currentUsername);
-
             case "notifications":
                 return GAME_CONTROLLER.infoNotifications(currentUsername);
-
             case "military":
                 return GAME_CONTROLLER.infoMilitary(currentUsername);
-
             case "economic":
                 return GAME_CONTROLLER.infoEconomic(currentUsername);
-
             case "diplomatic":
                 return GAME_CONTROLLER.infoDiplomatic(currentUsername);
-
             case "deals":
                 return GAME_CONTROLLER.infoDeals(currentUsername);
-
             default:
                 return null;
         }
@@ -215,16 +216,7 @@ public class GameMenuView extends AbstractMenuView {
             case "delete":
                 return GAME_CONTROLLER.unitDelete(currentUsername);
             case "build":
-                if (args.length == 1)
-                    return null;
-                switch (args[1]) {
-                    case "road":
-                        return GAME_CONTROLLER.unitBuildRoad(currentUsername);
-                    case "railroad":
-                        return GAME_CONTROLLER.unitBuildRailRoad(currentUsername);
-                    default:
-                        return getUnitBuildImprovement(args);
-                }
+                return getUnitBuildResponse(args);
             case "remove":
                 if (args.length == 1)
                     return null;
@@ -247,8 +239,14 @@ public class GameMenuView extends AbstractMenuView {
         }
     }
 
-    public JsonObject getUnitBuildImprovement(String[] args) {
+    public JsonObject getUnitBuildResponse(String[] args) {
+        if (args.length <= 1 || !args[0].equals("build"))
+            return null;
         switch (args[1]) {
+            case "road":
+                return GAME_CONTROLLER.unitBuildRoad(currentUsername);
+            case "railroad":
+                return GAME_CONTROLLER.unitBuildRailRoad(currentUsername);
             case "camp":
                 return GAME_CONTROLLER.unitBuildImprovement(currentUsername, 1);
             case "farm":
@@ -267,6 +265,93 @@ public class GameMenuView extends AbstractMenuView {
                 return GAME_CONTROLLER.unitBuildImprovement(currentUsername, 8);
             case "factory":
                 return GAME_CONTROLLER.unitBuildImprovement(currentUsername, 9);
+            default:
+                return null;
+        }
+    }
+
+    public JsonObject getCityActionResponse(String[] args) {
+        int tileId;
+        switch (args[0]) {
+            case "work":
+                try {
+                    tileId = Integer.parseInt(args[1]);
+                    return GAME_CONTROLLER.cityAddCitizenToWorkOnTile(currentUsername, tileId);
+                } catch (Exception ex) {
+                }
+                if (args.length <= 1)
+                    return null;
+                if (args[1].equals("delete")) {
+                    try {
+                        tileId = Integer.parseInt(args[2]);
+                    } catch (Exception ex) {
+                        return null;
+                    }
+                    return GAME_CONTROLLER.cityRemoveCitizenFromWorkOnTile(currentUsername, tileId);
+                } else if (args[1].equals("all")) {
+                    return GAME_CONTROLLER.cityGetWorkingTiles(currentUsername);
+                } else {
+                    return null;
+                }
+            case "output":
+                return GAME_CONTROLLER.cityGetOutput(currentUsername);
+            case "unemployed":
+                return GAME_CONTROLLER.cityGetUnemployedCitizens(currentUsername);
+            case "buildings":
+                return GAME_CONTROLLER.cityGetBuildings(currentUsername);
+            case "purchase":
+                if (args.length <= 1)
+                    return null;
+                if (args[1].equals("tile")) {
+                    try {
+                        tileId = Integer.parseInt(args[2]);
+                    } catch (Exception ex) {
+                        return null;
+                    }
+                    return GAME_CONTROLLER.cityPurchaseTile(currentUsername, tileId);
+                } else if (args[1].equals("production")) {
+                    int prodId;
+                    try {
+                        prodId = Integer.parseInt(args[2]);
+                    } catch (Exception ex) {
+                        return null;
+                    }
+                    return GAME_CONTROLLER.cityBuyProduction(currentUsername, prodId);
+                } else {
+                    return null;
+                }
+            case "production":
+                if (args.length == 1)
+                    return GAME_CONTROLLER.cityGetCurrentProduction(currentUsername);
+                if (args[1].equals("show")) {
+                    return GAME_CONTROLLER.cityGetCurrentProduction(currentUsername);
+                } else if (args[1].equals("set")) {
+                    int prodId;
+                    try {
+                        prodId = Integer.parseInt(args[2]);
+                    } catch (Exception ex) {
+                        return null;
+                    }
+                    return GAME_CONTROLLER.citySetCurrentProduction(currentUsername, prodId);
+                } else if (args[1].equals("all")) {
+                    return GAME_CONTROLLER.cityGetAllAvailableProductions(currentUsername);
+                } else {
+                    return null;
+                }
+            case "destroy":
+                try {
+                    tileId = Integer.parseInt(args[1]);
+                    return GAME_CONTROLLER.cityDestroy(currentUsername, tileId);
+                } catch (Exception ex) {
+                    return null;
+                }
+            case "annex":
+                try {
+                    tileId = Integer.parseInt(args[1]);
+                    return GAME_CONTROLLER.cityAnnex(currentUsername, tileId);
+                } catch (Exception ex) {
+                    return null;
+                }
             default:
                 return null;
         }

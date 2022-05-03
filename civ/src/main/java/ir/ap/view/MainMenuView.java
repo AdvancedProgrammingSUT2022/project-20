@@ -106,12 +106,14 @@ public class MainMenuView extends AbstractMenuView {
             if (!args[i].matches(Validator.PLAYER_ARG.toString())) {
                 return responseAndGo(Message.ARG_INVALID.toString().replace("%s", args[i]), Menu.MAIN);
             } else if (i + 1 == args.length || !args[i + 1].matches(Validator.USERNAME.toString())) {
-                return responseAndGo(Message.USERNAME_INVALID.toString().replace("%s", args[i + 1]), Menu.MAIN);
+                return responseAndGo(Message.PLAYERS_INVALID, Menu.MAIN);
             } else {
                 players.add(args[++i]);
             }
         }
-        if (responseOk(GAME_CONTROLLER.newGame(players.toArray(new String[0])))) {
+        JsonObject response = GAME_CONTROLLER.newGame(players.toArray(new String[0]));
+        String msg = getField(response, "msg", String.class);
+        if (responseOk(response)) {
             System.out.format("New game started with players:\n");
             for (String username : players) {
                 JsonObject civJson = GAME_CONTROLLER.getCivilizationByUsername(username);
@@ -123,7 +125,7 @@ public class MainMenuView extends AbstractMenuView {
             }
             return responseAndGo(null, Menu.GAME);
         } else {
-            return responseAndGo(Message.PLAYERS_INVALID, Menu.MAIN);
+            return responseAndGo(msg, Menu.MAIN);
         }
     }
 }

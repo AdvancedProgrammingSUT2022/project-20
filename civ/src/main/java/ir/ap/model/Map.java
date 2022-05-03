@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class Map {
-    private Tile[][] tiles = new Tile[ 30 ][ 30 ];
+    private Tile[][] tiles = new Tile[ 35 ][ 35 ];
     private ArrayList<Tile> khoshkiHa = new ArrayList<>();
     private int[][] dist = new int[905][905] ;// INF if no path
     private int[][] distNonWeighted = new int[905][905] ;// INF if no path
@@ -157,6 +157,7 @@ public class Map {
     }
 
     public void updateDistances(){
+        // TODO: first reset all distances!!!
         for(int k = 0 ; k < khoshkiHa.size() ; k ++){
             for(int i = 0 ; i < khoshkiHa.size() ; i ++){
                 for(int j = 0 ; j < khoshkiHa.size() ; j ++){
