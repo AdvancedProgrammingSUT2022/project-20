@@ -45,9 +45,18 @@ public enum BuildingType implements Production {
     private int productionYield;
     private int goldYield;
     private int happinessYield;
+    private Technology technologyRequired;
 
     public int getId() {
         return id;
+    }
+
+    public String getName() {
+        return this.name(); 
+    }
+
+    public Technology getTechnologyRequired() {
+        return technologyRequired;
     }
 
     public int getHappinessYield() {

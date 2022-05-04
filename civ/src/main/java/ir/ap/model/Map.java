@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class Map {
-    private static final int MAX_H = 30, MAX_W = 30;
+    public static final int MAX_H = 30, MAX_W = 30;
     private Tile[][] tiles = new Tile[ 35 ][ 35 ];
     private ArrayList<Tile> khoshkiHa = new ArrayList<>();
     private int[][] dist = new int[905][905] ;// INF if no path

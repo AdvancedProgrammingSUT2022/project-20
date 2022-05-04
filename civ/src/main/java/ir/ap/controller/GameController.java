@@ -152,6 +152,14 @@ public class GameController extends AbstractGameController implements JsonRespon
         return civObj;
     }
 
+    public JsonObject serializeProduction(Production production){
+        JsonObject productionObj = new JsonObject();
+        productionObj.addProperty("name", production.getName() );
+        productionObj.addProperty("id", production.getId());
+        productionObj.addProperty("cost", production.getCost());
+        return productionObj;
+    }
+
     public JsonObject getCivilizationByUsername(String username) {
         Civilization civ = civController.getCivilizationByUsername(username);
         if (civ == null)
@@ -518,8 +526,12 @@ public class GameController extends AbstractGameController implements JsonRespon
     }
 
     public JsonObject increaseGold(String username, int amount) {
-        // TODO
-        return JSON_FALSE;
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid civUsername", false);
+        int last_gold = civilization.getGold();
+        civilization.setGold(last_gold+amount);        
+        return messageToJsonObj("gold added successfully", true);
     }
 
     public JsonObject increaseTurn(String username, int amount) {
@@ -528,8 +540,13 @@ public class GameController extends AbstractGameController implements JsonRespon
     }
 
     public JsonObject increaseHappiness(String username, int amount) {
-        // TODO
-        return JSON_FALSE;
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid civUsername", false);
+        int last_happiness = civilization.getHappiness();
+        civilization.setHappiness(last_happiness+amount);        
+        return messageToJsonObj("Happiness added successfully", true);
+        // TODO: Happiness in civilization
     }
 
     public JsonObject mapShow(String username, int tileId) {
@@ -575,13 +592,33 @@ public class GameController extends AbstractGameController implements JsonRespon
     }
 
     public JsonObject cityAddCitizenToWorkOnTile(String username, int tileId) {
-        // TODO
-        return JSON_FALSE;
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid civUsername", false);
+        City city = civilization.getSelectedCity();
+        if ( city == null )
+            return messageToJsonObj("no city selected", false);
+        Tile tile = mapController.getTileById(tileId);
+        if ( tile == null )
+            return messageToJsonObj("invalid tileId", false);
+        if ( cityController.cityAddCitizenToWorkOnTile(city, tile) == false )
+            return messageToJsonObj("something is invalid", false);
+        return messageToJsonObj("citizen successfully added to work on tile", true);
     }
 
     public JsonObject cityRemoveCitizenFromWorkOnTile(String username, int tileId) {
-        // TODO
-        return JSON_FALSE;
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid civUsername", false);
+        City city = civilization.getSelectedCity();
+        if ( city == null )
+            return messageToJsonObj("no city selected", false);
+        Tile tile = mapController.getTileById(tileId);
+        if ( tile == null )
+            return messageToJsonObj("invalid tileId", false);
+        if ( cityController.cityRemoveCitizenFromWork(city, tile) == false )
+            return messageToJsonObj("something is invalid", false);        
+        return messageToJsonObj("citizen successfully removed from working on tile", true);
     }
 
     public JsonObject cityGetOutput(String username) {
@@ -590,52 +627,187 @@ public class GameController extends AbstractGameController implements JsonRespon
     }
 
     public JsonObject cityGetUnemployedCitizens(String username) {
-        // TODO
-        return JSON_FALSE;
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid civUsername", false);
+        City city = civilization.getSelectedCity();
+        if ( city == null )
+            return messageToJsonObj("no city selected", false);
+        if ( city.getPopulation() < city.getWorkingTiles().size() ) // Ehtemalan etefagh neofteh vali serfan baray etminan
+            return messageToJsonObj("something is wrong in the city", false);
+        JsonObject jsonObject =  new JsonObject();
+        jsonObject.addProperty("UnemployedCitizens", city.getPopulation()-city.getWorkingTiles().size());
+        jsonObject.addProperty("ok", true);
+        return jsonObject;
     }
 
     public JsonObject cityGetBuildings(String username) {
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid civUsername", false);
+        City city = civilization.getSelectedCity();
+        if ( city == null )
+            return messageToJsonObj("no city selected", false);        
         // TODO
         return JSON_FALSE;
-    }
-
-    public JsonObject cityPurchaseTile(String username, int tileId, boolean cheat) {
-        // TODO
-        return JSON_FALSE;
+    } 
+ 
+    public JsonObject cityPurchaseTile(String username, int tileId, boolean cheat) { 
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid civUsername", false);
+        City city = civilization.getSelectedCity();
+        if ( city == null )
+            return messageToJsonObj("no city selected", false);        
+        Tile tile = mapController.getTileById(tileId);
+        if ( tile == null )
+            return messageToJsonObj("invalid tileId", false);
+        if( cheat == true ){
+            if( cityController.cityPurchaseTile(city, tile) == false )
+                return messageToJsonObj("something is invalid", false);
+        }
+        else{
+            if( civilization.getGold() < City.GoldsNeedToIncreaseTiles )
+                return messageToJsonObj("the gold isn't enough", false);
+            if( cityController.cityPurchaseTile(city, tile) == false )
+                return messageToJsonObj("something is invalid", false);
+            int last_gold =  civilization.getGold();
+            civilization.setGold(last_gold-City.GoldsNeedToIncreaseTiles);             
+        }
+        return messageToJsonObj("Tile succesfully added to city", true);
     }
 
     public JsonObject cityGetCurrentProduction(String username) {
-        // TODO
-        return JSON_FALSE;
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid civUsername", false);
+        City city = civilization.getSelectedCity();
+        if ( city == null )
+            return messageToJsonObj("no city selected", false);        
+        Production production = city.getCurrentProduction();
+        if( production == null )
+            messageToJsonObj("there is no production", false);
+        JsonObject jsonObject = serializeProduction( production );
+        jsonObject.addProperty("ok", true);        
+        return jsonObject;
     }
 
     public JsonObject citySetCurrentProduction(String username, int prodId, boolean cheat) {
-        // TODO
-        return JSON_FALSE;
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid civUsername", false);
+        City city = civilization.getSelectedCity();
+        if ( city == null )
+            return messageToJsonObj("no city selected", false);        
+        Production[] allProductions = Production.getAllProductions();
+        if( prodId >= allProductions.length )
+            return messageToJsonObj("proId is invalid", false);
+        Production production = allProductions[ prodId ];
+        if( cityController.cityChangeCurrentProduction(city, production, cheat) == false )
+            return messageToJsonObj("something is invalid", false);
+        return messageToJsonObj("current production changed successfully", true);
     }
 
     public JsonObject cityBuyProduction(String username, int prodId, boolean cheat) {
-        // TODO
-        return JSON_FALSE;
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid civUsername", false);
+        City city = civilization.getSelectedCity();
+        if ( city == null )
+            return messageToJsonObj("no city selected", false);        
+        Production[] allProductions = Production.getAllProductions();
+        if ( prodId >= allProductions.length )
+            return messageToJsonObj("proId is invalid", false);
+        Production production = allProductions[ prodId ];
+        if ( cheat == true ){ 
+            if ( cityController.cityChangeCurrentProduction(city, production, true) == false )
+                return messageToJsonObj("something is invalid", false);        
+        }
+        else{
+            if ( production.getCost() > civilization.getGold() )
+                return messageToJsonObj("not enough gold", false);
+            if ( cityController.cityChangeCurrentProduction(city, production, true) == false )
+                return messageToJsonObj("something is invalid", false);
+            int last_gold = civilization.getGold();
+            civilization.setGold(last_gold-production.getCost());        
+        }
+        return messageToJsonObj("production successfully bought", true);
     }
 
     public JsonObject cityGetAllAvailableProductions(String username, boolean cheat) {
-        // TODO
-        return JSON_FALSE;
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid civUsername", false);
+        City city = civilization.getSelectedCity();
+        if ( city == null )
+            return messageToJsonObj("no city selected", false);        
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("Productions", new JsonArray());
+        if( cheat == true ){
+            for (Production production : Production.getAllProductions()){
+                ((JsonArray) jsonObject.get("Productions")).add(serializeProduction(production));
+            }
+        }   
+        else{
+            for (Production production : Production.getAllProductions()){
+                if( civilization.getTechnologyReached(production.getTechnologyRequired()) == true ){
+                    ((JsonArray) jsonObject.get("Productions")).add(serializeProduction(production));
+                }
+            }
+        }
+        jsonObject.addProperty("ok", true);     
+        return jsonObject;
     }
 
     public JsonObject cityGetWorkingTiles(String username) {
-        // TODO
-        return JSON_FALSE;
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid civUsername", false);
+        City city = civilization.getSelectedCity();
+        if ( city == null )
+            return messageToJsonObj("no city selected", false);        
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("Working Tiles", new JsonArray());    
+        for ( Tile tile : city.getWorkingTiles() ){
+            ((JsonArray) jsonObject.get("Working Tiles")).add(serializeTile(tile, civilization));
+        }
+        jsonObject.addProperty("ok", true);
+        return jsonObject;
     }
 
-    public JsonObject cityDestroy(String username, int tileId, boolean cheat) {
-        // TODO
-        return JSON_FALSE;
+    public JsonObject cityDestroy(String username, int tileId) {
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid civUsername", false);
+        Tile tile = mapController.getTileById(tileId);
+        if ( tile == null )
+            return messageToJsonObj("invalid tileId", false);
+        City city = tile.getCity();
+        if ( city == null )
+            return messageToJsonObj("no city selected", false);        
+        if ( city.getCivilization() == civilization )        
+            return messageToJsonObj("city is invalid", false);
+        if ( cityController.cityDestroy(city, civilization) == false )
+            return messageToJsonObj("something is invalid", false);  
+        return messageToJsonObj("city destroyed successfully", true);
+        // TODO: check if city is attacked and get by civilization
     }
 
-    public JsonObject cityAnnex(String username, int tileId, boolean cheat) {
-        // TODO
-        return JSON_FALSE;
+    public JsonObject cityAnnex(String username, int tileId) {
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid civUsername", false);
+        Tile tile = mapController.getTileById(tileId);
+        if ( tile == null )
+            return messageToJsonObj("invalid tileId", false);
+        City city = tile.getCity();
+        if ( city == null )
+            return messageToJsonObj("no city selected", false);
+        if ( city.getCivilization() == civilization )        
+            return messageToJsonObj("city is invalid", false);
+        if ( cityController.cityAnnex(city, civilization) == false )
+            return messageToJsonObj("something is invalid", false);  
+        return messageToJsonObj("city Annexed successfully", true);
+        // TODO: check if city is attacked and get by civilization 
     }
 }

@@ -4,6 +4,7 @@ import ir.ap.model.BuildingType;
 import ir.ap.model.City;
 import ir.ap.model.Civilization;
 import ir.ap.model.GameArea;
+import ir.ap.model.Map;
 import ir.ap.model.Production;
 import ir.ap.model.Tile;
 import ir.ap.model.UnitType;
@@ -25,6 +26,19 @@ public class CityController extends AbstractGameController {
         }
         int extraFood = city.getFoodYield() - 2 * city.getPopulation();
         city.addToPopulation(extraFood / 4.0 / city.getPopulation());
+        if( gameArea.getTurn() % City.TurnsNeedToIncreaseTiles == 0 ){
+            addRandomTileToCity(city);
+        }
+    }
+    
+    public void addRandomTileToCity( City city ){
+        if( city == null )return ;
+        for(int i = 0 ; i < Map.MAX_H ; i ++){
+            for(int j = 0; j < Map.MAX_W ; j ++){
+                Tile tile = gameArea.getMap().getTiles()[ i ][ j ] ;
+                if( cityPurchaseTile(city, tile) == true )return;
+            }
+        }        
     }
 
     public boolean addCityToMap(City city) {
@@ -144,10 +158,13 @@ public class CityController extends AbstractGameController {
         return addTileToTerritoryOfCity(city, tile);
     }
 
-    public boolean cityChangeCurrentProduction(City city, Production production) {
+    public boolean cityChangeCurrentProduction(City city, Production production, boolean cheat) {
         if (city == null) return false;
         city.setProductionSpent(0);
         city.setCurrentProduction(production);
+        if( cheat == true ){
+            cityConstructProduction(city);
+        }
         return true;
     }
 

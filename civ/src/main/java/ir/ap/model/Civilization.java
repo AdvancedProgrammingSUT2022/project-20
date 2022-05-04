@@ -20,7 +20,12 @@ public class Civilization {
     private int scienceSpentForResearch;
 
     private int gold;
-    private int science;
+    private int science;    
+    private int happiness;
+
+    public void setHappiness(int happiness) {
+        this.happiness = happiness;
+    }
 
     int[] accessibleResourceCount;
     boolean[] technologyReached;

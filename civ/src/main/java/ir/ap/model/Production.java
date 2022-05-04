@@ -19,4 +19,8 @@ public abstract interface Production {
     public abstract int getId();
 
     public abstract int getCost();
+
+    public abstract String getName();
+
+    public Technology getTechnologyRequired();
 }

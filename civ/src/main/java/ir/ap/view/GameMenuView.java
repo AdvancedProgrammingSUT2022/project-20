@@ -820,14 +820,14 @@ public class GameMenuView extends AbstractMenuView {
             case "destroy":
                 try {
                     tileId = Integer.parseInt(args[1]);
-                    return GAME_CONTROLLER.cityDestroy(currentPlayer, tileId, cheat);
+                    return GAME_CONTROLLER.cityDestroy(currentPlayer, tileId);
                 } catch (Exception ex) {
                     return null;
                 }
             case "annex":
                 try {
                     tileId = Integer.parseInt(args[1]);
-                    return GAME_CONTROLLER.cityAnnex(currentPlayer, tileId, cheat);
+                    return GAME_CONTROLLER.cityAnnex(currentPlayer, tileId);
                 } catch (Exception ex) {
                     return null;
                 }

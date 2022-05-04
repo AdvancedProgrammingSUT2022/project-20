@@ -118,6 +118,10 @@ public enum UnitType implements Production {
         return cost;
     }
 
+    public String getName(){
+       return this.name();
+    }
+
     public CombatType getCombatType() {
         return combatType;
     }
