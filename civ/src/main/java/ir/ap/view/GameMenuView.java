@@ -350,17 +350,19 @@ public class GameMenuView extends AbstractMenuView {
                 int tileId = tile.get("index").getAsInt();
                 int tileX = tile.get("x").getAsInt();
                 int tileY = tile.get("y").getAsInt();
-                String terrainType = tile.get("terrainType").getAsString();
-                Color tileColor = getTileColorByTerrainType(terrainType);
+                int terrainType = tile.get("terrainTypeId").getAsInt();
+                Color tileColor = getTileColorByTerrainTypeId(terrainType);
                 int upLeftX = 6 * i + (j % 2 == 0 ? 4 : 1);
                 int upLeftY = 8 * j;
                 int centerY = upLeftY + 5;
-                boolean upHasRiver = tile.get("upHasRiver").getAsBoolean();
-                boolean upRightHasRiver = tile.get("upRightHasRiver").getAsBoolean();
-                boolean downRightHasRiver = tile.get("downRightHasRiver").getAsBoolean();
-                boolean downHasRiver = tile.get("downHasRiver").getAsBoolean();
-                boolean downLeftHasRiver = tile.get("downLeftHasRiver").getAsBoolean();
-                boolean upLeftHasRiver = tile.get("upLeftHasRiver").getAsBoolean();
+
+                JsonObject hasRiver = (JsonObject) tile.get("hasRiver");
+                boolean upHasRiver = hasRiver.get("up").getAsBoolean();
+                boolean upRightHasRiver = hasRiver.get("upRight").getAsBoolean();
+                boolean downRightHasRiver = hasRiver.get("downRight").getAsBoolean();
+                boolean downHasRiver = hasRiver.get("down").getAsBoolean();
+                boolean downLeftHasRiver = hasRiver.get("downLeft").getAsBoolean();
+                boolean upLeftHasRiver = hasRiver.get("upLeft").getAsBoolean();
 
                 if (i == 0) {
                     for (int k = 3; k < 8; k++) {
@@ -400,10 +402,10 @@ public class GameMenuView extends AbstractMenuView {
                 int ownerCivId = tile.get("ownerCivId").getAsInt();
                 String ownerCivStr = getCivStrById(ownerCivId);
                 Color ownerCivColor = getCivColorById(ownerCivId);
-                int combatUnitId = ((JsonObject) tile.get("combatUnit")).get("id").getAsInt();
+                int combatUnitId = ((JsonObject) tile.get("combatUnit")).get("typeId").getAsInt();
                 String combatUnitStr = getUnitStrById(combatUnitId);
                 int combatUnitCivId = ((JsonObject) tile.get("combatUnit")).get("civId").getAsInt();
-                int nonCombatUnitId = ((JsonObject) tile.get("nonCombatUnit")).get("id").getAsInt();
+                int nonCombatUnitId = ((JsonObject) tile.get("nonCombatUnit")).get("typeId").getAsInt();
                 String nonCombatUnitStr = getUnitStrById(nonCombatUnitId);
                 int nonCombatUnitCivId = ((JsonObject) tile.get("nonCombatUnit")).get("civId").getAsInt();
 
@@ -432,12 +434,13 @@ public class GameMenuView extends AbstractMenuView {
                 String resourceStr = getResourceStrById(resourceId);
                 int improvementId = tile.get("improvementId").getAsInt();
                 String improvementStr = getImprovementStrById(improvementId);
-                int featureId = tile.get("featureId").getAsInt();
+                int featureId = tile.get("terrainFeatureId").getAsInt();
                 String featureStr = getFeatureStrById(featureId);
 
                 plain[upLeftX + 4][centerY - 2] = getColoredStr(resourceStr, tileColor, Color.FG_WHITE);
                 plain[upLeftX + 4][centerY] = getColoredStr(featureStr, tileColor, Color.FG_WHITE);
                 plain[upLeftX + 4][centerY + 2] = getColoredStr(improvementStr, tileColor, Color.FG_WHITE);
+
             }
         }
     }
@@ -450,23 +453,23 @@ public class GameMenuView extends AbstractMenuView {
         return getColoredStr(getColoredStr(str, color1), color2);
     }
 
-    private Color getTileColorByTerrainType(String terrainType) {
-        switch (terrainType) {
-            case "DESERT":
+    private Color getTileColorByTerrainTypeId(int terrainTypeId) {
+        switch (terrainTypeId) {
+            case 2:
                 return Color.BG_YELLOW;
-            case "GRASSLAND":
+            case 3:
                 return Color.BG_GREEN;
-            case "HILL":
+            case 4:
                 return Color.BG_PURPLE;
-            case "MOUNTAIN":
+            case 5:
                 return Color.BG_BLACK;
-            case "OCEAN":
+            case 6:
                 return Color.BG_BLUE;
-            case "PLAINS":
+            case 7:
                 return Color.BG_CYAN;
-            case "SNOW":
+            case 8:
                 return Color.BG_WHITE;
-            case "TUNDRA":
+            case 9:
                 return Color.BG_RED;
             default:
                 throw new RuntimeException();

@@ -36,6 +36,7 @@ public class Tile {
     private int[] weight;
 
     private int index;
+    private int mapX, mapY;
 
     private TerrainType terrainType;
     private TerrainFeature terrainFeature;
@@ -163,6 +164,22 @@ public class Tile {
         return index;
     }
 
+    public void setMapX(int mapX) {
+        this.mapX = mapX;
+    }
+
+    public int getMapX() {
+        return this.mapX;
+    }
+
+    public void setMapY(int mapY) {
+        this.mapY = mapY;
+    }
+
+    public int getMapY() {
+        return this.mapY;
+    }
+
     public void setTerrainType(TerrainType terrainType) {
         this.terrainType = terrainType;
     }
@@ -203,6 +220,14 @@ public class Tile {
 
     public ArrayList<Resource> getResources() {
         return resources;
+    }
+
+    public Resource getResourceVisibleByCivilization(Civilization civ) {
+        for (Resource rsrc : this.resources) {
+            if (civ.getTechnologyReached(rsrc.getTechnologyRequired()))
+                return rsrc;
+        }
+        return null;
     }
 
     public ArrayList<Resource> getImprovedResources() {

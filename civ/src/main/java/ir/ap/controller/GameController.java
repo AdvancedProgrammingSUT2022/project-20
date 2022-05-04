@@ -7,6 +7,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import ir.ap.model.*;
+import ir.ap.model.Tile.TileKnowledge;
 
 public class GameController extends AbstractGameController implements JsonResponsor, AutoCloseable {
 
@@ -76,7 +77,47 @@ public class GameController extends AbstractGameController implements JsonRespon
     }
 
     public JsonObject serializeTile(Tile tile, Civilization civ) {
-        // TODO
+        if (tile == null || civ == null)
+            return null;
+        JsonObject tileJsonObj = new JsonObject();
+        tileJsonObj.addProperty("index", tile.getIndex());
+        tileJsonObj.addProperty("x", tile.getMapX());
+        tileJsonObj.addProperty("y", tile.getMapY());;
+        if (gameArea.getTileKnowledgeByCivilization(civ, tile) != TileKnowledge.FOG_OF_WAR) {
+            tileJsonObj.addProperty("terrainTypeId", tile.getTerrainType().name());
+            if (tile.getTerrainFeature() != null) {
+                tileJsonObj.addProperty("terrainFeatureId", tile.getTerrainFeature().getId());
+            }
+            JsonObject hasRiver = new JsonObject();
+            hasRiver.addProperty("up", tile.getHasRiverOnSide(Direction.UP));
+            hasRiver.addProperty("upRight", tile.getHasRiverOnSide(Direction.UP_RIGHT));
+            hasRiver.addProperty("downRight", tile.getHasRiverOnSide(Direction.DOWN_RIGHT));
+            hasRiver.addProperty("down", tile.getHasRiverOnSide(Direction.DOWN));
+            hasRiver.addProperty("downLeft", tile.getHasRiverOnSide(Direction.DOWN_LEFT));
+            hasRiver.addProperty("upLeft", tile.getHasRiverOnSide(Direction.UP_LEFT));
+            tileJsonObj.add("hasRiver", hasRiver);
+        }
+        if (gameArea.getTileKnowledgeByCivilization(civ, tile) == TileKnowledge.VISIBLE) {
+            if (tile.getImprovement() != null) {
+                tileJsonObj.addProperty("improvementId", tile.getImprovement().getId());
+            }
+            if (tile.getNonCombatUnit() != null) {
+                JsonObject nonCombatUnit = new JsonObject();
+                nonCombatUnit.addProperty("unitTypeId", tile.getNonCombatUnit().getUnitType().getId());
+                nonCombatUnit.addProperty("civId", tile.getNonCombatUnit().getCivilization().getIndex());
+                tileJsonObj.add("nonCombatUnit", nonCombatUnit);
+            }
+            if (tile.getCombatUnit() != null) {
+                JsonObject combatUnit = new JsonObject();
+                combatUnit.addProperty("unitTypeId", tile.getCombatUnit().getUnitType().getId());
+                combatUnit.addProperty("civId", tile.getCombatUnit().getCivilization().getIndex());
+                tileJsonObj.add("combatUnit", combatUnit);
+            }
+            if (tile.getOwnerCity() != null) {
+                tileJsonObj.addProperty("ownerCivId", tile.getOwnerCity().getCivilization().getIndex());
+            }
+        }
+        return tileJsonObj;
     }
 
     public JsonObject serializeCity(City city, Civilization civ) {
