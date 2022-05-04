@@ -330,6 +330,12 @@ public class Tile {
                 (terrainFeature != null ? terrainFeature.getFoodYield() : 0) +
                 (improvement != null ? improvement.getFoodYield() : 0) +
                 (building != null ? building.getFoodYield() : 0);
+        for (int dirId = 0; dirId < 6; dirId++) {
+            Direction dir = Direction.getDirectionById(dirId);
+            if (getHasRiverOnSide(dir)) {
+                foodYield += TerrainFeature.RIVERS.getFoodYield();
+            }
+        }
         for (Resource rsrc : resources) {
             foodYield += rsrc.getFoodYield();
         }
@@ -341,6 +347,12 @@ public class Tile {
                 (terrainFeature != null ? terrainFeature.getGoldYield() : 0) +
                 (improvement != null ? improvement.getGoldYield() : 0) +
                 (building != null ? building.getGoldYield() : 0);
+        for (int dirId = 0; dirId < 6; dirId++) {
+            Direction dir = Direction.getDirectionById(dirId);
+            if (getHasRiverOnSide(dir)) {
+                goldYield += TerrainFeature.RIVERS.getGoldYield();
+            }
+        }
         for (Resource rsrc : resources) {
             goldYield += rsrc.getGoldYield();
         }
@@ -352,6 +364,12 @@ public class Tile {
                 (terrainFeature != null ? terrainFeature.getProductionYield() : 0) +
                 (improvement != null ? improvement.getProductionYield() : 0) +
                 (building != null ? building.getProductionYield() : 0);
+        for (int dirId = 0; dirId < 6; dirId++) {
+            Direction dir = Direction.getDirectionById(dirId);
+            if (getHasRiverOnSide(dir)) {
+                productionYield += TerrainFeature.RIVERS.getProductionYield();
+            }
+        }
         for (Resource rsrc : resources) {
             productionYield += rsrc.getProductionYield();
         }

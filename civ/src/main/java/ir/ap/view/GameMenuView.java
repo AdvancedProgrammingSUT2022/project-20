@@ -2,6 +2,7 @@ package ir.ap.view;
 
 import java.util.regex.Matcher;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 public class GameMenuView extends AbstractMenuView {
@@ -16,7 +17,9 @@ public class GameMenuView extends AbstractMenuView {
         UNIT_ACTION("unit (?<args>.*)"),
         CITY_ACTION("city (?<args>.*)"),
         NEXT_TURN("next turn"),
-        INCREASE("increase (?<args>.*)");
+        INCREASE("increase (?<args>.*)"),
+        SHOW_MAP("map show (?<nameOrId>\\S+)"),
+        MOVE_MAP("map move (?<dir>R|L|U|D)(?<amount> \\d*)");
 
         private final String regex;
 
@@ -66,12 +69,48 @@ public class GameMenuView extends AbstractMenuView {
         }
     }
 
+    public enum Color {
+        ANSI_RESET("\u001B[0m"),
+
+        BG_BLACK("\u001B[40m"),
+        BG_RED("\u001B[41m"),
+        BG_GREEN("\u001B[42m"),
+        BG_YELLOW("\u001B[43m"),
+        BG_BLUE("\u001B[44m"),
+        BG_PURPLE("\u001B[45m"),
+        BG_CYAN("\u001B[46m"),
+        BG_WHITE("\u001B[47m"),
+
+        FG_BLACK("\u001B[30m"),
+        FG_RED("\u001B[31m"),
+        FG_GREEN("\u001B[32m"),
+        FG_YELLOW("\u001B[33m"),
+        FG_BLUE("\u001B[34m"),
+        FG_PURPLE("\u001B[35m"),
+        FG_CYAN("\u001B[36m"),
+        FG_WHITE("\u001B[37m");
+
+        String str;
+
+        Color(String str) {
+            this.str = str;
+        }
+
+        @Override
+        public String toString() {
+            return str;
+        }
+    }
+
     private String[] usersInGame;
     private String[] civsInGame;
     private int currentTurnId;
     private String currentPlayer;
     private String currentCiv;
-    // TODO: cheat
+
+    private static final int MAX_H = 100, MAX_W = 100;
+    private static final int PLAIN_H = 25, PLAIN_W = 50;
+    private String[][] plain = new String[MAX_H][MAX_W];
 
     public Enum<?>[] getCommands() {
         return Command.values();
@@ -182,12 +221,52 @@ public class GameMenuView extends AbstractMenuView {
     }
 
     public Menu showMap(Matcher matcher) {
-        // TODO
+        String nameOrId = matcher.group("nameOrId");
+        int tileId = -1;
+        String cityName = null;
+        if (nameOrId.matches("\\d+")) {
+            tileId = Integer.parseInt(nameOrId);
+        } else {
+            cityName = nameOrId;
+        }
+        JsonObject response;
+        if (cityName != null) {
+            response = GAME_CONTROLLER.mapShow(currentPlayer, cityName);
+        } else {
+            response = GAME_CONTROLLER.mapShow(currentPlayer, tileId);
+        }
+        writeMap(response);
         return responseAndGo(null, Menu.GAME);
     }
 
     public Menu moveMap(Matcher matcher) {
-        // TODO
+        String dir = matcher.group("dir");
+        int amount = 1;
+        try {
+            amount = Integer.parseInt(matcher.group("amount").trim());
+        } catch (Exception ex) {
+            amount = 1;
+        }
+        int dirId;
+        switch (dir) {
+            case "U":
+                dirId = 0;
+                break;
+            case "R":
+                dirId = 1;
+                break;
+            case "D":
+                dirId = 2;
+                break;
+            case "L":
+                dirId = 3;
+                break;
+            default:
+                return responseAndGo(Message.E500, Menu.GAME);
+        }
+        JsonObject response = GAME_CONTROLLER.mapMove(currentPlayer, dirId, amount);
+        writeMap(response);
+        printMap();
         return responseAndGo(null, Menu.GAME);
     }
 
@@ -241,7 +320,218 @@ public class GameMenuView extends AbstractMenuView {
         return responseAndGo(null, Menu.GAME);
     }
 
-    public JsonObject getInfoResponse(String arg) {
+    private void resetPlain() {
+        for (int i = 0; i < MAX_H; i++) {
+            for (int j = 0; j < MAX_W; j++) {
+                plain[i][j] = "";
+            }
+        }
+    }
+
+    private void printMap() {
+        System.out.println("========MAP=============================");
+        for (int i = 0; i < PLAIN_H; i++) {
+            for (int j = 0; j < PLAIN_W; j++) {
+                System.out.print(plain[i][j]);
+            }
+            System.out.println();
+        }
+        System.out.println("========================================");
+    }
+
+    private void writeMap(JsonObject response) {
+        resetPlain();
+        JsonArray map = (JsonArray) response.get("map");
+        int width = response.get("width").getAsInt();
+        int height = response.get("height").getAsInt();
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                JsonObject tile = (JsonObject) ((JsonArray) map.get(i)).get(j);
+                int tileId = tile.get("index").getAsInt();
+                int tileX = tile.get("x").getAsInt();
+                int tileY = tile.get("y").getAsInt();
+                String terrainType = tile.get("terrainType").getAsString();
+                Color tileColor = getTileColorByTerrainType(terrainType);
+                int upLeftX = 6 * i + (j % 2 == 0 ? 4 : 1);
+                int upLeftY = 8 * j;
+                int centerY = upLeftY + 5;
+                boolean upHasRiver = tile.get("upHasRiver").getAsBoolean();
+                boolean upRightHasRiver = tile.get("upRightHasRiver").getAsBoolean();
+                boolean downRightHasRiver = tile.get("downRightHasRiver").getAsBoolean();
+                boolean downHasRiver = tile.get("downHasRiver").getAsBoolean();
+                boolean downLeftHasRiver = tile.get("downLeftHasRiver").getAsBoolean();
+                boolean upLeftHasRiver = tile.get("upLeftHasRiver").getAsBoolean();
+
+                if (i == 0) {
+                    for (int k = 3; k < 8; k++) {
+                        plain[upLeftX][upLeftY + k] = (upHasRiver
+                                ? getColoredStr("-", tileColor)
+                                : getColoredStr("-", Color.BG_BLUE, Color.FG_WHITE));
+                    }
+                }
+
+                for (int k = 3; k < 8; k++) {
+                    plain[upLeftX + 5][upLeftY + k] = (downHasRiver
+                            ? getColoredStr("_", tileColor)
+                            : getColoredStr("_", Color.BG_BLUE, Color.FG_WHITE));
+                }
+
+                for (int x = upLeftX; x < upLeftX + 3; x++) {
+                    int diffX = x - upLeftX;
+                    for (int y = centerY - 2 - diffX; y <= centerY + 2 + diffX; y++) {
+                        plain[x][y] = getColoredStr(" ", tileColor);
+                    }
+                    plain[x][centerY - 3 - diffX] = (upLeftHasRiver ? "/"
+                            : getColoredStr("/", Color.BG_BLUE, Color.FG_WHITE));
+                    plain[x][centerY + 3 + diffX] = (upRightHasRiver ? "\\"
+                            : getColoredStr("\\", Color.BG_BLUE, Color.FG_WHITE));
+                }
+                for (int x = upLeftX + 3; x < upLeftX + 6; x++) {
+                    int diffX = 5 - (x - upLeftX);
+                    for (int y = centerY - 2 - diffX; y <= centerY + 2 + diffX; y++) {
+                        plain[x][y] = getColoredStr(" ", tileColor);
+                    }
+                    plain[x][centerY - 3 - diffX] = (downLeftHasRiver ? "\\"
+                            : getColoredStr("\\", Color.BG_BLUE, Color.FG_WHITE));
+                    plain[x][centerY + 3 + diffX] = (downRightHasRiver ? "/"
+                            : getColoredStr("/", Color.BG_BLUE, Color.FG_WHITE));
+                }
+
+                int ownerCivId = tile.get("ownerCivId").getAsInt();
+                String ownerCivStr = getCivStrById(ownerCivId);
+                Color ownerCivColor = getCivColorById(ownerCivId);
+                int combatUnitId = ((JsonObject) tile.get("combatUnit")).get("id").getAsInt();
+                String combatUnitStr = getUnitStrById(combatUnitId);
+                int combatUnitCivId = ((JsonObject) tile.get("combatUnit")).get("civId").getAsInt();
+                int nonCombatUnitId = ((JsonObject) tile.get("nonCombatUnit")).get("id").getAsInt();
+                String nonCombatUnitStr = getUnitStrById(nonCombatUnitId);
+                int nonCombatUnitCivId = ((JsonObject) tile.get("nonCombatUnit")).get("civId").getAsInt();
+
+                plain[upLeftX][centerY - 1] = getColoredStr(Integer.toString(tileId / 100), tileColor, Color.FG_WHITE);
+                plain[upLeftX][centerY] = getColoredStr(Integer.toString((tileId % 100) / 10), tileColor,
+                        Color.FG_WHITE);
+                plain[upLeftX][centerY + 1] = getColoredStr(Integer.toString(tileId % 10), tileColor, Color.FG_WHITE);
+                plain[upLeftX + 1][centerY] = getColoredStr(ownerCivStr, tileColor, ownerCivColor);
+
+                plain[upLeftX + 2][centerY - 2] = getColoredStr(Integer.toString(tileX / 10), tileColor,
+                        Color.FG_WHITE);
+                plain[upLeftX + 2][centerY - 1] = getColoredStr(Integer.toString(tileX % 10), tileColor,
+                        Color.FG_WHITE);
+                plain[upLeftX + 2][centerY] = getColoredStr(",", tileColor, Color.FG_WHITE);
+                plain[upLeftX + 2][centerY + 1] = getColoredStr(Integer.toString(tileY / 10), tileColor,
+                        Color.FG_WHITE);
+                plain[upLeftX + 2][centerY + 2] = getColoredStr(Integer.toString(tileY % 10), tileColor,
+                        Color.FG_WHITE);
+
+                plain[upLeftX + 3][centerY - 1] = getColoredStr(nonCombatUnitStr, tileColor,
+                        getCivColorById(nonCombatUnitCivId));
+                plain[upLeftX + 3][centerY + 1] = getColoredStr(combatUnitStr, tileColor,
+                        getCivColorById(combatUnitCivId));
+
+                int resourceId = tile.get("resourceId").getAsInt();
+                String resourceStr = getResourceStrById(resourceId);
+                int improvementId = tile.get("improvementId").getAsInt();
+                String improvementStr = getImprovementStrById(improvementId);
+                int featureId = tile.get("featureId").getAsInt();
+                String featureStr = getFeatureStrById(featureId);
+
+                plain[upLeftX + 4][centerY - 2] = getColoredStr(resourceStr, tileColor, Color.FG_WHITE);
+                plain[upLeftX + 4][centerY] = getColoredStr(featureStr, tileColor, Color.FG_WHITE);
+                plain[upLeftX + 4][centerY + 2] = getColoredStr(improvementStr, tileColor, Color.FG_WHITE);
+            }
+        }
+    }
+
+    private String getColoredStr(String str, Color color) {
+        return color.toString() + str + Color.ANSI_RESET.toString();
+    }
+
+    private String getColoredStr(String str, Color color1, Color color2) {
+        return getColoredStr(getColoredStr(str, color1), color2);
+    }
+
+    private Color getTileColorByTerrainType(String terrainType) {
+        switch (terrainType) {
+            case "DESERT":
+                return Color.BG_YELLOW;
+            case "GRASSLAND":
+                return Color.BG_GREEN;
+            case "HILL":
+                return Color.BG_PURPLE;
+            case "MOUNTAIN":
+                return Color.BG_BLACK;
+            case "OCEAN":
+                return Color.BG_BLUE;
+            case "PLAINS":
+                return Color.BG_CYAN;
+            case "SNOW":
+                return Color.BG_WHITE;
+            case "TUNDRA":
+                return Color.BG_RED;
+            default:
+                throw new RuntimeException();
+        }
+    }
+
+    private String getUnitStrById(int unitId) {
+        return Character.toString((char) ((int) 'A' + unitId));
+    }
+
+    private String getResourceStrById(int rsrcId) {
+        return Character.toString((char) ((int) 'A' + rsrcId));
+    }
+
+    private String getImprovementStrById(int imprId) {
+        return Character.toString((char) ((int) 'A' + imprId));
+    }
+
+    private String getFeatureStrById(int featureId) {
+        switch (featureId) {
+            case 3:
+                return "P";
+            case 4:
+                return "J";
+            case 7:
+                return "I";
+            case 8:
+                return "F";
+            case 11:
+                return "M";
+            case 13:
+                return "O";
+            default:
+                throw new RuntimeException();
+        }
+    }
+
+    private Color getCivColorById(int civId) {
+        switch (civId) {
+            case 0:
+                return Color.FG_BLUE;
+            case 1:
+                return Color.FG_RED;
+            case 2:
+                return Color.FG_PURPLE;
+            case 3:
+                return Color.FG_YELLOW;
+            case 4:
+                return Color.FG_BLACK;
+            case 5:
+                return Color.FG_CYAN;
+            case 6:
+                return Color.FG_WHITE;
+            case 7:
+                return Color.FG_GREEN;
+            default:
+                return Color.FG_BLACK;
+        }
+    }
+
+    private String getCivStrById(int civId) {
+        return Character.toString((char) ((int) 'A' + civId));
+    }
+
+    private JsonObject getInfoResponse(String arg) {
         switch (arg) {
             case "research":
                 return GAME_CONTROLLER.infoResearch(currentPlayer);
@@ -270,7 +560,7 @@ public class GameMenuView extends AbstractMenuView {
         }
     }
 
-    public JsonObject getUnitActionResponse(String[] args, boolean cheat) {
+    private JsonObject getUnitActionResponse(String[] args, boolean cheat) {
         int tileId;
         switch (args[0]) {
             case "moveto":
@@ -337,7 +627,7 @@ public class GameMenuView extends AbstractMenuView {
         }
     }
 
-    public JsonObject getUnitBuildResponse(String[] args, boolean cheat) {
+    private JsonObject getUnitBuildResponse(String[] args, boolean cheat) {
         if (args.length <= 1 || !args[0].equals("build"))
             return null;
         switch (args[1]) {
@@ -368,7 +658,7 @@ public class GameMenuView extends AbstractMenuView {
         }
     }
 
-    public JsonObject getCityActionResponse(String[] args, boolean cheat) {
+    private JsonObject getCityActionResponse(String[] args, boolean cheat) {
         int tileId;
         switch (args[0]) {
             case "work":

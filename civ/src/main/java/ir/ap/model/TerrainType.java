@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public enum TerrainType {
 
-    COAST(1,1,0,1,0,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.ICE})),new ArrayList<>(Arrays.asList(new Resource[]{}))),
+    // COAST(1,1,0,1,0,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.ICE})),new ArrayList<>(Arrays.asList(new Resource[]{}))),
     DESERT(2,0,0,0,-33,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.OASIS,TerrainFeature.FLOOD_PLAINS})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.IRON,Resource.GOLD,Resource.SILVER,Resource.GEMS,Resource.MARBLE,Resource.COTTON,Resource.INCENSE,Resource.SHEEP}))),
     GRASSLAND(3,2,0,0,-33,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.FOREST,TerrainFeature.MARSH})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.IRON,Resource.HORSES,Resource.COAL,Resource.CATTLE,Resource.GOLD,Resource.GEMS,Resource.MARBLE,Resource.COTTON,Resource.SHEEP}))),
     HILL(4,0,2,0,25,2,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.JUNGLE,TerrainFeature.FOREST})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.IRON,Resource.COAL,Resource.DEER,Resource.GOLD,Resource.SILVER,Resource.GEMS,Resource.MARBLE,Resource.SHEEP}))),
@@ -17,22 +17,23 @@ public enum TerrainType {
     TUNDRA(9,1,0,0,-33,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.FOREST})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.IRON,Resource.HORSES,Resource.DEER,Resource.SILVER,Resource.GEMS,Resource.MARBLE,Resource.FURS})));
 
     public enum TerrainFeature{
-        BARRINGER_CRATER(1,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
-        FALLOUT(2,3, -3, -3, -33, 2,new ArrayList<>(Arrays.asList(new Resource[]{}))),
+        // BARRINGER_CRATER(1,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
+        // FALLOUT(2,3, -3, -3, -33, 2,new ArrayList<>(Arrays.asList(new Resource[]{}))),
         FLOOD_PLAINS(3,2,0,0,-33,1,new ArrayList<>(Arrays.asList(new Resource[]{Resource.WHEAT,Resource.SUGAR}))),
         JUNGLE(4,1,1,0,25,2,new ArrayList<>(Arrays.asList(new Resource[]{Resource.DEER,Resource.FURS,Resource.DYES,Resource.SILK}))),
-        GRAND_MESA(5,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
-        GREAT_BARRIER_REEF(6,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
+        // GRAND_MESA(5,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
+        // GREAT_BARRIER_REEF(6,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
         ICE(7,0,0,0,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
         FOREST(8,1,-1,0,25,2,new ArrayList<>(Arrays.asList(new Resource[]{Resource.BANANAS,Resource.GEMS,Resource.DYES}))),
-        KRAKATOA(9,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
-        LAKES(10,2,0,1,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
+        // KRAKATOA(9,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
+        //LAKES(10,2,0,1,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
         MARSH(11,-1,0,0,-33,2,new ArrayList<>(Arrays.asList(new Resource[]{Resource.SUGAR}))),
-        MT_FUJI(12,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
+        // MT_FUJI(12,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
         OASIS(13,3,0,1,-33,1,new ArrayList<>(Arrays.asList(new Resource[]{}))),
-        OLD_FAITHFULL(14,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
+        //OLD_FAITHFULL(14,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{}))),
         RIVERS(15,0,0,1,0,1,new ArrayList<>(Arrays.asList(new Resource[]{}))),
-        ROCK_OF_GIBRALTAR(16,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{})));
+        //ROCK_OF_GIBRALTAR(16,0,2,3,0,1000000000,new ArrayList<>(Arrays.asList(new Resource[]{})))
+        ;
 
         private int id;
         private int foodYield;
@@ -155,6 +156,6 @@ public enum TerrainType {
     }
 
     public boolean isSourceOfWater() {
-        return this == COAST || this == OCEAN;
+        return this == OCEAN;
     }
 }

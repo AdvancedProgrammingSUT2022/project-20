@@ -75,6 +75,10 @@ public class GameController extends AbstractGameController implements JsonRespon
         }
     }
 
+    public JsonObject serializeTile(Tile tile, Civilization civ) {
+        // TODO
+    }
+
     public JsonObject serializeCity(City city, Civilization civ) {
         if (!mapController.civCanSee(civ, city))
             return null;
@@ -138,8 +142,8 @@ public class GameController extends AbstractGameController implements JsonRespon
             Civilization curCiv = new Civilization(cnt++, curUser.getNickname() + ".civ", null);
             gameArea.addUser(curUser, curCiv);
         }
-        if (gameArea.getUserCount() < 2)
-            return messageToJsonObj("at least 2 players should be in game", false);
+        if (gameArea.getUserCount() < 2 || gameArea.getUserCount() > 8)
+            return messageToJsonObj("at least 2 players and at most 8 should be in game", false);
         civController = new CivilizationController(gameArea);
         mapController = new MapController(gameArea);
         unitController = new UnitController(gameArea);
@@ -492,10 +496,11 @@ public class GameController extends AbstractGameController implements JsonRespon
 
     public JsonObject mapShow(String username, String cityName) {
         // TODO
-        return JSON_FALSE;
+        // return JSON_FALSE;
     }
 
     public JsonObject mapMove(String username, int dirId, int count) {
+        // U:0,R:1,D:2,L:3
         // TODO
         return JSON_FALSE;
     }
