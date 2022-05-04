@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class Map {
+    private static final int MAX_H = 30, MAX_W = 30;
     private Tile[][] tiles = new Tile[ 35 ][ 35 ];
     private ArrayList<Tile> khoshkiHa = new ArrayList<>();
     private int[][] dist = new int[905][905] ;// INF if no path
@@ -138,6 +139,12 @@ public class Map {
     public Tile getTileByIndex( int index ){
         if( index < 0 || index > 900 )return null;
         return tiles[ index/30 ][ index%30 ];
+    }
+
+    public Tile getTileByIndices(int x, int y) {
+        if (x < 0 || x > MAX_H || y < 0 || y > MAX_W)
+            return null;
+        return tiles[x][y];
     }
 
     public void updateNonWeightedDistances(){

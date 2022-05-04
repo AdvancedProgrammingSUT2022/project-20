@@ -33,6 +33,14 @@ public class MapController extends AbstractGameController {
         }
     }
 
+    public Tile getTileById(int tileId) {
+        return gameArea.getTileById(tileId);
+    }
+
+    public Tile getTileByIndices(int x, int y) {
+        return gameArea.getTileByIndices(x, y);
+    }
+
     public boolean civCanSee(Civilization civ, Tile tile) {
         return gameArea.getTileKnowledgeByCivilization(civ, tile) != TileKnowledge.FOG_OF_WAR;
     }

@@ -31,6 +31,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         USER_NOT_LOGGED_IN("user is not logged in"),
         USER_NOT_ON_GAME("user is not on this game"),
 
+        INVALID_REQUEST("request is invalid"),
         E500("Server error");
 
         private final String msg;
@@ -82,7 +83,8 @@ public class GameController extends AbstractGameController implements JsonRespon
         JsonObject tileJsonObj = new JsonObject();
         tileJsonObj.addProperty("index", tile.getIndex());
         tileJsonObj.addProperty("x", tile.getMapX());
-        tileJsonObj.addProperty("y", tile.getMapY());;
+        tileJsonObj.addProperty("y", tile.getMapY());
+        tileJsonObj.addProperty("knowledge", gameArea.getTileKnowledgeByCivilization(civ, tile).name());
         if (gameArea.getTileKnowledgeByCivilization(civ, tile) != TileKnowledge.FOG_OF_WAR) {
             tileJsonObj.addProperty("terrainTypeId", tile.getTerrainType().name());
             if (tile.getTerrainFeature() != null) {
@@ -531,13 +533,35 @@ public class GameController extends AbstractGameController implements JsonRespon
     }
 
     public JsonObject mapShow(String username, int tileId) {
-        // TODO
-        return JSON_FALSE;
+        Civilization civ = civController.getCivilizationByUsername(username);
+        if (civ == null)
+            return messageToJsonObj(Message.USER_NOT_ON_GAME, false);
+        Tile tile = mapController.getTileById(tileId);
+        if (tile == null)
+            return messageToJsonObj(Message.INVALID_REQUEST, false);
+        JsonObject response = new JsonObject();
+        int height = 7, width = 9;
+        response.addProperty("height", height);
+        response.addProperty("width", width);
+        response.add("map", new JsonArray());
+        int tileX = tile.getMapX(), tileY = tile.getMapY();
+        int upLeftX = Math.max(0, tileX - height / 2);
+        int upLeftY = Math.max(0, tileY - width / 2);
+        for (int i = upLeftX; i < upLeftX + height; i++) {
+            JsonArray row = new JsonArray();
+            for (int j = upLeftY; j < upLeftY + width; j++) {
+                row.add(serializeTile(mapController.getTileByIndices(i, j), civ));
+            }
+            ((JsonArray) response.get("map")).add(row);
+        }
+        return setOk(response, true);
     }
 
     public JsonObject mapShow(String username, String cityName) {
-        // TODO
-        // return JSON_FALSE;
+        City city = City.getCityByName(cityName);
+        if (city == null || city.getTile() == null)
+            return null;
+        return mapShow(username, city.getTile().getIndex());
     }
 
     public JsonObject mapMove(String username, int dirId, int count) {

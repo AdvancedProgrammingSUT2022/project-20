@@ -96,6 +96,47 @@ public class GameMenuView extends AbstractMenuView {
             this.str = str;
         }
 
+        public Color getCompatibleColor() {
+            switch (this) {
+                case BG_BLACK:
+                    return FG_WHITE;
+                case BG_BLUE:
+                    return FG_WHITE;
+                case BG_CYAN:
+                    return FG_WHITE;
+                case BG_GREEN:
+                    return FG_WHITE;
+                case BG_PURPLE:
+                    return FG_WHITE;
+                case BG_RED:
+                    return FG_WHITE;
+                case BG_YELLOW:
+                    return FG_BLACK;
+                case BG_WHITE:
+                    return FG_BLACK;
+
+                case FG_BLACK:
+                    return BG_WHITE;
+                case FG_BLUE:
+                    return BG_WHITE;
+                case FG_CYAN:
+                    return BG_WHITE;
+                case FG_GREEN:
+                    return BG_WHITE;
+                case FG_PURPLE:
+                    return BG_WHITE;
+                case FG_RED:
+                    return BG_WHITE;
+                case FG_YELLOW:
+                    return BG_BLACK;
+                case FG_WHITE:
+                    return BG_BLACK;
+
+                default:
+                    return ANSI_RESET;
+            }
+        }
+
         @Override
         public String toString() {
             return str;
@@ -109,7 +150,7 @@ public class GameMenuView extends AbstractMenuView {
     private String currentCiv;
 
     private static final int MAX_H = 100, MAX_W = 100;
-    private static final int PLAIN_H = 25, PLAIN_W = 50;
+    private static final int PLAIN_H = 50, PLAIN_W = 75;
     private String[][] plain = new String[MAX_H][MAX_W];
 
     public Enum<?>[] getCommands() {
@@ -235,7 +276,11 @@ public class GameMenuView extends AbstractMenuView {
         } else {
             response = GAME_CONTROLLER.mapShow(currentPlayer, tileId);
         }
-        writeMap(response);
+        if (responseOk(response)) {
+            writeMap(response);
+            printMap();
+        } else
+            return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         return responseAndGo(null, Menu.GAME);
     }
 
@@ -262,11 +307,14 @@ public class GameMenuView extends AbstractMenuView {
                 dirId = 3;
                 break;
             default:
-                return responseAndGo(Message.E500, Menu.GAME);
+                return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         }
         JsonObject response = GAME_CONTROLLER.mapMove(currentPlayer, dirId, amount);
-        writeMap(response);
-        printMap();
+        if (responseOk(response)) {
+            writeMap(response);
+            printMap();
+        } else
+            return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         return responseAndGo(null, Menu.GAME);
     }
 
@@ -323,7 +371,7 @@ public class GameMenuView extends AbstractMenuView {
     private void resetPlain() {
         for (int i = 0; i < MAX_H; i++) {
             for (int j = 0; j < MAX_W; j++) {
-                plain[i][j] = "";
+                plain[i][j] = " ";
             }
         }
     }
@@ -350,32 +398,33 @@ public class GameMenuView extends AbstractMenuView {
                 int tileId = tile.get("index").getAsInt();
                 int tileX = tile.get("x").getAsInt();
                 int tileY = tile.get("y").getAsInt();
-                int terrainType = tile.get("terrainTypeId").getAsInt();
+                String knowledge = tile.get("knowledge").getAsString();
+
+                boolean fog = knowledge.equals("FOG_OF_WAR");
+                boolean hasFeature = tile.get("terrainFeatureId") != null;
+                int terrainType = -1;
+                if (!fog)
+                    terrainType = tile.get("terrainTypeId").getAsInt();
                 Color tileColor = getTileColorByTerrainTypeId(terrainType);
+
                 int upLeftX = 6 * i + (j % 2 == 0 ? 4 : 1);
                 int upLeftY = 8 * j;
                 int centerY = upLeftY + 5;
 
                 JsonObject hasRiver = (JsonObject) tile.get("hasRiver");
-                boolean upHasRiver = hasRiver.get("up").getAsBoolean();
-                boolean upRightHasRiver = hasRiver.get("upRight").getAsBoolean();
-                boolean downRightHasRiver = hasRiver.get("downRight").getAsBoolean();
-                boolean downHasRiver = hasRiver.get("down").getAsBoolean();
-                boolean downLeftHasRiver = hasRiver.get("downLeft").getAsBoolean();
-                boolean upLeftHasRiver = hasRiver.get("upLeft").getAsBoolean();
-
-                if (i == 0) {
-                    for (int k = 3; k < 8; k++) {
-                        plain[upLeftX][upLeftY + k] = (upHasRiver
-                                ? getColoredStr("-", tileColor)
-                                : getColoredStr("-", Color.BG_BLUE, Color.FG_WHITE));
-                    }
-                }
-
-                for (int k = 3; k < 8; k++) {
-                    plain[upLeftX + 5][upLeftY + k] = (downHasRiver
-                            ? getColoredStr("_", tileColor)
-                            : getColoredStr("_", Color.BG_BLUE, Color.FG_WHITE));
+                boolean upHasRiver = false;
+                boolean upRightHasRiver = false;
+                boolean downRightHasRiver = false;
+                boolean downHasRiver = false;
+                boolean downLeftHasRiver = false;
+                boolean upLeftHasRiver = false;
+                if (hasRiver != null) {
+                    upHasRiver = hasRiver.get("up").getAsBoolean();
+                    upRightHasRiver = hasRiver.get("upRight").getAsBoolean();
+                    downRightHasRiver = hasRiver.get("downRight").getAsBoolean();
+                    downHasRiver = hasRiver.get("down").getAsBoolean();
+                    downLeftHasRiver = hasRiver.get("downLeft").getAsBoolean();
+                    upLeftHasRiver = hasRiver.get("upLeft").getAsBoolean();
                 }
 
                 for (int x = upLeftX; x < upLeftX + 3; x++) {
@@ -383,9 +432,11 @@ public class GameMenuView extends AbstractMenuView {
                     for (int y = centerY - 2 - diffX; y <= centerY + 2 + diffX; y++) {
                         plain[x][y] = getColoredStr(" ", tileColor);
                     }
-                    plain[x][centerY - 3 - diffX] = (upLeftHasRiver ? "/"
+                    plain[x][centerY - 3 - diffX] = (!upLeftHasRiver
+                            ? getColoredStr("/", Color.BG_BLACK, Color.FG_WHITE)
                             : getColoredStr("/", Color.BG_BLUE, Color.FG_WHITE));
-                    plain[x][centerY + 3 + diffX] = (upRightHasRiver ? "\\"
+                    plain[x][centerY + 3 + diffX] = (!upRightHasRiver
+                            ? getColoredStr("\\", Color.BG_BLACK, Color.FG_WHITE)
                             : getColoredStr("\\", Color.BG_BLUE, Color.FG_WHITE));
                 }
                 for (int x = upLeftX + 3; x < upLeftX + 6; x++) {
@@ -393,53 +444,86 @@ public class GameMenuView extends AbstractMenuView {
                     for (int y = centerY - 2 - diffX; y <= centerY + 2 + diffX; y++) {
                         plain[x][y] = getColoredStr(" ", tileColor);
                     }
-                    plain[x][centerY - 3 - diffX] = (downLeftHasRiver ? "\\"
+                    plain[x][centerY - 3 - diffX] = (!downLeftHasRiver
+                            ? getColoredStr("\\", Color.BG_BLACK, Color.FG_WHITE)
                             : getColoredStr("\\", Color.BG_BLUE, Color.FG_WHITE));
-                    plain[x][centerY + 3 + diffX] = (downRightHasRiver ? "/"
+                    plain[x][centerY + 3 + diffX] = (!downRightHasRiver
+                            ? getColoredStr("/", Color.BG_BLACK, Color.FG_WHITE)
                             : getColoredStr("/", Color.BG_BLUE, Color.FG_WHITE));
                 }
 
-                int ownerCivId = tile.get("ownerCivId").getAsInt();
-                String ownerCivStr = getCivStrById(ownerCivId);
-                Color ownerCivColor = getCivColorById(ownerCivId);
-                int combatUnitId = ((JsonObject) tile.get("combatUnit")).get("typeId").getAsInt();
-                String combatUnitStr = getUnitStrById(combatUnitId);
-                int combatUnitCivId = ((JsonObject) tile.get("combatUnit")).get("civId").getAsInt();
-                int nonCombatUnitId = ((JsonObject) tile.get("nonCombatUnit")).get("typeId").getAsInt();
-                String nonCombatUnitStr = getUnitStrById(nonCombatUnitId);
-                int nonCombatUnitCivId = ((JsonObject) tile.get("nonCombatUnit")).get("civId").getAsInt();
+                if (i == 0) {
+                    for (int k = 3; k < 8; k++) {
+                        plain[upLeftX][upLeftY + k] = (!upHasRiver
+                                ? getColoredStr(" ", tileColor)
+                                : getColoredStr(" ", Color.BG_BLUE, Color.FG_WHITE));
+                    }
+                }
 
-                plain[upLeftX][centerY - 1] = getColoredStr(Integer.toString(tileId / 100), tileColor, Color.FG_WHITE);
-                plain[upLeftX][centerY] = getColoredStr(Integer.toString((tileId % 100) / 10), tileColor,
-                        Color.FG_WHITE);
-                plain[upLeftX][centerY + 1] = getColoredStr(Integer.toString(tileId % 10), tileColor, Color.FG_WHITE);
-                plain[upLeftX + 1][centerY] = getColoredStr(ownerCivStr, tileColor, ownerCivColor);
+                for (int k = 3; k < 8; k++) {
+                    plain[upLeftX + 5][upLeftY + k] = (!downHasRiver
+                            ? getColoredStr("_", tileColor)
+                            : getColoredStr("_", Color.BG_BLUE, Color.FG_WHITE));
+                }
 
-                plain[upLeftX + 2][centerY - 2] = getColoredStr(Integer.toString(tileX / 10), tileColor,
-                        Color.FG_WHITE);
-                plain[upLeftX + 2][centerY - 1] = getColoredStr(Integer.toString(tileX % 10), tileColor,
-                        Color.FG_WHITE);
-                plain[upLeftX + 2][centerY] = getColoredStr(",", tileColor, Color.FG_WHITE);
-                plain[upLeftX + 2][centerY + 1] = getColoredStr(Integer.toString(tileY / 10), tileColor,
-                        Color.FG_WHITE);
-                plain[upLeftX + 2][centerY + 2] = getColoredStr(Integer.toString(tileY % 10), tileColor,
-                        Color.FG_WHITE);
+                plain[upLeftX][centerY - 1] = getColoredStr(Integer.toString(tileId / 100), tileColor, true);
+                plain[upLeftX][centerY] = getColoredStr(Integer.toString((tileId % 100) / 10), tileColor, true);
+                plain[upLeftX][centerY + 1] = getColoredStr(Integer.toString(tileId % 10), tileColor, true);
 
-                plain[upLeftX + 3][centerY - 1] = getColoredStr(nonCombatUnitStr, tileColor,
-                        getCivColorById(nonCombatUnitCivId));
-                plain[upLeftX + 3][centerY + 1] = getColoredStr(combatUnitStr, tileColor,
-                        getCivColorById(combatUnitCivId));
+                plain[upLeftX + 2][centerY - 2] = getColoredStr(Integer.toString(tileX / 10), tileColor, true);
+                plain[upLeftX + 2][centerY - 1] = getColoredStr(Integer.toString(tileX % 10), tileColor, true);
+                plain[upLeftX + 2][centerY] = getColoredStr(",", tileColor, true);
+                plain[upLeftX + 2][centerY + 1] = getColoredStr(Integer.toString(tileY / 10), tileColor, true);
+                plain[upLeftX + 2][centerY + 2] = getColoredStr(Integer.toString(tileY % 10), tileColor, true);
 
-                int resourceId = tile.get("resourceId").getAsInt();
-                String resourceStr = getResourceStrById(resourceId);
-                int improvementId = tile.get("improvementId").getAsInt();
-                String improvementStr = getImprovementStrById(improvementId);
-                int featureId = tile.get("terrainFeatureId").getAsInt();
-                String featureStr = getFeatureStrById(featureId);
+                if (fog) {
+                    plain[upLeftX + 3][centerY - 1] = getColoredStr("F", tileColor, true);
+                    plain[upLeftX + 3][centerY] = getColoredStr("O", tileColor, true);
+                    plain[upLeftX + 3][centerY + 1] = getColoredStr("G", tileColor, true);
+                    continue;
+                }
 
-                plain[upLeftX + 4][centerY - 2] = getColoredStr(resourceStr, tileColor, Color.FG_WHITE);
-                plain[upLeftX + 4][centerY] = getColoredStr(featureStr, tileColor, Color.FG_WHITE);
-                plain[upLeftX + 4][centerY + 2] = getColoredStr(improvementStr, tileColor, Color.FG_WHITE);
+                if (hasFeature) {
+                    int featureId = tile.get("terrainFeatureId").getAsInt();
+                    String featureStr = getFeatureStrById(featureId);
+                    plain[upLeftX + 4][centerY] = getColoredStr(featureStr, tileColor, Color.FG_WHITE);
+                }
+
+                if (!knowledge.equals("VISIBLE"))
+                    continue;
+
+                if (tile.get("ownerCivId") != null) {
+                    int ownerCivId = tile.get("ownerCivId").getAsInt();
+                    String ownerCivStr = getCivStrById(ownerCivId);
+                    Color ownerCivColor = getCivColorById(ownerCivId);
+                    plain[upLeftX + 1][centerY] = getColoredStr(ownerCivStr, tileColor, ownerCivColor);
+                }
+
+                if (tile.get("combatUnit") != null) {
+                    int combatUnitId = ((JsonObject) tile.get("combatUnit")).get("typeId").getAsInt();
+                    String combatUnitStr = getUnitStrById(combatUnitId);
+                    int combatUnitCivId = ((JsonObject) tile.get("combatUnit")).get("civId").getAsInt();
+                    plain[upLeftX + 3][centerY + 1] = getColoredStr(combatUnitStr, tileColor,
+                            getCivColorById(combatUnitCivId));
+                }
+                if (tile.get("nonCombatUnit") != null) {
+                    int nonCombatUnitId = ((JsonObject) tile.get("nonCombatUnit")).get("typeId").getAsInt();
+                    String nonCombatUnitStr = getUnitStrById(nonCombatUnitId);
+                    int nonCombatUnitCivId = ((JsonObject) tile.get("nonCombatUnit")).get("civId").getAsInt();
+                    plain[upLeftX + 3][centerY - 1] = getColoredStr(nonCombatUnitStr, tileColor,
+                            getCivColorById(nonCombatUnitCivId));
+                }
+
+                if (tile.get("resourceId") != null) {
+                    int resourceId = tile.get("resourceId").getAsInt();
+                    String resourceStr = getResourceStrById(resourceId);
+                    plain[upLeftX + 4][centerY - 2] = getColoredStr(resourceStr, tileColor, true);
+                }
+                if (tile.get("improvementId") != null) {
+                    int improvementId = tile.get("improvementId").getAsInt();
+                    String improvementStr = getImprovementStrById(improvementId);
+                    plain[upLeftX + 4][centerY + 2] = getColoredStr(improvementStr, tileColor, true);
+                }
 
             }
         }
@@ -447,6 +531,10 @@ public class GameMenuView extends AbstractMenuView {
 
     private String getColoredStr(String str, Color color) {
         return color.toString() + str + Color.ANSI_RESET.toString();
+    }
+
+    private String getColoredStr(String str, Color color, boolean setFGColor) {
+        return getColoredStr(str, color, color.getCompatibleColor());
     }
 
     private String getColoredStr(String str, Color color1, Color color2) {
@@ -472,7 +560,7 @@ public class GameMenuView extends AbstractMenuView {
             case 9:
                 return Color.BG_RED;
             default:
-                throw new RuntimeException();
+                return Color.BG_WHITE;
         }
     }
 

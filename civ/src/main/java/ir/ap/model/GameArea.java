@@ -72,6 +72,14 @@ public class GameArea {
         return seed;
     }
 
+    public Tile getTileById(int tileId) {
+        return map.getTileByIndex(tileId);
+    }
+
+    public Tile getTileByIndices(int x, int y) {
+        return map.getTileByIndices(x, y);
+    }
+
     public void setTileKnowledgeByCivilization(Civilization civ, Tile tile, TileKnowledge tileKnowledge) {
         if (civ == null || tile == null || tileKnowledge == null) return;
         tilesKnowledges[civ.getIndex()][tile.getIndex()] = tileKnowledge;
