@@ -26,7 +26,7 @@ public class UnitController extends AbstractGameController {
         if (unit == null || newCiv == null) return false;
         removeUnit(unit);
         addUnit(newCiv, unit.getTile(), unit.getUnitType());
-        // TODO: XP?
+        // TODO: XP? fekonam nist asan
         return true;
     }
 

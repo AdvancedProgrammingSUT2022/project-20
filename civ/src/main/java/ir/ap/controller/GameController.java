@@ -188,7 +188,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             if (gameArea.getUserByUsername(username) != null)
                 return messageToJsonObj("duplicate users", false);
             User curUser = User.getUser(username);
-            if (curUser == null) // TODO login in server
+            if (curUser == null) // TODO login in server PHASE2
                 return messageToJsonObj(Message.USER_NOT_LOGGED_IN, false);
             Civilization curCiv = new Civilization(cnt++, curUser.getNickname() + ".civ", null);
             gameArea.addUser(curUser, curCiv);
@@ -280,6 +280,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         return JSON_FALSE;
     }
     // TODO: cheat
+    // TODO: test
     public JsonObject selectCombatUnit(String username, int tileId) {
         Civilization civilization = civController.getCivilizationByUsername(username);
         Tile tile = gameArea.getMap().getTileByIndex(tileId);
@@ -543,8 +544,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         Civilization civilization = civController.getCivilizationByUsername(username);
         if (civilization == null)
             return messageToJsonObj("invalid civUsername", false);
-        int last_happiness = civilization.getHappiness();
-        civilization.addToHappiness(last_happiness+amount);        
+        civilization.addToHappiness(amount);        
         return messageToJsonObj("Happiness added successfully", true);
         // TODO: Happiness in civilization
     }
@@ -790,7 +790,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         if ( cityController.cityDestroy(city, civilization) == false )
             return messageToJsonObj("something is invalid", false);  
         return messageToJsonObj("city destroyed successfully", true);
-        // TODO: check if city is attacked and get by civilization
+        // TODO: check if city is attacked and get by civilization (city.isDead()?)
     }
 
     public JsonObject cityAnnex(String username, int tileId) {
@@ -808,6 +808,6 @@ public class GameController extends AbstractGameController implements JsonRespon
         if ( cityController.cityAnnex(city, civilization) == false )
             return messageToJsonObj("something is invalid", false);  
         return messageToJsonObj("city Annexed successfully", true);
-        // TODO: check if city is attacked and get by civilization 
+        // TODO: check if city is attacked and get by civilization (city.isDead)
     }
 }

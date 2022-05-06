@@ -90,7 +90,6 @@ public class UserController implements JsonResponsor, AutoCloseable {
     }
 
     public boolean writeUsers() {
-        // TODO islogin
         try {
             Writer usersWriter = new FileWriter(PLAYERS_CONF_FILE);
             GSON.toJson(User.getUsers(), usersWriter);

@@ -179,7 +179,7 @@ public class CityController extends AbstractGameController {
         if (production instanceof UnitType) {
             unitController.addUnit(city.getCivilization(), city.getTile(), (UnitType) production);
         } else if (production instanceof BuildingType) {
-            // TODO
+            // TODO: PHASE2
         }
         return true;
     }

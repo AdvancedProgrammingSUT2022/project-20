@@ -199,6 +199,7 @@ public class GameMenuView extends AbstractMenuView {
     }
 
     public Menu info(Matcher matcher) {
+        // TODO
         String arg = matcher.group("arg");
         JsonObject response = getInfoResponse(arg);
         if (response == null)
@@ -236,6 +237,7 @@ public class GameMenuView extends AbstractMenuView {
     }
 
     public Menu unitAction(Matcher matcher) {
+        // TODO
         String[] args = matcher.group("args").trim().split("\\s+");
         boolean cheat = false;
         for (String arg : args) {
@@ -249,6 +251,7 @@ public class GameMenuView extends AbstractMenuView {
     }
 
     public Menu cityAction(Matcher matcher) {
+        // TODO
         String[] args = matcher.group("args").trim().split("\\s+");
         boolean cheat = false;
         for (String arg : args) {
