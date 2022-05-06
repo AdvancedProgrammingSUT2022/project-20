@@ -544,7 +544,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         if (civilization == null)
             return messageToJsonObj("invalid civUsername", false);
         int last_happiness = civilization.getHappiness();
-        civilization.setHappiness(last_happiness+amount);        
+        civilization.addToHappiness(last_happiness+amount);        
         return messageToJsonObj("Happiness added successfully", true);
         // TODO: Happiness in civilization
     }

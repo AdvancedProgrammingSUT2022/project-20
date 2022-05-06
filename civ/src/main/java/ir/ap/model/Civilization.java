@@ -20,12 +20,8 @@ public class Civilization {
     private int scienceSpentForResearch;
 
     private int gold;
-    private int science;    
-    private int happiness;
-
-    public void setHappiness(int happiness) {
-        this.happiness = happiness;
-    }
+    private int science;
+    private int extraHappiness;
 
     int[] accessibleResourceCount;
     boolean[] technologyReached;
@@ -271,8 +267,12 @@ public class Civilization {
         return accessibleResourceCount[rsc.getId()];
     }
 
+    public void addToHappiness(int delta) {
+        this.extraHappiness += delta;
+    }
+
     public int getHappiness() {
-        int happiness = 0;
+        int happiness = this.extraHappiness;
         happiness += -getCitiesPopulationSum();
         happiness += -3 * cities.size();
         happiness += -2 * citiesAnnexed.size();
