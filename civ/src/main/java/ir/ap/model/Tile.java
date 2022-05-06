@@ -54,12 +54,14 @@ public class Tile {
     private boolean hasRoad;
     private boolean hasRailRoad;
 
-    public Tile(int index, TerrainType terrainType, TerrainFeature terrainFeature, ArrayList<Resource> resources) {
+    public Tile(int index, int mapX, int mapY, TerrainType terrainType, TerrainFeature terrainFeature, ArrayList<Resource> resources) {
         neighbors = new Tile[6];
         hasRiverOnSide = new boolean[6];
         weight = new int[6];
 
         this.index = index;
+        this.mapX = mapX;
+        this.mapY = mapY;
 
         this.terrainType = terrainType;
         this.terrainFeature = terrainFeature;

@@ -557,6 +557,15 @@ public class GameController extends AbstractGameController implements JsonRespon
         // TODO: Happiness in civilization
     }
 
+    public JsonObject getTileIndexByXY(int x, int y) {
+        Tile tile = mapController.getTileByIndices(x, y);
+        if (tile == null)
+            return messageToJsonObj("No such tile", false);
+        JsonObject response = new JsonObject();
+        response.addProperty("id", tile.getIndex());
+        return setOk(response, true);
+    }
+
     public JsonObject mapShow(String username, int tileId) {
         Civilization civ = civController.getCivilizationByUsername(username);
         if (civ == null)
@@ -570,8 +579,13 @@ public class GameController extends AbstractGameController implements JsonRespon
         response.addProperty("width", width);
         response.add("map", new JsonArray());
         int tileX = tile.getMapX(), tileY = tile.getMapY();
+        response.addProperty("focusId", tileId);
+        response.addProperty("focusX", tileX);
+        response.addProperty("focusY", tileY);
         int upLeftX = Math.max(0, tileX - height / 2);
         int upLeftY = Math.max(0, tileY - width / 2);
+        upLeftX = Math.min(upLeftX, gameArea.getMap().getMapH() - height);
+        upLeftY = Math.min(upLeftY, gameArea.getMap().getMapW() - width);
         for (int i = upLeftX; i < upLeftX + height; i++) {
             JsonArray row = new JsonArray();
             for (int j = upLeftY; j < upLeftY + width; j++) {
@@ -587,16 +601,6 @@ public class GameController extends AbstractGameController implements JsonRespon
         if (city == null || city.getTile() == null)
             return null;
         return mapShow(username, city.getTile().getIndex());
-    }
-
-    public JsonObject mapMove(String username, int dirId, int count) {
-        // U:0,R:1,D:2,L:3
-        // TODO
-        return JSON_FALSE;
-    }
-
-    public JsonObject mapMove(String username, int dirId) {
-        return mapMove(username, dirId, 1);
     }
 
     public JsonObject cityAddCitizenToWorkOnTile(String username, int tileId) {

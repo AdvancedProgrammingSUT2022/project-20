@@ -6,6 +6,8 @@ import java.util.Random;
 
 public class Map {
     public static final int MAX_H = 30, MAX_W = 30;
+    private int mapH = MAX_H;
+    private int mapW = MAX_W;
     private Tile[][] tiles = new Tile[ 35 ][ 35 ];
     private ArrayList<Tile> khoshkiHa = new ArrayList<>();
     private int[][] dist = new int[905][905] ;// INF if no path
@@ -23,7 +25,7 @@ public class Map {
         for(int i = 0 ; i < 30 ; i ++){
             for(int j = 0 ; j < 30 ; j ++){
                 if( (i >= 10 && i < 20) && (j >= 5 && j < 25) )continue ;
-                Tile tile = new Tile( (i*30)+j, TerrainType.OCEAN, null, new ArrayList<>(Arrays.asList(new Resource[]{})));
+                Tile tile = new Tile( (i*30)+j, i, j, TerrainType.OCEAN, null, new ArrayList<>(Arrays.asList(new Resource[]{})));
                 tiles[ i ][ j ] = tile;
             }
         }
@@ -58,7 +60,7 @@ public class Map {
                         }
                     }
                 }
-                Tile tile = new Tile((i*30)+j, terrainType, terrainFeature, resources) ;
+                Tile tile = new Tile((i*30)+j, i, j, terrainType, terrainFeature, resources) ;
                 tiles[ i ][ j ] = tile;
                 khoshkiHa.add( tile );
             }
@@ -124,6 +126,10 @@ public class Map {
     public Map(long seed) {            
         generateRandomMap(seed);
     }
+
+    public int getMapH() { return this.mapH; }
+
+    public int getMapW() { return this.mapW; }
 
     private void addNeighborAndWeight(Tile tile, Tile neighbor, Direction direction){
         if( tile == null || neighbor == null )return;       

@@ -143,8 +143,50 @@ public class GameMenuView extends AbstractMenuView {
         }
     }
 
+    class Tile {
+        private int x, y;
+
+        public Tile(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public void goToDir(int dirId, int amount) {
+            switch (dirId) {
+                case 0:
+                    x -= amount;
+                    break;
+                case 1:
+                    y += amount;
+                    break;
+                case 2:
+                    x += amount;
+                    break;
+                case 3:
+                    y -= amount;
+                    break;
+            }
+        }
+
+        public int getX() {
+            return this.x;
+        }
+
+        public int getY() {
+            return this.y;
+        }
+
+        public int getId() {
+            JsonObject response = GAME_CONTROLLER.getTileIndexByXY(x, y);
+            if (responseOk(response))
+                return response.get("id").getAsInt();
+            return -1;
+        }
+    }
+
     private String[] usersInGame;
     private String[] civsInGame;
+    private Tile[] focusTile;
     private int currentTurnId;
     private String currentPlayer;
     private String currentCiv;
@@ -160,14 +202,17 @@ public class GameMenuView extends AbstractMenuView {
     public void init(String[] users) {
         usersInGame = users;
         civsInGame = new String[usersInGame.length];
+        focusTile = new Tile[usersInGame.length];
         for (int i = 0; i < users.length; i++) {
             civsInGame[i] = getField(GAME_CONTROLLER.getCivilizationByUsername(users[i]),
                     "civName", String.class);
+            focusTile[i] = new Tile(0, 0);
         }
         currentTurnId = 0;
         currentPlayer = usersInGame[currentTurnId];
         currentCiv = civsInGame[currentTurnId];
-        System.out.format("Turn: %s\n", currentCiv);
+        System.out.format("========================================\nTurn: %s\n", currentCiv);
+        printCurrentMap();
     }
 
     public Menu nextTurn(Matcher matcher) {
@@ -181,7 +226,8 @@ public class GameMenuView extends AbstractMenuView {
             if (getField(response, "end", Boolean.class) == true) {
                 return responseAndGo(msg, Menu.MAIN);
             }
-            System.out.format("Turn: %s\n", currentCiv);
+            System.out.format("========================================\nTurn: %s\n", currentCiv);
+            printCurrentMap();
         }
         return responseAndGo(msg, Menu.GAME);
     }
@@ -207,6 +253,7 @@ public class GameMenuView extends AbstractMenuView {
         if (!responseOk(response))
             return responseAndGo(Message.E500, Menu.GAME);
         String msg = getField(response, "msg", String.class);
+        printCurrentMap();
         return responseAndGo(msg, Menu.GAME);
     }
 
@@ -219,6 +266,7 @@ public class GameMenuView extends AbstractMenuView {
         if (response == null)
             return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         String msg = getField(response, "msg", String.class);
+        printCurrentMap();
         return responseAndGo(msg, Menu.GAME);
     }
 
@@ -233,6 +281,7 @@ public class GameMenuView extends AbstractMenuView {
         if (response == null)
             return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         String msg = getField(response, "msg", String.class);
+        printCurrentMap();
         return responseAndGo(msg, Menu.GAME);
     }
 
@@ -247,6 +296,7 @@ public class GameMenuView extends AbstractMenuView {
         if (response == null)
             return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         String msg = getField(response, "msg", String.class);
+        printCurrentMap();
         return responseAndGo(msg, Menu.GAME);
     }
 
@@ -261,6 +311,7 @@ public class GameMenuView extends AbstractMenuView {
         if (response == null)
             return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         String msg = getField(response, "msg", String.class);
+        printCurrentMap();
         return responseAndGo(msg, Menu.GAME);
     }
 
@@ -280,6 +331,10 @@ public class GameMenuView extends AbstractMenuView {
             response = GAME_CONTROLLER.mapShow(currentPlayer, tileId);
         }
         if (responseOk(response)) {
+            tileId = response.get("focusId").getAsInt();
+            int tileX = response.get("focusX").getAsInt();
+            int tileY = response.get("focusY").getAsInt();
+            focusTile[currentTurnId] = new Tile(tileX, tileY);
             writeMap(response);
             printMap();
         } else
@@ -312,12 +367,16 @@ public class GameMenuView extends AbstractMenuView {
             default:
                 return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         }
-        JsonObject response = GAME_CONTROLLER.mapMove(currentPlayer, dirId, amount);
+        Tile focus = focusTile[currentTurnId];
+        focus.goToDir(dirId, amount);
+        JsonObject response = GAME_CONTROLLER.mapShow(currentPlayer, focus.getId());
         if (responseOk(response)) {
             writeMap(response);
             printMap();
-        } else
+        } else {
+            focus.goToDir((dirId + 2) % 4, amount);
             return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
+        }
         return responseAndGo(null, Menu.GAME);
     }
 
@@ -368,7 +427,13 @@ public class GameMenuView extends AbstractMenuView {
                         .replace("%s", args[i]), Menu.GAME);
             }
         }
+        printCurrentMap();
         return responseAndGo(null, Menu.GAME);
+    }
+
+    public void printCurrentMap() {
+        writeMap(GAME_CONTROLLER.mapShow(currentPlayer, focusTile[currentTurnId].getId()));
+        printMap();
     }
 
     private void resetPlain() {
