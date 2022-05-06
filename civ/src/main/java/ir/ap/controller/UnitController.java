@@ -145,6 +145,7 @@ public class UnitController extends AbstractGameController {
     {
         if (civilization == null || target == null) return false;
         Unit unit = civilization.getSelectedUnit();
+        if (unit == null) return false;
         unit.setHowManyTurnWeKeepAction(0);
         City city = civilization.getSelectedCity();
         Unit enemyUnit = target.getCombatUnit();
@@ -272,7 +273,7 @@ public class UnitController extends AbstractGameController {
     {
         if (civilization == null) return false;
         Unit unit = civilization.getSelectedUnit();
-
+        if (unit == null) return false;
         unit.setHowManyTurnWeKeepAction(0);
         if (unit == null || !(unit.getUnitType() == UnitType.SETTLER))
             return false;

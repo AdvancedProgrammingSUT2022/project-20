@@ -291,6 +291,8 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("invalid civUsername", false);
         if (unit == null)
             return messageToJsonObj("selected tile doesn't have unit", false);
+        if (!unit.getCivilization().equals(civilization))
+            return messageToJsonObj("unit does not belong to your civ", false);
         civilization.setSelectedUnit(unit);
         return messageToJsonObj("unit selected", true);
     }
@@ -305,6 +307,8 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("invalid civUsername", false);
         if (unit == null)
             return messageToJsonObj("selected tile doesn't have unit", false);
+        if (!unit.getCivilization().equals(civilization))
+            return messageToJsonObj("unit does not belong to your civ", false);
         civilization.setSelectedUnit(unit);
         return messageToJsonObj("unit selected", true);
     }
@@ -319,6 +323,8 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("invalid civUsername", false);
         if (city == null)
             return messageToJsonObj("selected tile doesn't have city", false);
+        if (!city.getCivilization().equals(civilization))
+            return messageToJsonObj("city does not belong to your civ", false);
         civilization.setSelectedCity(city);
         return messageToJsonObj("city selected", true);
     }
@@ -330,6 +336,8 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("invalid civUsername", false);
         if (city == null)
             return messageToJsonObj("invalid cityName", false);
+        if (!city.getCivilization().equals(civilization))
+            return messageToJsonObj("city does not belong to your civ", false);
         civilization.setSelectedCity(city);
         return messageToJsonObj("city selected", true);
     }

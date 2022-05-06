@@ -32,6 +32,7 @@ public class CivilizationController extends AbstractGameController {
 
     public boolean nextTurn(Civilization civilization)
     {
+        // TODO: safe 43 doc
         if (civilization == null) return false;
         civilization.addToGold(civilization.getGoldYield());
         civilization.addToScience(civilization.getScienceYield());
