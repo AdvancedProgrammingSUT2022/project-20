@@ -9,6 +9,12 @@ public class CivilizationController extends AbstractGameController {
         super(gameArea);
     }
 
+    public Civilization newCiv(int id, User user) {
+        // TODO: create settler, worker
+        Civilization civ = new Civilization(id, user.getNickname() + ".civ", null);
+        return civ;
+    }
+
     public Civilization getCivilizationByUsername(String username)
     {
         Civilization civilization = gameArea.getCivilizationByUser(gameArea.getUserByUsername(username));
