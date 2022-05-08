@@ -98,7 +98,7 @@ public class City {
     }
 
     public static String getCityName(int index) {
-        return cityNames.get(index % cityNames.size());
+        return cityNames.get(Math.abs(index) % cityNames.size());
     }
 
     public String getName() {

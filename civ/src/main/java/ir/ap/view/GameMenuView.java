@@ -445,14 +445,59 @@ public class GameMenuView extends AbstractMenuView {
     }
 
     private void printMap() {
-        System.out.println("========MAP=============================");
+        System.out.println("========INFO============================");
+        System.out.println("\n >>> TERRAINS:");
+        int[] terrainTypeIds = GSON
+                .fromJson(GAME_CONTROLLER.getAllTerrainTypeIds().get("terrainTypeIds").getAsJsonArray(), int[].class);
+        for (int terrainTypeId : terrainTypeIds) {
+            System.out.format("\t%s\n",
+                    getColoredStr(
+                            GAME_CONTROLLER.getTerrainTypeNameById(terrainTypeId).get("terrainTypeName").getAsString(),
+                            getTileColorByTerrainTypeId(terrainTypeId), true));
+        }
+        System.out.println("\n >>> FEATURES:");
+        int[] terrainFeatureIds = GSON.fromJson(
+                GAME_CONTROLLER.getAllTerrainFeatureIds().get("terrainFeatureIds").getAsJsonArray(), int[].class);
+        for (int terrainFeatureId : terrainFeatureIds) {
+            System.out.format("\t(%s:%s),\n", getFeatureStrById(terrainFeatureId), GAME_CONTROLLER
+                    .getTerrainFeatureNameById(terrainFeatureId).get("terrainFeatureName").getAsString());
+        }
+        System.out.println("\n >>> UNITS:");
+        int[] unitTypeIds = GSON.fromJson(GAME_CONTROLLER.getAllUnitTypeIds().get("unitTypeIds").getAsJsonArray(),
+                int[].class);
+        for (int unitTypeId : unitTypeIds) {
+            System.out.format("\t(%s:%s),\n", getUnitStrById(unitTypeId),
+                    GAME_CONTROLLER.getUnitTypeNameById(unitTypeId).get("unitTypeName").getAsString());
+        }
+        System.out.println("\n >>> RESOURCES:");
+        int[] resourceIds = GSON.fromJson(GAME_CONTROLLER.getAllResourceIds().get("resourceIds").getAsJsonArray(),
+                int[].class);
+        for (int resourceId : resourceIds) {
+            System.out.format("\t(%s:%s),\n", getResourceStrById(resourceId),
+                    GAME_CONTROLLER.getResourceNameById(resourceId).get("resourceName").getAsString());
+        }
+        System.out.println("\n >>> IMPROVEMENTS:");
+        int[] improvementIds = GSON
+                .fromJson(GAME_CONTROLLER.getAllImprovementIds().get("improvementIds").getAsJsonArray(), int[].class);
+        for (int improvementId : improvementIds) {
+            System.out.format("\t(%s:%s),\n", getImprovementStrById(improvementId),
+                    GAME_CONTROLLER.getImprovementNameById(improvementId).get("improvementName").getAsString());
+        }
+        System.out.println("\n >>> CIVILIZATIONS:");
+        int[] civIds = GSON.fromJson(GAME_CONTROLLER.getAllCivilizationIds().get("civIds").getAsJsonArray(),
+                int[].class);
+        for (int civId : civIds) {
+            System.out.format("\t(%s:%s),\n", getColoredStr(getCivStrById(civId), getCivColorById(civId), true),
+                    GAME_CONTROLLER.getCivilizationNameById(civId).get("civName").getAsString());
+        }
+        System.out.println("\n========MAP=============================");
         for (int i = 0; i < PLAIN_H; i++) {
             for (int j = 0; j < PLAIN_W; j++) {
                 System.out.print(plain[i][j]);
             }
             System.out.println();
         }
-        System.out.println("========================================");
+        System.out.println("\n========================================");
     }
 
     private void writeMap(JsonObject response) {
@@ -460,6 +505,7 @@ public class GameMenuView extends AbstractMenuView {
         JsonArray map = (JsonArray) response.get("map");
         int width = response.get("width").getAsInt();
         int height = response.get("height").getAsInt();
+        int directionOfMap = ((JsonObject) ((JsonArray) map.get(0)).get(0)).get("index").getAsInt() % 2;
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 JsonObject tile = (JsonObject) ((JsonArray) map.get(i)).get(j);
@@ -475,7 +521,7 @@ public class GameMenuView extends AbstractMenuView {
                     terrainType = tile.get("terrainTypeId").getAsInt();
                 Color tileColor = getTileColorByTerrainTypeId(terrainType);
 
-                int upLeftX = 6 * i + (j % 2 == 0 ? 4 : 1);
+                int upLeftX = 6 * i + (j % 2 == directionOfMap ? 4 : 1);
                 int upLeftY = 8 * j;
                 int centerY = upLeftY + 5;
 
@@ -531,7 +577,7 @@ public class GameMenuView extends AbstractMenuView {
                 for (int k = 3; k < 8; k++) {
                     plain[upLeftX + 5][upLeftY + k] = (!downHasRiver
                             ? getColoredStr("_", tileColor)
-                            : getColoredStr("_", Color.BG_BLUE, Color.FG_WHITE));
+                            : getColoredStr("-", Color.BG_BLUE, Color.FG_WHITE));
                 }
 
                 plain[upLeftX][centerY - 1] = getColoredStr(Integer.toString(tileId / 100), tileColor, true);
@@ -545,13 +591,14 @@ public class GameMenuView extends AbstractMenuView {
                 plain[upLeftX + 2][centerY + 2] = getColoredStr(Integer.toString(tileY % 10), tileColor, true);
 
                 if (fog) {
-                    plain[upLeftX + 3][centerY - 1] = getColoredStr("F", tileColor, true);
-                    plain[upLeftX + 3][centerY] = getColoredStr("O", tileColor, true);
-                    plain[upLeftX + 3][centerY + 1] = getColoredStr("G", tileColor, true);
+                    plain[upLeftX + 3][centerY - 1] = getColoredStr("F", tileColor, Color.FG_BLUE);
+                    plain[upLeftX + 3][centerY] = getColoredStr("O", tileColor, Color.FG_BLUE);
+                    plain[upLeftX + 3][centerY + 1] = getColoredStr("G", tileColor, Color.FG_BLUE);
                     continue;
                 }
 
                 if (hasFeature) {
+                    // REVEALED
                     int featureId = tile.get("terrainFeatureId").getAsInt();
                     String featureStr = getFeatureStrById(featureId);
                     plain[upLeftX + 4][centerY] = getColoredStr(featureStr, tileColor, Color.FG_WHITE);
@@ -564,22 +611,25 @@ public class GameMenuView extends AbstractMenuView {
                     int ownerCivId = tile.get("ownerCivId").getAsInt();
                     String ownerCivStr = getCivStrById(ownerCivId);
                     Color ownerCivColor = getCivColorById(ownerCivId);
-                    plain[upLeftX + 1][centerY] = getColoredStr(ownerCivStr, tileColor, ownerCivColor);
+                    plain[upLeftX + 1][centerY] = getColoredStr(ownerCivStr, ownerCivColor, true);
+                    if (tile.get("cityInTile") != null) {
+                        plain[upLeftX + 1][centerY + 1] = getColoredStr("*", ownerCivColor, true);
+                    }
                 }
 
                 if (tile.get("combatUnit") != null) {
-                    int combatUnitId = ((JsonObject) tile.get("combatUnit")).get("typeId").getAsInt();
-                    String combatUnitStr = getUnitStrById(combatUnitId);
+                    int combatUnitTypeId = ((JsonObject) tile.get("combatUnit")).get("unitTypeId").getAsInt();
+                    String combatUnitStr = getUnitStrById(combatUnitTypeId);
                     int combatUnitCivId = ((JsonObject) tile.get("combatUnit")).get("civId").getAsInt();
-                    plain[upLeftX + 3][centerY + 1] = getColoredStr(combatUnitStr, tileColor,
-                            getCivColorById(combatUnitCivId));
+                    plain[upLeftX + 3][centerY + 1] = getColoredStr(combatUnitStr,
+                            getCivColorById(combatUnitCivId), true);
                 }
                 if (tile.get("nonCombatUnit") != null) {
-                    int nonCombatUnitId = ((JsonObject) tile.get("nonCombatUnit")).get("typeId").getAsInt();
-                    String nonCombatUnitStr = getUnitStrById(nonCombatUnitId);
+                    int nonCombatUnitTypeId = ((JsonObject) tile.get("nonCombatUnit")).get("unitTypeId").getAsInt();
+                    String nonCombatUnitStr = getUnitStrById(nonCombatUnitTypeId);
                     int nonCombatUnitCivId = ((JsonObject) tile.get("nonCombatUnit")).get("civId").getAsInt();
-                    plain[upLeftX + 3][centerY - 1] = getColoredStr(nonCombatUnitStr, tileColor,
-                            getCivColorById(nonCombatUnitCivId));
+                    plain[upLeftX + 3][centerY - 1] = getColoredStr(nonCombatUnitStr,
+                            getCivColorById(nonCombatUnitCivId), true);
                 }
 
                 if (tile.get("resourceId") != null) {
@@ -632,8 +682,8 @@ public class GameMenuView extends AbstractMenuView {
         }
     }
 
-    private String getUnitStrById(int unitId) {
-        return Character.toString((char) ((int) 'A' + unitId));
+    private String getUnitStrById(int unitTypeId) {
+        return Character.toString((char) ((int) 'A' + unitTypeId));
     }
 
     private String getResourceStrById(int rsrcId) {
@@ -658,6 +708,8 @@ public class GameMenuView extends AbstractMenuView {
                 return "M";
             case 13:
                 return "O";
+            case 15:
+                return getColoredStr("-", Color.BG_BLUE);
             default:
                 throw new RuntimeException();
         }
@@ -666,23 +718,23 @@ public class GameMenuView extends AbstractMenuView {
     private Color getCivColorById(int civId) {
         switch (civId) {
             case 0:
-                return Color.FG_BLUE;
+                return Color.BG_BLUE;
             case 1:
-                return Color.FG_RED;
+                return Color.BG_RED;
             case 2:
-                return Color.FG_PURPLE;
+                return Color.BG_PURPLE;
             case 3:
-                return Color.FG_YELLOW;
+                return Color.BG_YELLOW;
             case 4:
-                return Color.FG_BLACK;
+                return Color.BG_BLACK;
             case 5:
-                return Color.FG_CYAN;
+                return Color.BG_CYAN;
             case 6:
-                return Color.FG_WHITE;
+                return Color.BG_WHITE;
             case 7:
-                return Color.FG_GREEN;
+                return Color.BG_GREEN;
             default:
-                return Color.FG_BLACK;
+                return Color.BG_BLACK;
         }
     }
 

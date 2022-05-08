@@ -2,11 +2,13 @@ package ir.ap.controller;
 
 import java.io.FileReader;
 import java.io.Reader;
+import java.util.ArrayList;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import ir.ap.model.*;
+import ir.ap.model.TerrainType.TerrainFeature;
 import ir.ap.model.Tile.TileKnowledge;
 
 public class GameController extends AbstractGameController implements JsonResponsor, AutoCloseable {
@@ -86,7 +88,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         tileJsonObj.addProperty("y", tile.getMapY());
         tileJsonObj.addProperty("knowledge", gameArea.getTileKnowledgeByCivilization(civ, tile).name());
         if (gameArea.getTileKnowledgeByCivilization(civ, tile) != TileKnowledge.FOG_OF_WAR) {
-            tileJsonObj.addProperty("terrainTypeId", tile.getTerrainType().name());
+            tileJsonObj.addProperty("terrainTypeId", tile.getTerrainType().getId());
             if (tile.getTerrainFeature() != null) {
                 tileJsonObj.addProperty("terrainFeatureId", tile.getTerrainFeature().getId());
             }
@@ -117,6 +119,9 @@ public class GameController extends AbstractGameController implements JsonRespon
             }
             if (tile.getOwnerCity() != null) {
                 tileJsonObj.addProperty("ownerCivId", tile.getOwnerCity().getCivilization().getIndex());
+            }
+            if (tile.getCity() != null) {
+                tileJsonObj.addProperty("cityInTile", tile.getCity().getName());
             }
         }
         return tileJsonObj;
@@ -190,7 +195,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             User curUser = User.getUser(username);
             if (curUser == null) // TODO login in server PHASE2
                 return messageToJsonObj(Message.USER_NOT_LOGGED_IN, false);
-            Civilization curCiv = civController.newCiv(cnt++, curUser);
+            Civilization curCiv = new Civilization(cnt++, curUser.getNickname() + ".civ", null);;
             gameArea.addUser(curUser, curCiv);
         }
         if (gameArea.getUserCount() < 2 || gameArea.getUserCount() > 8)
@@ -563,6 +568,150 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("No such tile", false);
         JsonObject response = new JsonObject();
         response.addProperty("id", tile.getIndex());
+        return setOk(response, true);
+    }
+
+    public JsonObject getTerrainTypeNameById(int id) {
+        TerrainType[] terrainTypes = TerrainType.values();
+        for (TerrainType terrainType : terrainTypes) {
+            if (terrainType.getId() == id) {
+                JsonObject response = new JsonObject();
+                response.addProperty("terrainTypeId", terrainType.getId());
+                response.addProperty("terrainTypeName", terrainType.name());
+                return setOk(response, true);
+            }
+        }
+        return JSON_FALSE;
+    }
+
+    public JsonObject getAllTerrainTypeIds() {
+        TerrainType[] terrainTypes = TerrainType.values();
+        ArrayList<Integer> ids = new ArrayList<>();
+        for (TerrainType terrainType : terrainTypes) {
+            ids.add(terrainType.getId());
+        }
+        JsonObject response = new JsonObject();
+        response.add("terrainTypeIds", GSON.fromJson(GSON.toJson(ids), JsonArray.class));
+        return setOk(response, true);
+    }
+
+    public JsonObject getTerrainFeatureNameById(int id) {
+        TerrainFeature[] terrainFeatures = TerrainFeature.values();
+        for (TerrainFeature terrainFeature : terrainFeatures) {
+            if (terrainFeature.getId() == id) {
+                JsonObject response = new JsonObject();
+                response.addProperty("terrainFeatureId", terrainFeature.getId());
+                response.addProperty("terrainFeatureName", terrainFeature.name());
+                return setOk(response, true);
+            }
+        }
+        return JSON_FALSE;
+    }
+
+    public JsonObject getAllTerrainFeatureIds() {
+        TerrainFeature[] terrainFeatures = TerrainFeature.values();
+        ArrayList<Integer> ids = new ArrayList<>();
+        for (TerrainFeature terrainFeature : terrainFeatures) {
+            ids.add(terrainFeature.getId());
+        }
+        JsonObject response = new JsonObject();
+        response.add("terrainFeatureIds", GSON.fromJson(GSON.toJson(ids), JsonArray.class));
+        return setOk(response, true);
+    }
+
+    public JsonObject getUnitTypeNameById(int id) {
+        UnitType[] unitTypes = UnitType.values();
+        for (UnitType unitType : unitTypes) {
+            if (unitType.getId() == id) {
+                JsonObject response = new JsonObject();
+                response.addProperty("unitTypeId", unitType.getId());
+                response.addProperty("unitTypeName", unitType.name());
+                return setOk(response, true);
+            }
+        }
+        return JSON_FALSE;
+    }
+
+    public JsonObject getAllUnitTypeIds() {
+        UnitType[] unitTypes = UnitType.values();
+        ArrayList<Integer> ids = new ArrayList<>();
+        for (UnitType unitType : unitTypes) {
+            ids.add(unitType.getId());
+        }
+        JsonObject response = new JsonObject();
+        response.add("unitTypeIds", GSON.fromJson(GSON.toJson(ids), JsonArray.class));
+        return setOk(response, true);
+    }
+
+    public JsonObject getResourceNameById(int id) {
+        Resource[] resources = Resource.values();
+        for (Resource resource : resources) {
+            if (resource.getId() == id) {
+                JsonObject response = new JsonObject();
+                response.addProperty("resourceId", resource.getId());
+                response.addProperty("resourceName", resource.name());
+                return setOk(response, true);
+            }
+        }
+        return JSON_FALSE;
+    }
+
+    public JsonObject getAllResourceIds() {
+        Resource[] resources = Resource.values();
+        ArrayList<Integer> ids = new ArrayList<>();
+        for (Resource resource : resources) {
+            ids.add(resource.getId());
+        }
+        JsonObject response = new JsonObject();
+        response.add("resourceIds", GSON.fromJson(GSON.toJson(ids), JsonArray.class));
+        return setOk(response, true);
+    }
+
+    public JsonObject getImprovementNameById(int id) {
+        Improvement[] improvements = Improvement.values();
+        for (Improvement improvement : improvements) {
+            if (improvement.getId() == id) {
+                JsonObject response = new JsonObject();
+                response.addProperty("improvementId", improvement.getId());
+                response.addProperty("improvementName", improvement.name());
+                return setOk(response, true);
+            }
+        }
+        return JSON_FALSE;
+    }
+
+    public JsonObject getAllImprovementIds() {
+        Improvement[] improvements = Improvement.values();
+        ArrayList<Integer> ids = new ArrayList<>();
+        for (Improvement improvement : improvements) {
+            ids.add(improvement.getId());
+        }
+        JsonObject response = new JsonObject();
+        response.add("improvementIds", GSON.fromJson(GSON.toJson(ids), JsonArray.class));
+        return setOk(response, true);
+    }
+
+    public JsonObject getCivilizationNameById(int id) {
+        ArrayList<Civilization> civilizations = civController.getAllCivilizations();
+        for (Civilization civilization : civilizations) {
+            if (civilization.getIndex() == id) {
+                JsonObject response = new JsonObject();
+                response.addProperty("civId", civilization.getIndex());
+                response.addProperty("civName", civilization.getName());
+                return setOk(response, true);
+            }
+        }
+        return JSON_FALSE;
+    }
+
+    public JsonObject getAllCivilizationIds() {
+        ArrayList<Civilization> civs = civController.getAllCivilizations();
+        ArrayList<Integer> ids = new ArrayList<>();
+        for (Civilization civ : civs) {
+            ids.add(civ.getIndex());
+        }
+        JsonObject response = new JsonObject();
+        response.add("civIds", GSON.fromJson(GSON.toJson(ids), JsonArray.class));
         return setOk(response, true);
     }
 

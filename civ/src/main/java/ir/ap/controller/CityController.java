@@ -97,7 +97,7 @@ public class CityController extends AbstractGameController {
         if (city == null || tile == null)
             return false;
         for (Tile neighbor : tile.getNeighbors()) {
-            if (neighbor.getOwnerCity().equals(city))
+            if (neighbor != null && neighbor.getOwnerCity() != null && neighbor.getOwnerCity().equals(city))
                 return true;
         }
         return false;
@@ -130,7 +130,7 @@ public class CityController extends AbstractGameController {
             gameArea.setTileKnowledgeByCivilization(civ, tile, TileKnowledge.REVEALED);
         }
         for (Tile neighbor : tile.getNeighbors()) {
-            if (!neighbor.civilizationIsVisiting(civ))
+            if (neighbor != null && !neighbor.civilizationIsVisiting(civ))
                 gameArea.setTileKnowledgeByCivilization(civ, neighbor, TileKnowledge.REVEALED);
         }
         return true;

@@ -261,6 +261,10 @@ public class Tile {
         ownerCity = city;
     }
 
+    public boolean hasOwnerCity() {
+        return getOwnerCity() != null;
+    }
+
     public void addVisitingUnit(Unit unit) {
         visitingUnits.add(unit);
     }

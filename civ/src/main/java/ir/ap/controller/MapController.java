@@ -112,12 +112,13 @@ public class MapController extends AbstractGameController {
                 continue;
             visited.put(curTile, true);
             retTiles.add(curTile);
-            if (checkIsNonBlock && curTile.isBlock())
+            if (curTile != tile && checkIsNonBlock && curTile.isBlock())
                 continue;
             for (Tile tileInDepth : curTile.getNeighbors()) {
+                if (tileInDepth == null) continue;
                 int curDist = dist.get(curTile);
                 int depthDist = curDist + 1;
-                if (visited.get(tileInDepth) != null && depthDist <= range) {
+                if (visited.get(tileInDepth) == null && depthDist <= range) {
                     dist.put(tileInDepth, depthDist);
                     queue.add(tileInDepth);
                 }

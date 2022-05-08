@@ -9,12 +9,6 @@ public class CivilizationController extends AbstractGameController {
         super(gameArea);
     }
 
-    public Civilization newCiv(int id, User user) {
-        // TODO: create settler, worker
-        Civilization civ = new Civilization(id, user.getNickname() + ".civ", null);
-        return civ;
-    }
-
     public Civilization getCivilizationByUsername(String username)
     {
         Civilization civilization = gameArea.getCivilizationByUser(gameArea.getUserByUsername(username));
@@ -54,6 +48,7 @@ public class CivilizationController extends AbstractGameController {
             if(unit.getUnitAction() == UnitType.UnitAction.ALERT) {
                 Tile tile = unit.getTile();
                 for(Tile enemyTile : tile.getNeighbors()) {
+                    if (enemyTile == null) continue;
                     Unit enemyUnit = enemyTile.getCombatUnit();
                     if(enemyUnit == null) enemyUnit = enemyTile.getNonCombatUnit();
                     if(enemyUnit != null)

@@ -26,7 +26,6 @@ public class UnitController extends AbstractGameController {
         if (unit == null || newCiv == null) return false;
         removeUnit(unit);
         addUnit(newCiv, unit.getTile(), unit.getUnitType());
-        // TODO: XP? fekonam nist asan
         return true;
     }
 
@@ -143,6 +142,7 @@ public class UnitController extends AbstractGameController {
 
     public boolean unitAttack(Civilization civilization, Tile target, boolean cheat)
     {
+        // TODO: khodi ha!!!!
         if (civilization == null || target == null) return false;
         Unit unit = civilization.getSelectedUnit();
         if (unit == null) return false;
@@ -279,7 +279,7 @@ public class UnitController extends AbstractGameController {
             return false;
 
         Tile target = unit.getTile();
-        if (target == null || target.hasCity())
+        if (target == null || target.hasOwnerCity())
             return false;
         City city;
         int cnt = 10;
@@ -436,7 +436,7 @@ public class UnitController extends AbstractGameController {
         if (tile == null || (!tile.hasCity() && !tile.hasBuilding() && !tile.hasImprovement())) return false;
         unit.setHowManyTurnWeKeepAction(0);
 
-        // TODO: repair building
+        // TODO: repair building PHASE2
 
         unit.setUnitAction(UnitType.UnitAction.REPAIR);
         return true;
@@ -457,7 +457,6 @@ public class UnitController extends AbstractGameController {
         if(unit == null) return false;
         unit.setHowManyTurnWeKeepAction(0);
         unit.setUnitAction(UnitType.UnitAction.ALERT);
-        //TODO: what change?
         return true;
     }
 
