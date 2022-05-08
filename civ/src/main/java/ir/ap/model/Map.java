@@ -8,13 +8,13 @@ public class Map {
     public static final int MAX_H = 30, MAX_W = 30;
     private int mapH = MAX_H;
     private int mapW = MAX_W;
-    private Tile[][] tiles = new Tile[ 35 ][ 35 ];
+    private Tile[][] tiles = new Tile[ 35 ][ 35 ]; // tiles[ i ][ j ] => i: satr , j: sotoon . But be careful that tile.index/30: sotoon , tile.index%30: satr 
     private ArrayList<Tile> khoshkiHa = new ArrayList<>();
     private int[][] dist = new int[905][905] ;// INF if no path
     private int[][] distNonWeighted = new int[905][905] ;// INF if no path
     private int[][] nextWeightedDist = new int[905][905] ;// -1 if no path
     private int[][] nextNonWeightedDist = new int[905][905] ;// -1 if no path
-    private final int INF = 1000000000 ;
+    private final int INF = 1000000000; 
     
     private void generateRandomMap(long seed){
         Random randomobj = new Random();
@@ -25,8 +25,8 @@ public class Map {
         for(int i = 0 ; i < 30 ; i ++){
             for(int j = 0 ; j < 30 ; j ++){
                 if( (i >= 10 && i < 20) && (j >= 5 && j < 25) )continue ;
-                Tile tile = new Tile( (i*30)+j, i, j, TerrainType.OCEAN, null, new ArrayList<>(Arrays.asList(new Resource[]{})));
-                tiles[ i ][ j ] = tile;
+                Tile tile = new Tile( (i*30)+j, j, i, TerrainType.OCEAN, null, new ArrayList<>(Arrays.asList(new Resource[]{})));
+                tiles[ j ][ i ] = tile;
             }
         }
 
@@ -39,7 +39,10 @@ public class Map {
             }
         }
 
-        TerrainType[] allTerrainTypes = TerrainType.values(); 
+        ArrayList<TerrainType> allTerrainTypes = new ArrayList<>(); // Ocean is not needed
+        for(int i = 0 ; i < TerrainType.values().length ; i ++){
+            if( TerrainType.values()[ i ].equals( TerrainType.OCEAN ) == false ) allTerrainTypes.add( TerrainType.values()[ i ]);
+        }
         Resource[] allResources = Resource.values(); 
 
         for(int i = 10 ; i < 20 ; i ++){
@@ -48,7 +51,7 @@ public class Map {
                 TerrainType.TerrainFeature terrainFeature = null;
                 ArrayList<Resource> resources = new ArrayList<>() ;
                 
-                terrainType = allTerrainTypes[ randomobj.nextInt(allTerrainTypes.length) ] ;
+                terrainType = allTerrainTypes.get( randomobj.nextInt(allTerrainTypes.size()) ) ;
                 if (terrainType.getFeaturesPossible().size() > 0){
                     if( randomobj.nextInt( 2 ) == 0 )terrainFeature = terrainType.getFeaturesPossible().get( randomobj.nextInt( terrainType.getFeaturesPossible().size() ) );
                 }
@@ -60,32 +63,32 @@ public class Map {
                         }
                     }
                 }
-                Tile tile = new Tile((i*30)+j, i, j, terrainType, terrainFeature, resources) ;
-                tiles[ i ][ j ] = tile;
+                Tile tile = new Tile((i*30)+j, j, i, terrainType, terrainFeature, resources) ;
+                tiles[ j ][ i ] = tile;
                 khoshkiHa.add( tile );
             }
         }
         
         // add neighborhoods
-        for(int i = 10 ; i < 20 ; i ++){
-            for(int j = 5 ; j < 25 ; j ++){
-                Tile tile = this.getTileByIndex( (i*30)+j );
+        for(int i = 0 ; i < 30 ; i ++){
+            for(int j = 0 ; j < 30 ; j ++){
+                Tile tile = this.getTileByIndex( (i*30)+j );// i: sotoon , j: satr
                 int index = tile.getIndex();
-                if( i != 10 )addNeighborAndWeight(tile, this.getTileByIndex(index-1), Direction.UP);
-                if( i != 19 )addNeighborAndWeight(tile, this.getTileByIndex(index+1), Direction.DOWN);
-                if( j != 5 && !(i == 10 && j%2 == 1) ){
+                if( j != 0 )addNeighborAndWeight(tile, this.getTileByIndex(index-1), Direction.UP);
+                if( j != 29 )addNeighborAndWeight(tile, this.getTileByIndex(index+1), Direction.DOWN);
+                if( i != 0 && !(j == 0 && i%2 == 1) ){
                     if( j%2 == 0 )addNeighborAndWeight(tile, this.getTileByIndex(index-30), Direction.UP_LEFT);
                     else addNeighborAndWeight(tile, this.getTileByIndex(index-31), Direction.UP_LEFT);
                 }
-                if( j != 5 && !(i == 10 && j%2 == 0) ){
+                if( i != 0 && !(j == 30 && i%2 == 0) ){
                     if( j%2 == 0 )addNeighborAndWeight(tile, this.getTileByIndex(index-29), Direction.DOWN_LEFT);
                     else addNeighborAndWeight(tile, this.getTileByIndex(index-30), Direction.DOWN_LEFT);
                 }
-                if( j != 19 && !(i == 10 && j%2 == 1) ){
+                if( i != 29 && !(j == 0 && i%2 == 1) ){
                     if( j%2 == 0 )addNeighborAndWeight(tile, this.getTileByIndex(index+30), Direction.UP_RIGHT);
                     else addNeighborAndWeight(tile, this.getTileByIndex(index+29), Direction.UP_RIGHT);
                 }
-                if( j != 19 && !(i == 10 && j%2 == 0) ){
+                if( i != 29 && !(j == 30 && i%2 == 0) ){
                     if( j%2 == 0 )addNeighborAndWeight(tile, this.getTileByIndex(index+31), Direction.DOWN_RIGHT);
                     else addNeighborAndWeight(tile, this.getTileByIndex(index+30), Direction.DOWN_RIGHT);
                 }
@@ -144,7 +147,7 @@ public class Map {
 
     public Tile getTileByIndex( int index ){
         if( index < 0 || index > 900 )return null;
-        return tiles[ index/30 ][ index%30 ];
+        return tiles[ index%30 ][ index/30 ];
     }
 
     public Tile getTileByIndices(int x, int y) {
@@ -169,8 +172,27 @@ public class Map {
         }
     }
 
+    void initDists(){
+        for(int i = 0 ; i < 900 ; i ++){
+            for(int j = 0 ; j < 900 ; j ++){
+                dist[ i ][ j ] = INF;
+                nextWeightedDist[ i ][ j ] = -1;
+            }
+        }
+        for(int i = 0 ; i < khoshkiHa.size() ; i ++){
+            Tile tile = khoshkiHa.get(i);
+            for(int z = 0 ; z < 6 ; z ++){
+                Tile neighbor = tile.getNeighborOnSide( z );
+                if( dist[ tile.getIndex() ][ neighbor.getIndex() ] > tile.getWeightOnSide( z ) ){
+                    dist[ tile.getIndex() ][ neighbor.getIndex() ] = tile.getWeightOnSide( z );
+                    nextWeightedDist[ tile.getIndex() ][ neighbor.getIndex() ] = neighbor.getIndex();
+                }
+            }
+        }
+    }
+
     public void updateDistances(){
-        // TODO: first reset all distances!!!
+        initDists();
         for(int k = 0 ; k < khoshkiHa.size() ; k ++){
             for(int i = 0 ; i < khoshkiHa.size() ; i ++){
                 for(int j = 0 ; j < khoshkiHa.size() ; j ++){

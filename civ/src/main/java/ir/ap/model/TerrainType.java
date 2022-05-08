@@ -11,7 +11,7 @@ public enum TerrainType {
     HILL(4,0,2,0,25,2,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.JUNGLE,TerrainFeature.FOREST})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.IRON,Resource.COAL,Resource.DEER,Resource.GOLD,Resource.SILVER,Resource.GEMS,Resource.MARBLE,Resource.SHEEP}))),
 
     MOUNTAIN(5,0,0,0,25,1000000000,new ArrayList<>(Arrays.asList(new TerrainFeature[]{})),new ArrayList<>(Arrays.asList(new Resource[]{}))),
-    OCEAN(6,1,0,1,0,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.ICE})),new ArrayList<>(Arrays.asList(new Resource[]{}))),
+    OCEAN(6,1,0,1,0,1000000000,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.ICE})),new ArrayList<>(Arrays.asList(new Resource[]{}))),
     PLAINS(7,1,1,0,-33,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.JUNGLE, TerrainFeature.FOREST})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.IRON,Resource.HORSES,Resource.COAL,Resource.WHEAT,Resource.GOLD,Resource.GEMS,Resource.MARBLE,Resource.IVORY,Resource.COTTON,Resource.INCENSE,Resource.SHEEP}))),
     SNOW(8,0,0,0,-33,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.IRON}))),
     TUNDRA(9,1,0,0,-33,1,new ArrayList<>(Arrays.asList(new TerrainFeature[]{TerrainFeature.FOREST})),new ArrayList<>(Arrays.asList(new Resource[]{Resource.IRON,Resource.HORSES,Resource.DEER,Resource.SILVER,Resource.GEMS,Resource.MARBLE,Resource.FURS})));

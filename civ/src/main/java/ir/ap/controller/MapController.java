@@ -11,9 +11,11 @@ import ir.ap.model.City;
 import ir.ap.model.Civilization;
 import ir.ap.model.GameArea;
 import ir.ap.model.Improvement;
+import ir.ap.model.TerrainType;
 import ir.ap.model.Tile;
 import ir.ap.model.Unit;
 import ir.ap.model.UnitType;
+import ir.ap.model.TerrainType.TerrainFeature;
 import ir.ap.model.Tile.TileKnowledge;
 
 public class MapController extends AbstractGameController {
@@ -23,7 +25,14 @@ public class MapController extends AbstractGameController {
     }
 
     public void initCivilizationPositions(){
-        ArrayList<Tile> khoshkiHas = gameArea.getMap().getKhoshkiHa() ;
+        ArrayList<Tile> khoshkiHas = new ArrayList<>()  ;
+        for(int i = 0 ; i < gameArea.getMap().getKhoshkiHa().size(); i ++){
+            Tile tile = gameArea.getMap().getKhoshkiHa().get( i );
+            if( tile.getTerrainType().equals( TerrainType.MOUNTAIN ) == false && tile.getTerrainType().equals( TerrainType.OCEAN ) == false 
+                && tile.getTerrainFeature().equals( TerrainFeature.ICE ) == false ){
+                khoshkiHas.add( tile );
+            }
+        }
         Collections.shuffle( khoshkiHas , new Random( gameArea.getSeed() ) );
         int i = 0;
         for( Civilization civilization : gameArea.getCiv2user().keySet() ){
