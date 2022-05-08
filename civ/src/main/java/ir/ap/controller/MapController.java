@@ -28,8 +28,9 @@ public class MapController extends AbstractGameController {
         ArrayList<Tile> khoshkiHas = new ArrayList<>()  ;
         for(int i = 0 ; i < gameArea.getMap().getKhoshkiHa().size(); i ++){
             Tile tile = gameArea.getMap().getKhoshkiHa().get( i );
-            if( tile.getTerrainType().equals( TerrainType.MOUNTAIN ) == false && tile.getTerrainType().equals( TerrainType.OCEAN ) == false 
-                && tile.getTerrainFeature().equals( TerrainFeature.ICE ) == false ){
+            if (tile.getTerrainType() != TerrainType.MOUNTAIN &&
+                tile.getTerrainType() != TerrainType.OCEAN &&
+                tile.getTerrainFeature() != TerrainFeature.ICE) {
                 khoshkiHas.add( tile );
             }
         }

@@ -218,8 +218,8 @@ public class GameMenuView extends AbstractMenuView {
         currentTurnId = 0;
         currentPlayer = usersInGame[currentTurnId];
         currentCiv = civsInGame[currentTurnId];
-        System.out.format("========================================\nTurn: %s\n", currentCiv);
         printCurrentMap();
+        System.out.format("Turn: %s\n========================================\n", currentCiv);
     }
 
     public Menu nextTurn(Matcher matcher) {
@@ -233,8 +233,8 @@ public class GameMenuView extends AbstractMenuView {
             if (getField(response, "end", Boolean.class) == true) {
                 return responseAndGo(msg, Menu.MAIN);
             }
-            System.out.format("========================================\nTurn: %s\n", currentCiv);
             printCurrentMap();
+            System.out.format("Turn: %s\n========================================\n", currentCiv);
         }
         return responseAndGo(msg, Menu.GAME);
     }
@@ -513,7 +513,7 @@ public class GameMenuView extends AbstractMenuView {
         JsonArray map = (JsonArray) response.get("map");
         int width = response.get("width").getAsInt();
         int height = response.get("height").getAsInt();
-        int directionOfMap = ((JsonObject) ((JsonArray) map.get(0)).get(0)).get("index").getAsInt() % 2;
+        int directionOfMap = ((JsonObject) ((JsonArray) map.get(0)).get(0)).get("y").getAsInt() % 2;
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 JsonObject tile = (JsonObject) ((JsonArray) map.get(i)).get(j);

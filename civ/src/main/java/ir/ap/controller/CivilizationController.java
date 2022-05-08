@@ -50,6 +50,8 @@ public class CivilizationController extends AbstractGameController {
                 unitController.moveUnitTowardsTarget(unit);
             }
 
+            unit.resetMp();
+
             if(unit.getUnitAction() == UnitType.UnitAction.ALERT) {
                 Tile tile = unit.getTile();
                 for(Tile enemyTile : tile.getNeighbors()) {

@@ -12,7 +12,7 @@ public class Map {
     private ArrayList<Tile> khoshkiHa = new ArrayList<>();
     private int[][] dist = new int[905][905] ;// INF if no path
     private int[][] distNonWeighted = new int[905][905] ;// INF if no path
-    private int[][] nextWeightedDist = new int[905][905] ;// -1 if no path
+    private int[][] nextWeightedDist = new int[905][905] ;// -1 if no path TODO wrong algo
     private int[][] nextNonWeightedDist = new int[905][905] ;// -1 if no path
     private final int INF = 1000000000; 
     
@@ -32,10 +32,17 @@ public class Map {
 
         for(int i = 0 ; i < 30*30 ; i ++){
             for(int j = 0 ; j < 30*30 ; j ++){
-                dist[ i ][ j ] = INF;
-                distNonWeighted[ i ][ j ] = INF;
-                nextWeightedDist[ i ][ j ] = -1;
-                nextNonWeightedDist[ i ][ j ] = -1;
+                if (i == j) {
+                    dist[i][i] = 0;
+                    distNonWeighted[i][i] = 0;
+                    nextWeightedDist[i][i] = i;
+                    nextNonWeightedDist[i][i] = i;
+                } else {
+                    dist[ i ][ j ] = INF;
+                    distNonWeighted[ i ][ j ] = INF;
+                    nextWeightedDist[ i ][ j ] = -1;
+                    nextNonWeightedDist[ i ][ j ] = -1;
+                }
             }
         }
 
@@ -173,10 +180,16 @@ public class Map {
     }
 
     void initDists(){
+        // TODO: weights are not updated?!!
         for(int i = 0 ; i < 900 ; i ++){
             for(int j = 0 ; j < 900 ; j ++){
-                dist[ i ][ j ] = INF;
-                nextWeightedDist[ i ][ j ] = -1;
+                if (i == j) {
+                    dist[i][j] = 0;
+                    nextWeightedDist[i][j] = i;
+                } else {
+                    dist[ i ][ j ] = INF;
+                    nextWeightedDist[ i ][ j ] = -1;
+                }
             }
         }
         for(int i = 0 ; i < khoshkiHa.size() ; i ++){
