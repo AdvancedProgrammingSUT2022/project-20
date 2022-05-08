@@ -68,6 +68,7 @@ public class UnitController extends AbstractGameController {
     public boolean unitMoveTo(Civilization civilization, Tile target, boolean cheat)
     {
         //TODO
+        // TODO: moveto OCEAN?!!
         if (civilization == null || target == null) return false;
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
