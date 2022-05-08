@@ -466,35 +466,36 @@ public class GameMenuView extends AbstractMenuView {
         int[] terrainFeatureIds = GSON.fromJson(
                 GAME_CONTROLLER.getAllTerrainFeatureIds().get("terrainFeatureIds").getAsJsonArray(), int[].class);
         for (int terrainFeatureId : terrainFeatureIds) {
-            System.out.format("\t(%s:%s),\n", getFeatureStrById(terrainFeatureId), GAME_CONTROLLER
+            System.out.format("\t%2d: (%s:%s),\n", terrainFeatureId, getFeatureStrById(terrainFeatureId), GAME_CONTROLLER
                     .getTerrainFeatureNameById(terrainFeatureId).get("terrainFeatureName").getAsString());
         }
         System.out.println("\n >>> UNITS:");
         int[] unitTypeIds = GSON.fromJson(GAME_CONTROLLER.getAllUnitTypeIds().get("unitTypeIds").getAsJsonArray(),
                 int[].class);
         for (int unitTypeId : unitTypeIds) {
-            System.out.format("\t(%s:%s),\n", getUnitStrById(unitTypeId),
+            System.out.format("\t%2d: (%s:%s),\n", unitTypeId, getUnitStrById(unitTypeId),
                     GAME_CONTROLLER.getUnitTypeNameById(unitTypeId).get("unitTypeName").getAsString());
         }
         System.out.println("\n >>> RESOURCES:");
         int[] resourceIds = GSON.fromJson(GAME_CONTROLLER.getAllResourceIds().get("resourceIds").getAsJsonArray(),
                 int[].class);
         for (int resourceId : resourceIds) {
-            System.out.format("\t(%s:%s),\n", getResourceStrById(resourceId),
+            System.out.format("\t%2d: (%s:%s),\n", resourceId, getResourceStrById(resourceId),
                     GAME_CONTROLLER.getResourceNameById(resourceId).get("resourceName").getAsString());
         }
         System.out.println("\n >>> IMPROVEMENTS:");
         int[] improvementIds = GSON
                 .fromJson(GAME_CONTROLLER.getAllImprovementIds().get("improvementIds").getAsJsonArray(), int[].class);
         for (int improvementId : improvementIds) {
-            System.out.format("\t(%s:%s),\n", getImprovementStrById(improvementId),
+            System.out.format("\t%2d: (%s:%s),\n", improvementId, getImprovementStrById(improvementId),
                     GAME_CONTROLLER.getImprovementNameById(improvementId).get("improvementName").getAsString());
         }
         System.out.println("\n >>> CIVILIZATIONS:");
         int[] civIds = GSON.fromJson(GAME_CONTROLLER.getAllCivilizationIds().get("civIds").getAsJsonArray(),
                 int[].class);
         for (int civId : civIds) {
-            System.out.format("\t(%s:%s),\n", getColoredStr(getCivStrById(civId), getCivColorById(civId), true),
+            System.out.format("\t%2d: (%s:%s),\n", civId,
+                    getColoredStr(getCivStrById(civId), getCivColorById(civId), true),
                     GAME_CONTROLLER.getCivilizationNameById(civId).get("civName").getAsString());
         }
         System.out.println("\n========MAP=============================");

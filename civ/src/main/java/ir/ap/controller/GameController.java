@@ -815,7 +815,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         if ( city.getPopulation() < city.getWorkingTiles().size() ) // Ehtemalan etefagh neofteh vali serfan baray etminan
             return messageToJsonObj("something is wrong in the city", false);
         JsonObject jsonObject =  new JsonObject();
-        jsonObject.addProperty("UnemployedCitizens", city.getPopulation()-city.getWorkingTiles().size());
+        jsonObject.addProperty("unemployedCitizens", city.getPopulation()-city.getWorkingTiles().size());
         jsonObject.addProperty("ok", true);
         return jsonObject;
     }
@@ -827,7 +827,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         City city = civilization.getSelectedCity();
         if ( city == null )
             return messageToJsonObj("no city selected", false);        
-        // TODO
+        // TODO PHASE2
         return JSON_FALSE;
     } 
  
@@ -846,12 +846,11 @@ public class GameController extends AbstractGameController implements JsonRespon
                 return messageToJsonObj("something is invalid", false);
         }
         else{
-            if( civilization.getGold() < City.GoldsNeedToIncreaseTiles )
+            if( civilization.getGold() < City.GOLD_NEEDED_TO_PURCHASE_TILE )
                 return messageToJsonObj("the gold isn't enough", false);
             if( cityController.cityPurchaseTile(city, tile) == false )
                 return messageToJsonObj("something is invalid", false);
-            int last_gold =  civilization.getGold();
-            civilization.setGold(last_gold-City.GoldsNeedToIncreaseTiles);             
+            civilization.addToGold(-City.GOLD_NEEDED_TO_PURCHASE_TILE);
         }
         return messageToJsonObj("Tile succesfully added to city", true);
     }
@@ -865,8 +864,9 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("no city selected", false);        
         Production production = city.getCurrentProduction();
         if( production == null )
-            messageToJsonObj("there is no production", false);
-        JsonObject jsonObject = serializeProduction( production );
+            return messageToJsonObj("there is no production", false);
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("production", serializeProduction(production));
         jsonObject.addProperty("ok", true);        
         return jsonObject;
     }
@@ -880,7 +880,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("no city selected", false);        
         Production[] allProductions = Production.getAllProductions();
         if( prodId >= allProductions.length )
-            return messageToJsonObj("proId is invalid", false);
+            return messageToJsonObj("prodId is invalid", false);
         Production production = allProductions[ prodId ];
         if( cityController.cityChangeCurrentProduction(city, production, cheat) == false )
             return messageToJsonObj("something is invalid", false);
@@ -921,16 +921,16 @@ public class GameController extends AbstractGameController implements JsonRespon
         if ( city == null )
             return messageToJsonObj("no city selected", false);        
         JsonObject jsonObject = new JsonObject();
-        jsonObject.add("Productions", new JsonArray());
+        jsonObject.add("productions", new JsonArray());
         if( cheat == true ){
             for (Production production : Production.getAllProductions()){
-                ((JsonArray) jsonObject.get("Productions")).add(serializeProduction(production));
+                ((JsonArray) jsonObject.get("productions")).add(serializeProduction(production));
             }
         }   
         else{
             for (Production production : Production.getAllProductions()){
                 if( civilization.getTechnologyReached(production.getTechnologyRequired()) == true ){
-                    ((JsonArray) jsonObject.get("Productions")).add(serializeProduction(production));
+                    ((JsonArray) jsonObject.get("productions")).add(serializeProduction(production));
                 }
             }
         }
@@ -946,9 +946,9 @@ public class GameController extends AbstractGameController implements JsonRespon
         if ( city == null )
             return messageToJsonObj("no city selected", false);        
         JsonObject jsonObject = new JsonObject();
-        jsonObject.add("Working Tiles", new JsonArray());    
+        jsonObject.add("workingTiles", new JsonArray());    
         for ( Tile tile : city.getWorkingTiles() ){
-            ((JsonArray) jsonObject.get("Working Tiles")).add(serializeTile(tile, civilization));
+            ((JsonArray) jsonObject.get("workingTiles")).add(serializeTile(tile, civilization));
         }
         jsonObject.addProperty("ok", true);
         return jsonObject;

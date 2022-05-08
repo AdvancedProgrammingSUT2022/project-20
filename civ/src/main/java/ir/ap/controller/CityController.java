@@ -26,7 +26,7 @@ public class CityController extends AbstractGameController {
         }
         int extraFood = city.getFoodYield() - 2 * city.getPopulation();
         city.addToPopulation(extraFood / 4.0 / city.getPopulation());
-        if( gameArea.getTurn() % City.TurnsNeedToIncreaseTiles == 0 ){
+        if( gameArea.getTurn() % City.TURN_NEEDED_TO_EXTEND_TILES == 0 ){
             addRandomTileToCity(city);
         }
     }

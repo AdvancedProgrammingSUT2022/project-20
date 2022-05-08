@@ -7,8 +7,8 @@ import java.util.HashSet;
 public class City {
     private static ArrayList<City> cities = new ArrayList<>();
     private static ArrayList<String> cityNames = new ArrayList<>();
-    public static int GoldsNeedToIncreaseTiles = 5;
-    public static int TurnsNeedToIncreaseTiles = 3;
+    public static final int GOLD_NEEDED_TO_PURCHASE_TILE = 5;
+    public static final int TURN_NEEDED_TO_EXTEND_TILES = 3;
 
     private static final int DEFAULT_HP = 20;
     private static final int DEFAULT_TERRITORY_RANGE = 5;
