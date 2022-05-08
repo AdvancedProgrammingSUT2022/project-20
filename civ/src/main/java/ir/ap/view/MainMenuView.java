@@ -124,7 +124,7 @@ public class MainMenuView extends AbstractMenuView {
                 }
                 System.out.format("\t%s as civ %s\n", username, civName);
             }
-            ((GameMenuView) Menu.GAME.getMenuView()).init(usersInGame);
+            ((GameMenuView) Menu.GAME.getMenuView()).init(usersInGame, response);
             return responseAndGo(null, Menu.GAME);
         } else {
             return responseAndGo(msg, Menu.MAIN);

@@ -199,14 +199,21 @@ public class GameMenuView extends AbstractMenuView {
         return Command.values();
     }
 
-    public void init(String[] users) {
+    public void init(String[] users, JsonObject response) {
         usersInGame = users;
         civsInGame = new String[usersInGame.length];
         focusTile = new Tile[usersInGame.length];
+        JsonArray civsJson = response.get("civs").getAsJsonArray();
         for (int i = 0; i < users.length; i++) {
             civsInGame[i] = getField(GAME_CONTROLLER.getCivilizationByUsername(users[i]),
                     "civName", String.class);
-            focusTile[i] = new Tile(0, 0);
+            JsonObject civJson = civsJson.get(i).getAsJsonObject();
+            if (civJson.has("initPos")) {
+                focusTile[i] = new Tile(civJson.get("initPos").getAsJsonObject().get("x").getAsInt(),
+                        civJson.get("initPos").getAsJsonObject().get("y").getAsInt());
+            } else {
+                focusTile[i] = new Tile(0, 0);
+            }
         }
         currentTurnId = 0;
         currentPlayer = usersInGame[currentTurnId];
@@ -601,7 +608,7 @@ public class GameMenuView extends AbstractMenuView {
                     // REVEALED
                     int featureId = tile.get("terrainFeatureId").getAsInt();
                     String featureStr = getFeatureStrById(featureId);
-                    plain[upLeftX + 4][centerY] = getColoredStr(featureStr, tileColor, Color.FG_WHITE);
+                    plain[upLeftX + 4][centerY] = getColoredStr(featureStr, tileColor, true);
                 }
 
                 if (!knowledge.equals("VISIBLE"))

@@ -430,6 +430,15 @@ public class Tile {
         return this.improvement == resource.getImprovementRequired();
     }
 
+    public boolean hasRiverInBetween(Tile neighbor) {
+        for (int i = 0; i < 6; i++) {
+            if (neighbors[i] != null && neighbors[i] == neighbor) {
+                return getHasRiverOnSide(Direction.getDirectionById(i));
+            }
+        }
+        return false;
+    }
+
     public boolean hasRiver() {
         return getHasRiverOnSide(Direction.UP) ||
                 getHasRiverOnSide(Direction.UP_RIGHT) ||
@@ -454,6 +463,10 @@ public class Tile {
         return terrainFeature == TerrainFeature.FOREST ||
                 terrainType == TerrainType.MOUNTAIN ||
                 terrainType == TerrainType.HILL;
+    }
+
+    public boolean isUnreachable() {
+        return terrainType == TerrainType.MOUNTAIN || terrainType.isSourceOfWater();
     }
 
 }

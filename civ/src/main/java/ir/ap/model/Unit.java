@@ -13,6 +13,7 @@ public class Unit {
     private int hp;
     private Civilization civilization;
     private Tile tile;
+    private Tile target;
     private int howManyTurnWeKeepAction;
 
     public Unit(UnitType unitType, Civilization civilization, Tile tile) {
@@ -22,6 +23,7 @@ public class Unit {
         hp = (unitType.isCivilian() ? 0 : MAX_HP);
         this.civilization = civilization;
         this.tile = tile;
+        this.target = null;
     }
 
     public static int getMaxHp() {
@@ -64,6 +66,10 @@ public class Unit {
         mp = unitType.getMovement();
     }
 
+    public boolean hasMovedThisTurn() {
+        return this.mp != unitType.getMovement();
+    }
+
     public boolean canMove() {
         return mp > 0;
     }
@@ -102,6 +108,14 @@ public class Unit {
 
     public void setTile(Tile tile) {
         this.tile = tile;
+    }
+
+    public Tile getTarget() {
+        return target;
+    }
+
+    public void setTarget(Tile target) {
+        this.target = target;
     }
 
     public int getCost() {

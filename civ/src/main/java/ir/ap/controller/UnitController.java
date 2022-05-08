@@ -3,6 +3,7 @@ package ir.ap.controller;
 import ir.ap.model.*;
 import ir.ap.model.TerrainType.TerrainFeature;
 import ir.ap.model.Tile.TileKnowledge;
+import ir.ap.model.UnitType.UnitAction;
 
 public class UnitController extends AbstractGameController {
     public UnitController(GameArea gameArea) {
@@ -65,27 +66,45 @@ public class UnitController extends AbstractGameController {
         return true;
     }
 
+    public boolean moveUnitTowardsTarget(Unit unit) {
+        if (unit == null || unit.getUnitAction() != UnitAction.MOVETO || unit.getTarget() == null) return false;
+        while (unit.canMove()) {
+            Tile target = unit.getTarget();
+            Tile curTile = unit.getTile();
+            Tile nxtTile = gameArea.getMap().getNextTileInWeightedShortestPath(curTile, target);
+            if (nxtTile == null || nxtTile.isUnreachable()) break;
+            int dist = nxtTile.getMovementCost();
+            if ((unit.isCivilian() && nxtTile.getNonCombatUnit() != null) ||
+                (!unit.isCivilian() && nxtTile.getCombatUnit() != null) ||
+                (unit.hasMovedThisTurn() && unit.getMp() < dist))
+                break;
+            removeUnitFromMap(unit);
+            unit.addToMp(-dist);
+            if (curTile.hasRiverInBetween(nxtTile))
+                unit.setMp(0);
+            unit.setTile(nxtTile);
+            addUnitToMap(unit);
+        }
+        Tile target = unit.getTarget();
+        Tile curTile = unit.getTile();
+        if (curTile == target) {
+            unit.setTarget(null);
+            unit.setUnitAction(null);
+        }
+        return true;
+    }
+
     public boolean unitMoveTo(Civilization civilization, Tile target, boolean cheat)
     {
-        //TODO
-        // TODO: moveto OCEAN?!!
         if (civilization == null || target == null) return false;
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
         unit.setHowManyTurnWeKeepAction(0);
         Tile tile = unit.getTile();
-        if (tile == null) return false;
-        int dist = mapController.getWeightedDistance(tile, target);
-        if (unit.getMp() == 0 || dist >= unit.getMp() + UnitType.MAX_MOVEMENT)
-            return false;
-        if ((unit.isCivilian() && target.getNonCombatUnit() != null) ||
-            (!unit.isCivilian() && target.getCombatUnit() != null))
-            return false;
-        removeUnitFromMap(unit);
-        unit.addToMp(-dist);
-        unit.setTile(target);
+        if (tile == null || target.isUnreachable()) return false;
+        unit.setTarget(target);
         unit.setUnitAction(UnitType.UnitAction.MOVETO);
-        addUnitToMap(unit);
+        moveUnitTowardsTarget(unit);
         return true;
     }
 

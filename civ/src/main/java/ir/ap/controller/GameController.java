@@ -214,7 +214,25 @@ public class GameController extends AbstractGameController implements JsonRespon
             controller.setCityController(cityController);
         }
         mapController.initCivilizationPositions();
-        return messageToJsonObj(Message.GAME_STARTED, true);
+        JsonObject response = new JsonObject();
+        response.addProperty("msg", Message.GAME_STARTED.toString());
+        setOk(response, true);
+        response.add("civs", new JsonArray());
+        for (String username : players) {
+            JsonArray civsJson = response.get("civs").getAsJsonArray();
+            JsonObject curCivJson = new JsonObject();
+            Civilization curCiv = civController.getCivilizationByUsername(username);
+            if (curCiv.getUnits().size() > 0) {
+                int initX = curCiv.getUnits().get(0).getTile().getMapX();
+                int initY = curCiv.getUnits().get(0).getTile().getMapY();
+                JsonObject initPosJson = new JsonObject();
+                initPosJson.addProperty("x", initX);
+                initPosJson.addProperty("y", initY);
+                curCivJson.add("initPos", initPosJson);
+            }
+            civsJson.add(curCivJson);
+        }
+        return response;
     }
 
     public JsonObject nextTurn(String username) {

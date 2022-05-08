@@ -1,6 +1,7 @@
 package ir.ap.controller;
 
 import ir.ap.model.*;
+import ir.ap.model.UnitType.UnitAction;
 
 import java.util.ArrayList;
 
@@ -45,6 +46,10 @@ public class CivilizationController extends AbstractGameController {
         }
         for(Unit unit : civilization.getUnits())
         {
+            if (unit.getUnitAction() == UnitAction.MOVETO) {
+                unitController.moveUnitTowardsTarget(unit);
+            }
+
             if(unit.getUnitAction() == UnitType.UnitAction.ALERT) {
                 Tile tile = unit.getTile();
                 for(Tile enemyTile : tile.getNeighbors()) {
