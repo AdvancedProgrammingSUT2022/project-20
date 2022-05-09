@@ -802,6 +802,7 @@ public class GameController extends AbstractGameController implements JsonRespon
 
     public JsonObject cityGetOutput(String username) {
         // TODO
+        //
         return JSON_FALSE;
     }
 
