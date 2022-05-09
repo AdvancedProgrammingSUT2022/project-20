@@ -165,6 +165,20 @@ public class GameController extends AbstractGameController implements JsonRespon
         return productionObj;
     }
 
+    public JsonObject serializeTechnology(Technology technology){
+        JsonObject technologyObject = new JsonObject();
+        technologyObject.addProperty("name", technology.getName());
+        technologyObject.addProperty("id", technology.getId());
+        technologyObject.addProperty("cost", technology.getCost());
+        technologyObject.add("technologiesRequired", new JsonArray());
+        for(int i = 0 ; i < technology.getTechnologiesRequired().size() ; i ++){
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("id", technology.getTechnologiesRequired().get( i ).getId());
+            ((JsonArray) technologyObject.get("technologiesRequired")).add(jsonObject);
+        }
+        return technologyObject;
+    }
+
     public JsonObject getCivilizationByUsername(String username) {
         Civilization civ = civController.getCivilizationByUsername(username);
         if (civ == null)
@@ -249,7 +263,13 @@ public class GameController extends AbstractGameController implements JsonRespon
     }
 
     public JsonObject infoResearch(String username) {
-        // TODO
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid username", false);
+        Technology technology = civilization.getCurrentResearch();
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("Current Research", serializeTechnology(technology));
+        jsonObject.addProperty("Turns need research to be finished", civilization.gettur);      
         return JSON_FALSE;
     }
 
@@ -801,9 +821,21 @@ public class GameController extends AbstractGameController implements JsonRespon
     }
 
     public JsonObject cityGetOutput(String username) {
-        // TODO
-        //
-        return JSON_FALSE;
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid civUsername", false);
+        City city = civilization.getSelectedCity();
+        if ( city == null )
+            return messageToJsonObj("no city selected", false);
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("foodYield", city.getFoodYield());
+        jsonObject.addProperty("productionYield", city.getProductionYield());
+        jsonObject.addProperty("goldYield", city.getGoldYield());
+        jsonObject.addProperty("ScienceYield", city.getScienceYield());
+        int constantCityTurn = City.TURN_NEEDED_TO_EXTEND_TILES;
+        jsonObject.addProperty("Turns need to extend city territory", (constantCityTurn-(gameArea.getTurn()%constantCityTurn))%constantCityTurn );
+        // TODO: Turns need to extend population        
+        return jsonObject;
     }
 
     public JsonObject cityGetUnemployedCitizens(String username) {
