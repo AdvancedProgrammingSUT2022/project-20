@@ -12,7 +12,7 @@ public class Map {
     private ArrayList<Tile> khoshkiHa = new ArrayList<>();
     private int[][] dist = new int[905][905] ;// INF if no path
     private int[][] distNonWeighted = new int[905][905] ;// INF if no path
-    private int[][] nextWeightedDist = new int[905][905] ;// -1 if no path TODO wrong algo
+    private int[][] nextWeightedDist = new int[905][905] ;// -1 if no path
     private int[][] nextNonWeightedDist = new int[905][905] ;// -1 if no path
     private final int INF = 1000000000; 
     
