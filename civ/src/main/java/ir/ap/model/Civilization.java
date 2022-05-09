@@ -163,6 +163,10 @@ public class Civilization {
         return Math.max(0, currentResearch.getCost() - scienceSpentForResearch);
     }
 
+    public int getTurnsLeftForResearchFinish() {
+        return (int) Math.ceil(1.0 * getScienceLeftForResearchFinish() / getScienceYield());
+    }
+
     public int getGold() {
         return this.gold;
     }
