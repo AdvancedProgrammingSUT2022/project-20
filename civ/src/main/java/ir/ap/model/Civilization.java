@@ -289,6 +289,10 @@ public class Civilization {
         return happiness;
     }
 
+    public boolean isUnhappy() {
+        return getHappiness() < 0;
+    }
+
     public void finishResearch() {
         if (currentResearch == null) return;
         technologyReached[currentResearch.getId()] = true;

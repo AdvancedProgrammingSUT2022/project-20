@@ -127,10 +127,13 @@ public class Unit {
     }
 
     public int getCombatStrength() {
-        return unitType.getCombatStrength() +
+        int strength = unitType.getCombatStrength() +
                 (unitAction == UnitAction.FORTIFY
                         || unitAction == UnitAction.FORTIFY_HEAL
                         || unitAction == UnitAction.ALERT ? 3 : 0);
+        if (civilization.isUnhappy())
+            strength = Math.max(1, 3 * strength / 4);
+        return strength;
     }
 
     public int getRangedCombatStrength() {
