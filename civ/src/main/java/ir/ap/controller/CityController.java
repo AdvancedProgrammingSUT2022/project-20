@@ -18,14 +18,8 @@ public class CityController extends AbstractGameController {
     public void nextTurn(City city) {
         if (city == null) return;
         city.addToHp(1);
-        city.addToFood(-2 * city.getPopulation());
-        if (city.getFood() < 0 && city.getFoodYield() + city.getFood() >= 0) {
-            city.setFood(0);
-        }
-        if (city.getCurrentProduction() != UnitType.SETTLER) {
-            city.addToFood(city.getFoodYield());
-        }
-        city.addToPopulation(city.getFood() / 4.0 / city.getPopulation());
+        city.addToFood(city.getExtraFood());
+        city.addToPopulation(city.getPopulationGrowth());
         if (city.getCurrentProduction() != null) {
             city.addToProductionSpent(city.getProductionYield());
             if (city.getCostLeftForProductionConstruction() <= 0) {

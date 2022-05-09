@@ -261,6 +261,14 @@ public class City {
         this.population += delta;
     }
 
+    public double getPopulationGrowth() {
+        return getExtraFood() / 4.0 / getPopulation();
+    }
+
+    public int getTurnsLeftForNextCitizen() {
+        return (int) Math.ceil(1.0 / getPopulationGrowth());
+    }
+
     public int getRealPopulation() {
         return (int) Math.round(1000 * Math.pow(getPopulation(), 2.8));
     }
@@ -286,6 +294,16 @@ public class City {
 
     public void addToFood(int delta) {
         this.food += delta;
+    }
+
+    public int getExtraFood() {
+        int extraFood = -2 * getPopulation();
+        if (getCurrentProduction() != UnitType.SETTLER) {
+            extraFood += getFoodYield();
+        } else if (extraFood < 0 && extraFood + getFoodYield() >= 0) {
+            extraFood = 0;
+        }
+        return extraFood;
     }
 
     public int getGoldYield() {
