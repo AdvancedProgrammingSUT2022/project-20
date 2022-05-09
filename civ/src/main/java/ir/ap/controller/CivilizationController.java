@@ -37,7 +37,11 @@ public class CivilizationController extends AbstractGameController {
         if (civilization == null) return false;
         civilization.addToGold(civilization.getGoldYield());
         civilization.addToScience(civilization.getScienceYield());
-        if (civilization.getCurrentResearch() != null) {
+        if (civilization.getGold() < 0) {
+            civilization.addToGold(2);
+            civilization.addToScience(-2);
+        }
+        if (civilization.getCurrentResearch() != null && civilization.getScience() > 0) {
             civilization.addToScienceSpentForCurrentResearch(civilization.getScience());
             civilization.setScience(0);
             if (civilization.getScienceLeftForResearchFinish() <= 0) {

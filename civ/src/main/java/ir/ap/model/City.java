@@ -26,6 +26,7 @@ public class City {
     private int productionSpent;
 
     private int hp;
+    private int food;
 
     private double population;
 
@@ -43,6 +44,7 @@ public class City {
         productionSpent = 0;
 
         hp = DEFAULT_HP;
+        food = 0;
 
         population = 1;
     }
@@ -61,6 +63,7 @@ public class City {
         productionSpent = 0;
 
         hp = DEFAULT_HP;
+        food = 0;
 
         population = 1;
     }
@@ -180,8 +183,12 @@ public class City {
         return this.currentProduction;
     }
 
-    public void setCurrentProduction(Production currentProduction) {
-        this.currentProduction = currentProduction;
+    public boolean setCurrentProduction(Production production) {
+        if (production == UnitType.SETTLER &&
+            (civilization.isUnhappy() || getPopulation() < 2))
+            return false;
+        this.currentProduction = production;
+        return true;
     }
 
     public int getProductionSpent() {
@@ -254,6 +261,14 @@ public class City {
         this.population += delta;
     }
 
+    public double getPopulationGrowth() {
+        return getExtraFood() / 4.0 / getPopulation();
+    }
+
+    public int getTurnsLeftForNextCitizen() {
+        return (int) Math.ceil(1.0 / getPopulationGrowth());
+    }
+
     public int getRealPopulation() {
         return (int) Math.round(1000 * Math.pow(getPopulation(), 2.8));
     }
@@ -261,9 +276,34 @@ public class City {
     public int getFoodYield() {
         int foodYield = 2;
         for (Tile tile : territory) {
-            foodYield += tile.getFoodYield();
+            if (getWorkingTiles().contains(tile))
+                foodYield += tile.getFoodYield();
         }
+        if (civilization.isUnhappy())
+            foodYield /= 3;
         return foodYield;
+    }
+
+    public int getFood() {
+        return food;
+    }
+
+    public void setFood(int food) {
+        this.food = food;
+    }
+
+    public void addToFood(int delta) {
+        this.food += delta;
+    }
+
+    public int getExtraFood() {
+        int extraFood = -2 * getPopulation();
+        if (getCurrentProduction() != UnitType.SETTLER) {
+            extraFood += getFoodYield();
+        } else if (extraFood < 0 && extraFood + getFoodYield() >= 0) {
+            extraFood = 0;
+        }
+        return extraFood;
     }
 
     public int getGoldYield() {

@@ -18,14 +18,14 @@ public class CityController extends AbstractGameController {
     public void nextTurn(City city) {
         if (city == null) return;
         city.addToHp(1);
+        city.addToFood(city.getExtraFood());
+        city.addToPopulation(city.getPopulationGrowth());
         if (city.getCurrentProduction() != null) {
             city.addToProductionSpent(city.getProductionYield());
             if (city.getCostLeftForProductionConstruction() <= 0) {
                 cityConstructProduction(city);
             }
         }
-        int extraFood = city.getFoodYield() - 2 * city.getPopulation();
-        city.addToPopulation(extraFood / 4.0 / city.getPopulation());
         if( gameArea.getTurn() % City.TURN_NEEDED_TO_EXTEND_TILES == 0 ){
             addRandomTileToCity(city);
         }
@@ -141,7 +141,7 @@ public class CityController extends AbstractGameController {
             return false;
         if (city.getWorkingTiles().size() >= city.getPopulation())
             return false;
-        if (tile.getOwnerCity() != city)
+        if (tile.getOwnerCity() != city || gameArea.getDistanceInTiles(city.getTile(), tile) > 2)
             return false;
         return city.addToWorkingTiles(tile);
     }
