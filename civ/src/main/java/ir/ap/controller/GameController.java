@@ -672,7 +672,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("something is invalid", false);
         return messageToJsonObj("unit built rail road", true);
     }
-    // TODO: unit removes and build Improvement are not complete due to changes on weights and dists
+
     public JsonObject unitBuildImprovement(String username, int imprId, boolean cheat) {
         Civilization civilization = civController.getCivilizationByUsername(username);
         Improvement improvement = Improvement.getImprovementById(imprId);
