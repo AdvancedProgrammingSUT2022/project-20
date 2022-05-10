@@ -567,8 +567,17 @@ public class GameController extends AbstractGameController implements JsonRespon
     }
 
     public JsonObject increaseTurn(String username, int amount) {
-        // TODO
-        return JSON_FALSE;
+        Civilization civ = civController.getCivilizationByUsername(username);
+        if (civ == null)
+            return messageToJsonObj(Message.USER_NOT_ON_GAME, false);
+        boolean end = false;
+        for (int i = 0; i < amount; i++) {
+            end |= civController.nextTurn(civ);
+            if (end) break;
+        }
+        JsonObject response = new JsonObject();
+        response.addProperty("end", end);
+        return setOk(response, true);
     }
 
     public JsonObject increaseHappiness(String username, int amount) {

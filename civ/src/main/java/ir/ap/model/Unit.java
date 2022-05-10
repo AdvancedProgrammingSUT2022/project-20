@@ -15,6 +15,7 @@ public class Unit {
     private Tile tile;
     private Tile target;
     private int howManyTurnWeKeepAction;
+    private boolean isSleep;
 
     public Unit(UnitType unitType, Civilization civilization, Tile tile) {
         this.unitType = unitType;
@@ -24,6 +25,7 @@ public class Unit {
         this.civilization = civilization;
         this.tile = tile;
         this.target = null;
+        this.isSleep = false;
     }
 
     public static int getMaxHp() {
@@ -92,6 +94,14 @@ public class Unit {
 
     public void resetHp() {
         hp = MAX_HP;
+    }
+
+    public void setSleep(boolean sleep) {
+        this.isSleep = sleep;
+    }
+
+    public boolean getSleep() {
+        return isSleep;
     }
 
     public Civilization getCivilization() {
