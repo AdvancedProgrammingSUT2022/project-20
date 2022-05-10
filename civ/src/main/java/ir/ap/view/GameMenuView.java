@@ -2,6 +2,8 @@ package ir.ap.view;
 
 import java.util.regex.Matcher;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -257,8 +259,12 @@ public class GameMenuView extends AbstractMenuView {
         JsonObject response = getInfoResponse(arg);
         if (response == null)
             return responseAndGo(Message.ARG_INVALID.toString().replace("%s", arg), Menu.GAME);
-        if (!responseOk(response))
-            return responseAndGo(Message.E500, Menu.GAME);
+        if (!responseOk(response)) {
+            if (response != null && response.has("msg")) {
+                return responseAndGo(response.get("msg").getAsString(), Menu.GAME);
+            }
+            return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
+        }
         String msg = getField(response, "msg", String.class);
         printCurrentMap();
         return responseAndGo(msg, Menu.GAME);
@@ -270,7 +276,7 @@ public class GameMenuView extends AbstractMenuView {
         JsonObject response = (type.equals("combat")
                 ? GAME_CONTROLLER.selectCombatUnit(currentPlayer, tileId)
                 : GAME_CONTROLLER.selectNonCombatUnit(currentPlayer, tileId));
-        if (response == null)
+        if (!responseOk(response))
             return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         String msg = getField(response, "msg", String.class);
         printCurrentMap();
@@ -285,7 +291,7 @@ public class GameMenuView extends AbstractMenuView {
         } else {
             response = GAME_CONTROLLER.selectCity(currentPlayer, nameOrId);
         }
-        if (response == null)
+        if (!responseOk(response))
             return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         String msg = getField(response, "msg", String.class);
         printCurrentMap();
@@ -300,10 +306,10 @@ public class GameMenuView extends AbstractMenuView {
             cheat |= arg.matches("(--cheat|-c)");
         }
         JsonObject response = getUnitActionResponse(args, cheat);
-        if (response == null)
+        if (!responseOk(response))
             return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
-        String msg = getField(response, "msg", String.class);
         printCurrentMap();
+        String msg = getField(response, "msg", String.class);
         return responseAndGo(msg, Menu.GAME);
     }
 
@@ -315,10 +321,44 @@ public class GameMenuView extends AbstractMenuView {
             cheat |= arg.matches("(--cheat|-c)");
         }
         JsonObject response = getCityActionResponse(args, cheat);
-        if (response == null)
+        if (!responseOk(response)) {
+            if (response != null && response.has("msg"))
+                return responseAndGo(response.get("msg").getAsString(), Menu.GAME);
             return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
-        String msg = getField(response, "msg", String.class);
+        }
         printCurrentMap();
+        String cityName = GAME_CONTROLLER.getSelectedCity(currentPlayer)
+                .get("selectedCity").getAsJsonObject()
+                .get("name").getAsString();
+        if (response.has("unemployedCitizens")) {
+            int unemployedCitizens = response.get("unemployedCitizens").getAsInt();
+            JsonObject unemployedCitizensJson = new JsonObject();
+            unemployedCitizensJson.addProperty("title", "UNEMPLOYED CITIZENS");
+            unemployedCitizensJson.addProperty("City name", cityName);
+            unemployedCitizensJson.addProperty("Unemployed citizens", unemployedCitizens);
+            printResponse(unemployedCitizensJson);
+        }
+        if (response.has("production")) {
+            JsonObject productionJson = response.get("production").getAsJsonObject().deepCopy();
+            productionJson.addProperty("title", "CURRENT PRODUCTION");
+            productionJson.addProperty("City name", cityName);
+            printResponse(productionJson);
+        }
+        if (response.has("productions")) {
+            JsonObject productionsJson = response.get("productions").getAsJsonObject().deepCopy();
+            productionsJson.addProperty("title", "PRODUCTIONS AVAILABLE");
+            productionsJson.addProperty("City name", cityName);
+            printResponse(productionsJson);
+        }
+        if (response.has("workingTiles")) {
+            JsonArray workingTilesJsonArray = response.get("workingTiles").getAsJsonArray().deepCopy();
+            JsonObject workingTilesJson = new JsonObject();
+            workingTilesJson.add("workingTiles", workingTilesJsonArray);
+            workingTilesJson.addProperty("title", "WORKING TILES");
+            workingTilesJson.addProperty("City name", cityName);
+            printResponse(workingTilesJson);
+        }
+        String msg = getField(response, "msg", String.class);
         return responseAndGo(msg, Menu.GAME);
     }
 
@@ -438,6 +478,14 @@ public class GameMenuView extends AbstractMenuView {
         return responseAndGo(null, Menu.GAME);
     }
 
+    public void printResponse(JsonObject response) {
+        String title = response.get("title").getAsString();
+        response.remove("title");
+        System.out.format(" >>> %s:\n", title);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        System.out.println(gson.toJson(response));
+    }
+
     public void printCurrentMap() {
         writeMap(GAME_CONTROLLER.mapShow(currentPlayer, focusTile[currentTurnId].getId()));
         printMap();
@@ -466,8 +514,9 @@ public class GameMenuView extends AbstractMenuView {
         int[] terrainFeatureIds = GSON.fromJson(
                 GAME_CONTROLLER.getAllTerrainFeatureIds().get("terrainFeatureIds").getAsJsonArray(), int[].class);
         for (int terrainFeatureId : terrainFeatureIds) {
-            System.out.format("\t%2d: (%s:%s),\n", terrainFeatureId, getFeatureStrById(terrainFeatureId), GAME_CONTROLLER
-                    .getTerrainFeatureNameById(terrainFeatureId).get("terrainFeatureName").getAsString());
+            System.out.format("\t%2d: (%s:%s),\n", terrainFeatureId, getFeatureStrById(terrainFeatureId),
+                    GAME_CONTROLLER
+                            .getTerrainFeatureNameById(terrainFeatureId).get("terrainFeatureName").getAsString());
         }
         System.out.println("\n >>> UNITS:");
         int[] unitTypeIds = GSON.fromJson(GAME_CONTROLLER.getAllUnitTypeIds().get("unitTypeIds").getAsJsonArray(),
@@ -498,14 +547,14 @@ public class GameMenuView extends AbstractMenuView {
                     getColoredStr(getCivStrById(civId), getCivColorById(civId), true),
                     GAME_CONTROLLER.getCivilizationNameById(civId).get("civName").getAsString());
         }
-        System.out.println("\n========MAP=============================");
+        System.out.println("\n========MAP=============================\n");
         for (int i = 0; i < PLAIN_H; i++) {
             for (int j = 0; j < PLAIN_W; j++) {
                 System.out.print(plain[i][j]);
             }
             System.out.println();
         }
-        System.out.println("\n========================================");
+        System.out.println("\n========================================\n");
     }
 
     private void writeMap(JsonObject response) {

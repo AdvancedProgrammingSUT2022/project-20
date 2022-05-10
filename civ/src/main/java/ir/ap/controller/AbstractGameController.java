@@ -2,7 +2,14 @@ package ir.ap.controller;
 
 import java.util.Random;
 
+import ir.ap.model.BuildingType;
 import ir.ap.model.GameArea;
+import ir.ap.model.Improvement;
+import ir.ap.model.Resource;
+import ir.ap.model.Technology;
+import ir.ap.model.TerrainType;
+import ir.ap.model.UnitType;
+import ir.ap.model.TerrainType.TerrainFeature;
 
 public abstract class AbstractGameController {
     protected static final Random RANDOM = new Random(System.currentTimeMillis());
@@ -16,6 +23,13 @@ public abstract class AbstractGameController {
     protected CityController cityController;
 
     public AbstractGameController() {
+        BuildingType.initAll();
+        Improvement.initAll();
+        Resource.initAll();
+        Technology.initAll();
+        TerrainType.initAll();
+        TerrainFeature.initAll();
+        UnitType.initAll();
         gameArea = null;
         gameController = null;
         civController = null;
@@ -25,6 +39,13 @@ public abstract class AbstractGameController {
     }
 
     public AbstractGameController(GameArea gameArea) {
+        BuildingType.initAll();
+        Improvement.initAll();
+        Resource.initAll();
+        Technology.initAll();
+        TerrainType.initAll();
+        TerrainFeature.initAll();
+        UnitType.initAll();
         this.gameArea = gameArea;
         gameController = null;
         civController = null;

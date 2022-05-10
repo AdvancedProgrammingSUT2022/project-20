@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public enum Improvement {
-    CAMP(1,0,0,0,Technology.TRAPPING,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.TerrainFeature.FOREST,TerrainType.TUNDRA,TerrainType.PLAINS,TerrainType.HILL}))),
-    FARM(2,1,0,0,Technology.AGRICULTURE,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.PLAINS,TerrainType.DESERT,TerrainType.GRASSLAND}))),
-    LUMBER_MILL(3,0,1,0,Technology.CONSTRUCTION,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.TerrainFeature.FOREST}))),
-    MINE(4,0,1,0,Technology.MINING,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.PLAINS,TerrainType.DESERT,TerrainType.GRASSLAND,TerrainType.TUNDRA,TerrainType.SNOW,TerrainType.HILL,TerrainType.TerrainFeature.FOREST, TerrainType.TerrainFeature.JUNGLE,TerrainType.TerrainFeature.MARSH}))),
-    PASTURE(5,0,0,0,Technology.ANIMAL_HUSBANDRY,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.PLAINS,TerrainType.DESERT,TerrainType.GRASSLAND,TerrainType.TUNDRA,TerrainType.HILL}))),
-    PLANTATION(6,0,0,0,Technology.CALENDAR,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.PLAINS,TerrainType.DESERT,TerrainType.GRASSLAND,TerrainType.TerrainFeature.FOREST,TerrainType.TerrainFeature.JUNGLE,TerrainType.TerrainFeature.MARSH, TerrainType.TerrainFeature.FLOOD_PLAINS}))),
-    QUARRY(7,0,0,0,Technology.MASONRY,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.PLAINS,TerrainType.DESERT,TerrainType.GRASSLAND,TerrainType.TUNDRA,TerrainType.HILL}))),
-    TRADING_POST(8,0,0,1,Technology.TRAPPING,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.PLAINS,TerrainType.DESERT,TerrainType.GRASSLAND,TerrainType.TUNDRA}))),
-    FACTORY(9,0,2,0,Technology.ENGINEERING,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.PLAINS,TerrainType.DESERT,TerrainType.GRASSLAND,TerrainType.TUNDRA,TerrainType.SNOW})));
+    CAMP,
+    FARM,
+    LUMBER_MILL,
+    MINE,
+    PASTURE,
+    PLANTATION,
+    QUARRY,
+    TRADING_POST,
+    FACTORY;
 
     public static Improvement getImprovementById(int id)
     {
@@ -45,7 +45,19 @@ public enum Improvement {
     private Technology technologyRequired;
     private ArrayList<Enum<?>> canBeFoundOn;
 
-    Improvement(int id, int foodYield, int productionYield, int goldYield, Technology technologyRequired, ArrayList<Enum<?>> canBeFoundOn) {
+    public static void initAll() {
+        CAMP.init(1,0,0,0,Technology.TRAPPING,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.TerrainFeature.FOREST,TerrainType.TUNDRA,TerrainType.PLAINS,TerrainType.HILL})));
+        FARM.init(2,1,0,0,Technology.AGRICULTURE,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.PLAINS,TerrainType.DESERT,TerrainType.GRASSLAND})));
+        LUMBER_MILL.init(3,0,1,0,Technology.CONSTRUCTION,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.TerrainFeature.FOREST})));
+        MINE.init(4,0,1,0,Technology.MINING,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.PLAINS,TerrainType.DESERT,TerrainType.GRASSLAND,TerrainType.TUNDRA,TerrainType.SNOW,TerrainType.HILL,TerrainType.TerrainFeature.FOREST, TerrainType.TerrainFeature.JUNGLE,TerrainType.TerrainFeature.MARSH})));
+        PASTURE.init(5,0,0,0,Technology.ANIMAL_HUSBANDRY,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.PLAINS,TerrainType.DESERT,TerrainType.GRASSLAND,TerrainType.TUNDRA,TerrainType.HILL})));
+        PLANTATION.init(6,0,0,0,Technology.CALENDAR,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.PLAINS,TerrainType.DESERT,TerrainType.GRASSLAND,TerrainType.TerrainFeature.FOREST,TerrainType.TerrainFeature.JUNGLE,TerrainType.TerrainFeature.MARSH, TerrainType.TerrainFeature.FLOOD_PLAINS})));
+        QUARRY.init(7,0,0,0,Technology.MASONRY,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.PLAINS,TerrainType.DESERT,TerrainType.GRASSLAND,TerrainType.TUNDRA,TerrainType.HILL})));
+        TRADING_POST.init(8,0,0,1,Technology.TRAPPING,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.PLAINS,TerrainType.DESERT,TerrainType.GRASSLAND,TerrainType.TUNDRA})));
+        FACTORY.init(9,0,2,0,Technology.ENGINEERING,new ArrayList<Enum<?>>(Arrays.asList(new Enum<?>[]{TerrainType.PLAINS,TerrainType.DESERT,TerrainType.GRASSLAND,TerrainType.TUNDRA,TerrainType.SNOW})));
+    }
+
+    void init(int id, int foodYield, int productionYield, int goldYield, Technology technologyRequired, ArrayList<Enum<?>> canBeFoundOn) {
         this.id = id;
         this.foodYield = foodYield;
         this.productionYield = productionYield;

@@ -387,6 +387,9 @@ public class Tile {
         for (Resource rsrc : resources) {
             goldYield += rsrc.getGoldYield();
         }
+        if (getHasRoad()) {
+            goldYield -= 1;
+        }
         return goldYield;
     }
 

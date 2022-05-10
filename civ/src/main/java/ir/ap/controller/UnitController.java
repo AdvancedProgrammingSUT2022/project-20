@@ -66,11 +66,12 @@ public class UnitController extends AbstractGameController {
         return true;
     }
 
-    public boolean moveUnitTowardsTarget(Unit unit) {
+    public boolean moveUnitTowardsTarget(Unit unit, boolean cheat) {
         if (unit == null || unit.getUnitAction() != UnitAction.MOVETO || unit.getTarget() == null) return false;
-        while (unit.canMove()) {
+        while (cheat || unit.canMove()) {
             Tile target = unit.getTarget();
             Tile curTile = unit.getTile();
+            if (curTile == target) break;
             Tile nxtTile = gameArea.getMap().getNextTileInWeightedShortestPath(curTile, target);
             if (nxtTile == null || nxtTile.isUnreachable()) break;
             int dist = nxtTile.getMovementCost();
@@ -94,9 +95,12 @@ public class UnitController extends AbstractGameController {
         return true;
     }
 
+    public boolean moveUnitTowardsTarget(Unit unit) {
+        return moveUnitTowardsTarget(unit, false);
+    }
+
     public boolean unitMoveTo(Civilization civilization, Tile target, boolean cheat)
     {
-        // TODO: cheat
         if (civilization == null || target == null) return false;
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
@@ -105,7 +109,7 @@ public class UnitController extends AbstractGameController {
         if (tile == null || target.isUnreachable()) return false;
         unit.setTarget(target);
         unit.setUnitAction(UnitType.UnitAction.MOVETO);
-        moveUnitTowardsTarget(unit);
+        moveUnitTowardsTarget(unit, cheat);
         return true;
     }
 
@@ -115,6 +119,7 @@ public class UnitController extends AbstractGameController {
         if(unit == null) return false;
         unit.setHowManyTurnWeKeepAction(0);
         unit.setUnitAction(UnitType.UnitAction.SLEEP);
+        unit.setSleep(true);
         return true;
     }
 
@@ -163,7 +168,6 @@ public class UnitController extends AbstractGameController {
 
     public boolean unitAttack(Civilization civilization, Tile target, boolean cheat)
     {
-        // TODO: khodi ha!!!!
         if (civilization == null || target == null) return false;
         Unit unit = civilization.getSelectedUnit();
         if (unit == null) return false;
@@ -179,9 +183,11 @@ public class UnitController extends AbstractGameController {
 
         int dist = mapController.getDistanceInTiles(curTile, target);
         if(city != null) {
+            int combatStrength = (cheat ? 1000 : city.getCombatStrength());
             if (enemyCity != null) {
+                if (enemyCity.getCivilization() == civilization) return false;
                 if (dist > city.getTerritoryRange()) return false;
-                enemyCity.setHp(enemyCity.getHp() - city.getCombatStrength());
+                enemyCity.setHp(enemyCity.getHp() - combatStrength);
 
                 if (enemyCity.isDead()) {
                     cityController.changeCityOwner(enemyCity, civilization);
@@ -190,8 +196,9 @@ public class UnitController extends AbstractGameController {
                 return true;
             }
             else if(enemyUnit != null){
+                if (enemyUnit.getCivilization() == civilization) return false;
                 if (dist > city.getTerritoryRange()) return false;
-                enemyUnit.setHp(enemyUnit.getHp() - city.getCombatStrength());
+                enemyUnit.setHp(enemyUnit.getHp() - combatStrength);
 
                 if (enemyUnit.getHp() <= 0) {
                     removeUnit(enemyUnit);
@@ -202,13 +209,15 @@ public class UnitController extends AbstractGameController {
         }
         
         if(unit != null) {
+            int combatStrength = (cheat ? 1000 : unit.getCombatStrength());
             if(unit.getUnitType().getCombatType() == UnitType.CombatType.CIVILIAN) return false;
             if(enemyUnit != null) {
+                if (enemyUnit.getCivilization() == civilization) return false;
                 if (unit.getCombatType() == UnitType.CombatType.ARCHERY || unit.getCombatType() == UnitType.CombatType.SIEGE) {
                     if (dist > unit.getRange()) return false;
                     if (unit.getCombatType() == UnitType.CombatType.SIEGE && unit.getUnitAction() != UnitType.UnitAction.SETUP_RANGED)
                         return false;
-                    enemyUnit.setHp(enemyUnit.getHp() - unit.getCombatStrength());
+                    enemyUnit.setHp(enemyUnit.getHp() - combatStrength);
                     if (enemyUnit.isDead()) {
                         removeUnit(enemyUnit);
                     }
@@ -227,8 +236,8 @@ public class UnitController extends AbstractGameController {
                             return true;
                         }
                     } else {
-                        enemyUnit.setHp(enemyUnit.getHp() - unit.getCombatStrength());
-                        unit.setHp(unit.getHp() - enemyUnit.getCombatStrength());
+                        enemyUnit.setHp(enemyUnit.getHp() - combatStrength);
+                        if (!cheat) unit.setHp(unit.getHp() - enemyUnit.getCombatStrength());
                         if (enemyUnit.getHp() <= 0) {
                             removeUnit(enemyUnit);
                             unitMoveTo(civilization, target, cheat);
@@ -242,12 +251,13 @@ public class UnitController extends AbstractGameController {
                 }
             }
             if (enemyCity != null) {
+                if (enemyCity.getCivilization() == civilization) return false;
                 if (unit.getCombatType() == UnitType.CombatType.ARCHERY || unit.getCombatType() == UnitType.CombatType.SIEGE) {
                     if (dist > unit.getRange()) return false;
                     if (unit.getCombatType() == UnitType.CombatType.SIEGE && unit.getUnitAction() != UnitType.UnitAction.SETUP_RANGED)
                         return false;
-                    enemyCity.setHp(enemyCity.getHp() - unit.getCombatStrength());
-                    unit.setHp(unit.getHp() - enemyCity.getCombatStrength());
+                    enemyCity.setHp(enemyCity.getHp() - combatStrength);
+                    if (!cheat) unit.setHp(unit.getHp() - enemyCity.getCombatStrength());
 
                     if (unit.getHp() <= 0) {
                         removeUnit(unit);
@@ -257,8 +267,8 @@ public class UnitController extends AbstractGameController {
 
                 if (unit.getCombatType() == UnitType.CombatType.MOUNTED || unit.getCombatType() == UnitType.CombatType.MELEE || unit.getCombatType() == UnitType.CombatType.GUNPOWDER || unit.getCombatType() == UnitType.CombatType.ARMORED || unit.getCombatType() == UnitType.CombatType.RECON) {
                     if (dist > 1) return false;
-                    enemyCity.setHp(enemyCity.getHp() - unit.getCombatStrength());
-                    unit.setHp(unit.getHp() - enemyCity.getCombatStrength());
+                    enemyCity.setHp(enemyCity.getHp() - combatStrength);
+                    if (!cheat) unit.setHp(unit.getHp() - enemyCity.getCombatStrength());
                     if (enemyCity.getHp() <= 0) {
                         unitMoveTo(civilization, target, cheat);
                         cityController.changeCityOwner(enemyCity, civilization);
@@ -296,7 +306,7 @@ public class UnitController extends AbstractGameController {
         Unit unit = civilization.getSelectedUnit();
         if (unit == null) return false;
         unit.setHowManyTurnWeKeepAction(0);
-        if (unit == null || !(unit.getUnitType() == UnitType.SETTLER))
+        if (unit == null || (!cheat && unit.getUnitType() != UnitType.SETTLER))
             return false;
 
         Tile target = unit.getTile();
@@ -330,7 +340,7 @@ public class UnitController extends AbstractGameController {
         if(unit == null) return false;
         Tile tile = unit.getTile();
         if (tile == null || tile.getHasRoad()) return false;
-        unit.setHowManyTurnWeKeepAction(0);
+        unit.setHowManyTurnWeKeepAction((cheat ? 1000 : 0));
         if(unit.getUnitType() != UnitType.WORKER) return false;
         if(civilization.getTechnologyReached(Technology.THE_WHEEL) == false) return false;
 
@@ -344,7 +354,7 @@ public class UnitController extends AbstractGameController {
         if(unit == null) return false;
         Tile tile = unit.getTile();
         if (tile == null || tile.getHasRailRoad()) return false;
-        unit.setHowManyTurnWeKeepAction(0);
+        unit.setHowManyTurnWeKeepAction((cheat ? 1000 : 0));
         if(unit.getUnitType() != UnitType.WORKER) return false;
         if(civilization.getTechnologyReached(Technology.RAILROAD) == false) return false;
 
@@ -356,7 +366,7 @@ public class UnitController extends AbstractGameController {
     {
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
-        unit.setHowManyTurnWeKeepAction(0);
+        unit.setHowManyTurnWeKeepAction((cheat ? 1000 : 0));
         Tile tile = unit.getTile();
         if (tile == null || tile.hasImprovement()) return false;
 
@@ -406,7 +416,7 @@ public class UnitController extends AbstractGameController {
         if(unit == null) return false;
         Tile tile = unit.getTile();
         if (tile == null || tile.getTerrainFeature() != TerrainFeature.JUNGLE) return false;
-        unit.setHowManyTurnWeKeepAction(0);
+        unit.setHowManyTurnWeKeepAction((cheat ? 1000 : 0));
         if(civilization.getTechnologyReached(Technology.BRONZE_WORKING) == false) return false;
 
         unit.setUnitAction(UnitType.UnitAction.REMOVE_JUNGLE);
@@ -418,7 +428,7 @@ public class UnitController extends AbstractGameController {
         if(unit == null) return false;
         Tile tile = unit.getTile();
         if (tile == null || tile.getTerrainFeature() != TerrainFeature.FOREST) return false;
-        unit.setHowManyTurnWeKeepAction(0);
+        unit.setHowManyTurnWeKeepAction((cheat ? 1000 : 0));
         if(civilization.getTechnologyReached(Technology.MINING) == false) return false;
 
         unit.setUnitAction(UnitType.UnitAction.REMOVE_FOREST);
@@ -428,7 +438,7 @@ public class UnitController extends AbstractGameController {
     public boolean unitRemoveMarsh(Civilization civilization, boolean cheat) {
         Unit unit = civilization.getSelectedUnit();
         if (unit == null) return false;
-        unit.setHowManyTurnWeKeepAction(0);
+        unit.setHowManyTurnWeKeepAction((cheat ? 1000 : 0));
         Tile tile = unit.getTile();
         if (tile == null || tile.getTerrainFeature() != TerrainFeature.MARSH) return false;
         if(civilization.getTechnologyReached(Technology.MASONRY) == false) return false;
@@ -443,7 +453,7 @@ public class UnitController extends AbstractGameController {
         if(unit == null) return false;
         Tile tile = unit.getTile();
         if (tile == null || (!tile.getHasRoad() && !tile.getHasRailRoad())) return false;
-        unit.setHowManyTurnWeKeepAction(0);
+        unit.setHowManyTurnWeKeepAction((cheat ? 1000 : 0));
 
         unit.setUnitAction(UnitType.UnitAction.REMOVE_ROUTE);
         return true;
@@ -455,7 +465,7 @@ public class UnitController extends AbstractGameController {
         if(unit == null) return false;
         Tile tile = unit.getTile();
         if (tile == null || (!tile.hasCity() && !tile.hasBuilding() && !tile.hasImprovement())) return false;
-        unit.setHowManyTurnWeKeepAction(0);
+        unit.setHowManyTurnWeKeepAction((cheat ? 1000 : 0));
 
         // TODO: repair building PHASE2
 
@@ -469,6 +479,7 @@ public class UnitController extends AbstractGameController {
         if(unit == null) return false;
         unit.setHowManyTurnWeKeepAction(0);
         unit.setUnitAction(UnitType.UnitAction.WAKE);
+        unit.setSleep(false);
         return true;
     }
 

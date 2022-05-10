@@ -47,6 +47,14 @@ public enum BuildingType implements Production {
     private int happinessYield;
     private Technology technologyRequired;
 
+    public static void initAll() {
+        
+    }
+
+    void init() {
+
+    }
+
     public int getId() {
         return id;
     }

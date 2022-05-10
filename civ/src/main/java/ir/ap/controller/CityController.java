@@ -160,6 +160,8 @@ public class CityController extends AbstractGameController {
 
     public boolean cityChangeCurrentProduction(City city, Production production, boolean cheat) {
         if (city == null) return false;
+        if (!cheat && !city.getCivilization().getTechnologyReached(production.getTechnologyRequired()))
+            return false;
         city.setProductionSpent(0);
         city.setCurrentProduction(production);
         if( cheat == true ){

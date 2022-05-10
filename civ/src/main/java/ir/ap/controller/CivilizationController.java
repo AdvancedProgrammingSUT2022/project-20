@@ -33,7 +33,6 @@ public class CivilizationController extends AbstractGameController {
 
     public boolean nextTurn(Civilization civilization)
     {
-        // TODO: safe 43 doc
         if (civilization == null) return false;
         civilization.addToGold(civilization.getGoldYield());
         civilization.addToScience(civilization.getScienceYield());
@@ -62,8 +61,9 @@ public class CivilizationController extends AbstractGameController {
                     if (enemyTile == null) continue;
                     Unit enemyUnit = enemyTile.getCombatUnit();
                     if(enemyUnit == null) enemyUnit = enemyTile.getNonCombatUnit();
-                    if(enemyUnit != null)
+                    if(enemyUnit != null) {
                         unitController.unitWake(civilization);
+                    }
                 }
             }
 
@@ -81,7 +81,7 @@ public class CivilizationController extends AbstractGameController {
                         City city = tile.getCity();
                         city.setHp(Math.min(city.getHp() + 3, 20));
                         tile.setCity(city);
-                        if (city.getHp() == 20) {
+                        if (city.getHp() >= 20) {
                             unit.setHowManyTurnWeKeepAction(0);
                             unit.setUnitAction(null);;
                         }
@@ -89,13 +89,13 @@ public class CivilizationController extends AbstractGameController {
                 }
                 if (unit.getUnitAction() == UnitType.UnitAction.FORTIFY_HEAL) {
                     unit.setHp(Math.min(unit.getHp() + 3, Unit.getMaxHp()));
-                    if (unit.getHp() == Unit.getMaxHp()) {
+                    if (unit.getHp() >= Unit.getMaxHp()) {
                         unit.setHowManyTurnWeKeepAction(0);
                         unit.setUnitAction(null);
                     }
                 }
 
-                if (unit.getHowManyTurnWeKeepAction() == 6) {
+                if (unit.getHowManyTurnWeKeepAction() >= 6) {
                     if (unit.getUnitAction() == UnitType.UnitAction.BUILD_CAMP) {
                         mapController.addImprovement(tile, Improvement.CAMP);
                         unit.setHowManyTurnWeKeepAction(0);
@@ -132,14 +132,14 @@ public class CivilizationController extends AbstractGameController {
                     unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
 
                 if (unit.getUnitAction() == UnitType.UnitAction.BUILD_RAILROAD) {
-                    if (unit.getHowManyTurnWeKeepAction() == 3) {
+                    if (unit.getHowManyTurnWeKeepAction() >= 3) {
                         mapController.addRailRoad(tile);
                         unit.setHowManyTurnWeKeepAction(0);
                     } else
                         unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
                 }
                 if (unit.getUnitAction() == UnitType.UnitAction.BUILD_ROAD) {
-                    if (unit.getHowManyTurnWeKeepAction() == 3) {
+                    if (unit.getHowManyTurnWeKeepAction() >= 3) {
                         mapController.addRoad(tile);
                         unit.setHowManyTurnWeKeepAction(0);
                     } else
@@ -151,21 +151,21 @@ public class CivilizationController extends AbstractGameController {
                     unit.setHowManyTurnWeKeepAction(0);
                 }
                 if (unit.getUnitAction() == UnitType.UnitAction.REMOVE_FOREST) {
-                    if (unit.getHowManyTurnWeKeepAction() == 4) {
+                    if (unit.getHowManyTurnWeKeepAction() >= 4) {
                         mapController.removeTerrainFeature(tile);
                         unit.setHowManyTurnWeKeepAction(0);
                     } else
                         unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
                 }
                 if (unit.getUnitAction() == UnitType.UnitAction.REMOVE_JUNGLE) {
-                    if (unit.getHowManyTurnWeKeepAction() == 7) {
+                    if (unit.getHowManyTurnWeKeepAction() >= 7) {
                         mapController.removeTerrainFeature(tile);
                         unit.setHowManyTurnWeKeepAction(0);
                     } else
                         unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
                 }
                 if (unit.getUnitAction() == UnitType.UnitAction.REMOVE_MARSH) {
-                    if (unit.getHowManyTurnWeKeepAction() == 6) {
+                    if (unit.getHowManyTurnWeKeepAction() >= 6) {
                         mapController.removeTerrainFeature(tile);
                         unit.setHowManyTurnWeKeepAction(0);
                     } else
