@@ -138,4 +138,7 @@ public enum Technology {
     {
         return this.objectsUnlocks;
     }
+    public String getName(){
+        return this.name();
+    }
 }
