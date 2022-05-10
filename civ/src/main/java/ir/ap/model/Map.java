@@ -82,24 +82,16 @@ public class Map {
             for(int j = 0 ; j < 30 ; j ++){
                 Tile tile = this.getTileByIndex( (i*30)+j );// i: sotoon , j: satr
                 int index = tile.getIndex();
-                if( j != 0 )setNeighborAndWeight(tile, this.getTileByIndex(index-1), Direction.UP);
-                if( j != 29 )setNeighborAndWeight(tile, this.getTileByIndex(index+1), Direction.DOWN);
-                if( i != 0 && !(j == 0 && i%2 == 1) ){
-                    if( j%2 == 0 )setNeighborAndWeight(tile, this.getTileByIndex(index-30), Direction.UP_LEFT);
-                    else setNeighborAndWeight(tile, this.getTileByIndex(index-31), Direction.UP_LEFT);
-                }
-                if( i != 0 && !(j == 30 && i%2 == 0) ){
-                    if( j%2 == 0 )setNeighborAndWeight(tile, this.getTileByIndex(index-29), Direction.DOWN_LEFT);
-                    else setNeighborAndWeight(tile, this.getTileByIndex(index-30), Direction.DOWN_LEFT);
-                }
-                if( i != 29 && !(j == 0 && i%2 == 1) ){
-                    if( j%2 == 0 )setNeighborAndWeight(tile, this.getTileByIndex(index+30), Direction.UP_RIGHT);
-                    else setNeighborAndWeight(tile, this.getTileByIndex(index+29), Direction.UP_RIGHT);
-                }
-                if( i != 29 && !(j == 30 && i%2 == 0) ){
-                    if( j%2 == 0 )setNeighborAndWeight(tile, this.getTileByIndex(index+31), Direction.DOWN_RIGHT);
-                    else setNeighborAndWeight(tile, this.getTileByIndex(index+30), Direction.DOWN_RIGHT);
-                }
+                setNeighborAndWeight(tile, this.getTileByIndex(index-1), Direction.UP);
+                setNeighborAndWeight(tile, this.getTileByIndex(index+1), Direction.DOWN);
+                if( i%2 == 0 )setNeighborAndWeight(tile, this.getTileByIndex(index-30), Direction.UP_LEFT);
+                else setNeighborAndWeight(tile, this.getTileByIndex(index-31), Direction.UP_LEFT);
+                if( i%2 == 0 )setNeighborAndWeight(tile, this.getTileByIndex(index-29), Direction.DOWN_LEFT);
+                else setNeighborAndWeight(tile, this.getTileByIndex(index-30), Direction.DOWN_LEFT);
+                if( i%2 == 0 )setNeighborAndWeight(tile, this.getTileByIndex(index+30), Direction.UP_RIGHT);
+                else setNeighborAndWeight(tile, this.getTileByIndex(index+29), Direction.UP_RIGHT);
+                if( i%2 == 0 )setNeighborAndWeight(tile, this.getTileByIndex(index+31), Direction.DOWN_RIGHT);
+                else setNeighborAndWeight(tile, this.getTileByIndex(index+30), Direction.DOWN_RIGHT);
             }
         }
         // add rivers and its weight's changes

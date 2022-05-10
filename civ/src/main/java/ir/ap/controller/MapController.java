@@ -111,16 +111,12 @@ public class MapController extends AbstractGameController {
         if (tile == null)
             return new ArrayList<>();
         ArrayList<Tile> retTiles = new ArrayList<>();
-        HashMap<Tile, Boolean> visited = new HashMap<>();
         HashMap<Tile, Integer> dist = new HashMap<>();
         Queue<Tile> queue = new LinkedList<>();
         queue.add(tile);
         dist.put(tile, 0);
         while (!queue.isEmpty()) {
             Tile curTile = queue.poll();
-            if (visited.get(curTile) != null)
-                continue;
-            visited.put(curTile, true);
             retTiles.add(curTile);
             if (curTile != tile && checkIsNonBlock && curTile.isBlock())
                 continue;
@@ -128,7 +124,7 @@ public class MapController extends AbstractGameController {
                 if (tileInDepth == null) continue;
                 int curDist = dist.get(curTile);
                 int depthDist = curDist + 1;
-                if (visited.get(tileInDepth) == null && depthDist <= range) {
+                if (dist.get(tileInDepth) == null && depthDist <= range) {
                     dist.put(tileInDepth, depthDist);
                     queue.add(tileInDepth);
                 }

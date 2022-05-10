@@ -142,13 +142,13 @@ public class GameController extends AbstractGameController implements JsonRespon
         }
         if( fullDeatails == true ){
             cityObj.addProperty("population", city.getPopulation());
-            cityObj.addProperty("defence power", city.getCombatStrength());
-            cityObj.addProperty("food yield", city.getFoodYield());
-            cityObj.addProperty("science yield", city.getScienceYield());
-            cityObj.addProperty("Gold", city.getGoldYield());
-            cityObj.addProperty("production yield", city.getProductionYield());
-            cityObj.add("current production", serializeProduction(city.getCurrentProduction()));
-            cityObj.addProperty("turns need to reach production", city.getTurnsLeftForProductionConstruction());
+            cityObj.addProperty("defencePower", city.getCombatStrength());
+            cityObj.addProperty("foodYield", city.getFoodYield());
+            cityObj.addProperty("scienceYield", city.getScienceYield());
+            cityObj.addProperty("gold", city.getGoldYield());
+            cityObj.addProperty("productionYield", city.getProductionYield());
+            cityObj.add("currentProduction", serializeProduction(city.getCurrentProduction()));
+            cityObj.addProperty("turnsNeededToReachProduction", city.getTurnsLeftForProductionConstruction());
         }
         return cityObj;
     }
@@ -157,7 +157,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         JsonObject civObj = new JsonObject();
         civObj.addProperty("index", civ.getIndex());
         civObj.addProperty("name", civ.getName());
-        civObj.addProperty("Gold", civ.getGold());
+        civObj.addProperty("gold", civ.getGold());
         if (mapController.civCanSee(otherCiv, civ.getCapital())) {
             civObj.add("capital", serializeCity(civ.getCapital(), otherCiv, true));
         }
@@ -198,8 +198,8 @@ public class GameController extends AbstractGameController implements JsonRespon
 
     public JsonObject serializeUnit(Unit unit){
         JsonObject unitObject = new JsonObject();
-        unitObject.addProperty("Unit Type", unit.getUnitType().getId());
-        unitObject.addProperty("Unit Action", unit.getUnitAction().getId());
+        unitObject.addProperty("unitType", unit.getUnitType().name());
+        unitObject.addProperty("unitAction", unit.getUnitAction().name());
         unitObject.addProperty("mp", unit.getMp());
         unitObject.addProperty("hp", unit.getHp());
         unitObject.addProperty("Tile", unit.getTile().getIndex());
@@ -375,7 +375,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         ((JsonArray) jsonObject.get("Objects Unlocks")).add(buildingTypeObject);
         ((JsonArray) jsonObject.get("Objects Unlocks")).add(unitActionObject);
         ((JsonArray) jsonObject.get("Objects Unlocks")).add(technologyObject);
-        return jsonObject;
+        return setOk(jsonObject, true);
     }
 
     public JsonObject infoUnits(String username) {
@@ -389,7 +389,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             Unit unit = units.get( i );
             ((JsonArray) jsonObject.get("units")).add(serializeUnit(unit));
         }    
-        return jsonObject;
+        return setOk(jsonObject, true);
     }
 
     public JsonObject infoCities(String username) {
@@ -403,7 +403,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             City city = cities.get( i );
             ((JsonArray) jsonObject.get("cities")).add(serializeCity(city, civilization, false));
         }        
-        return jsonObject;
+        return setOk(jsonObject, true);
     }
 
     public JsonObject infoDiplomacy(String username) {
@@ -411,7 +411,6 @@ public class GameController extends AbstractGameController implements JsonRespon
         Civilization civilization = civController.getCivilizationByUsername(username);
         if (civilization == null)
             return messageToJsonObj("invalid username", false);
-        JsonObject jsonObject = new JsonObject();
         return JSON_FALSE;
     }
 
@@ -426,8 +425,8 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("invalid username", false);
         JsonObject jsonObject = new JsonObject();
         jsonObject.add("civilization", serializeCiv(civilization, civilization));
-        //TODO: Need anything else?
-        return jsonObject;
+        //TODO: EMTIAZ aslan pyade nashode
+        return setOk(jsonObject, true);
     }
 
     public JsonObject infoNotifications(String username) {
@@ -447,7 +446,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         for (Unit unit : civilization.getUnits()){
             ((JsonArray) jsonObject.get("units")).add(serializeUnit(unit));
         }
-        return jsonObject;
+        return setOk(jsonObject, true);
     }
 
     public JsonObject infoEconomic(String username) {
@@ -461,7 +460,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             City city = cities.get( i );
             ((JsonArray) jsonObject.get("cities")).add(serializeCity(city, civilization, true));
         }        
-        return jsonObject;
+        return setOk(jsonObject, true);
     }
 
     public JsonObject infoDiplomatic(String username) {
@@ -469,7 +468,6 @@ public class GameController extends AbstractGameController implements JsonRespon
         Civilization civilization = civController.getCivilizationByUsername(username);
         if (civilization == null)
             return messageToJsonObj("invalid username", false);
-        JsonObject jsonObject = new JsonObject();
         return JSON_FALSE;
     }
 
@@ -922,6 +920,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         if (civ == null)
             return messageToJsonObj(Message.USER_NOT_ON_GAME, false);
         Tile tile = mapController.getTileById(tileId);
+        mapController.getTilesInRange(tile, 2);
         if (tile == null)
             return messageToJsonObj(Message.INVALID_REQUEST, false);
         JsonObject response = new JsonObject();
@@ -999,7 +998,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         int constantCityTurn = City.TURN_NEEDED_TO_EXTEND_TILES;
         jsonObject.addProperty("Turns need to extend city territory", (constantCityTurn-(gameArea.getTurn()%constantCityTurn))%constantCityTurn );
         jsonObject.addProperty("Turns need to extend city population", city.getTurnsLeftForNextCitizen());
-        return jsonObject;
+        return setOk(jsonObject, true);
     }
 
     public JsonObject cityGetUnemployedCitizens(String username) {
