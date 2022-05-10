@@ -142,13 +142,13 @@ public class GameController extends AbstractGameController implements JsonRespon
         }
         if( fullDeatails == true ){
             cityObj.addProperty("population", city.getPopulation());
-            cityObj.addProperty("defence power", city.getCombatStrength());
-            cityObj.addProperty("food yield", city.getFoodYield());
-            cityObj.addProperty("science yield", city.getScienceYield());
-            cityObj.addProperty("Gold", city.getGoldYield());
-            cityObj.addProperty("production yield", city.getProductionYield());
-            cityObj.add("current production", serializeProduction(city.getCurrentProduction()));
-            cityObj.addProperty("turns need to reach production", city.getTurnsLeftForProductionConstruction());
+            cityObj.addProperty("defencePower", city.getCombatStrength());
+            cityObj.addProperty("foodYield", city.getFoodYield());
+            cityObj.addProperty("scienceYield", city.getScienceYield());
+            cityObj.addProperty("gold", city.getGoldYield());
+            cityObj.addProperty("productionYield", city.getProductionYield());
+            cityObj.add("currentProduction", serializeProduction(city.getCurrentProduction()));
+            cityObj.addProperty("turnsNeededToReachProduction", city.getTurnsLeftForProductionConstruction());
         }
         return cityObj;
     }
@@ -198,8 +198,8 @@ public class GameController extends AbstractGameController implements JsonRespon
 
     public JsonObject serializeUnit(Unit unit){
         JsonObject unitObject = new JsonObject();
-        unitObject.addProperty("Unit Type", unit.getUnitType().getId());
-        unitObject.addProperty("Unit Action", unit.getUnitAction().getId());
+        unitObject.addProperty("unitType", unit.getUnitType().name());
+        unitObject.addProperty("unitAction", unit.getUnitAction().name());
         unitObject.addProperty("mp", unit.getMp());
         unitObject.addProperty("hp", unit.getHp());
         unitObject.addProperty("Tile", unit.getTile().getIndex());
