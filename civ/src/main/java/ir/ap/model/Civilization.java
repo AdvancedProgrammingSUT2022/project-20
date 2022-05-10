@@ -208,10 +208,12 @@ public class Civilization {
     }
 
     public boolean getTechnologyReached(Technology tech) {
+        if (tech == null) return true;
         return this.technologyReached[tech.getId()];
     }
 
     public void setTechnologyReached(Technology tech, boolean value) {
+        if (tech == null) return;
         this.technologyReached[tech.getId()] = value;
     }
 

@@ -28,6 +28,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         }
     }
 
+    // TODO: message queue
     public enum Message {
         GAME_STARTED("game started successfully"),
         USER_NOT_LOGGED_IN("user is not logged in"),
@@ -171,6 +172,35 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj(Message.USER_NOT_ON_GAME, false);
         JsonObject response = new JsonObject();
         response.addProperty("civName", civ.getName());
+        return setOk(response, true);
+    }
+
+    public JsonObject getSelectedCity(String username) {
+        Civilization civ = civController.getCivilizationByUsername(username);
+        if (civ == null)
+            return messageToJsonObj(Message.USER_NOT_ON_GAME, false);
+        City city = civ.getSelectedCity();
+        if (city == null)
+            return messageToJsonObj("no selected city", false);
+        JsonObject response = new JsonObject();
+        JsonObject cityJson = new JsonObject();
+        cityJson.addProperty("name", city.getName());
+        response.add("selectedCity", cityJson);
+        return setOk(response, true);
+    }
+
+    public JsonObject getSelectedUnit(String username) {
+        Civilization civ = civController.getCivilizationByUsername(username);
+        if (civ == null)
+            return messageToJsonObj(Message.USER_NOT_LOGGED_IN, false);
+        Unit unit = civ.getSelectedUnit();
+        if (unit == null)
+            return messageToJsonObj("no selected unit", false);
+        JsonObject response = new JsonObject();
+        JsonObject unitJson = new JsonObject();
+        unitJson.addProperty("type", unit.getUnitType().getName());
+        unitJson.addProperty("tile", unit.getTile().getIndex());
+        response.add("selectedUnit", unitJson);
         return setOk(response, true);
     }
 
@@ -889,11 +919,15 @@ public class GameController extends AbstractGameController implements JsonRespon
         if ( city == null )
             return messageToJsonObj("no city selected", false);        
         Production[] allProductions = Production.getAllProductions();
-        if( prodId >= allProductions.length )
-            return messageToJsonObj("prodId is invalid", false);
-        Production production = allProductions[ prodId ];
-        if( cityController.cityChangeCurrentProduction(city, production, cheat) == false )
-            return messageToJsonObj("something is invalid", false);
+        Production selectedProd = null;
+        for (Production production : allProductions) {
+            if (production.getId() == prodId) {
+                selectedProd = production;
+                break;
+            }
+        }
+        if( cityController.cityChangeCurrentProduction(city, selectedProd, cheat) == false )
+            return messageToJsonObj(Message.INVALID_REQUEST, false);
         return messageToJsonObj("current production changed successfully", true);
     }
 
@@ -931,17 +965,19 @@ public class GameController extends AbstractGameController implements JsonRespon
         if ( city == null )
             return messageToJsonObj("no city selected", false);        
         JsonObject jsonObject = new JsonObject();
-        jsonObject.add("productions", new JsonArray());
-        if( cheat == true ){
-            for (Production production : Production.getAllProductions()){
-                ((JsonArray) jsonObject.get("productions")).add(serializeProduction(production));
-            }
-        }   
-        else{
-            for (Production production : Production.getAllProductions()){
-                if( civilization.getTechnologyReached(production.getTechnologyRequired()) == true ){
-                    ((JsonArray) jsonObject.get("productions")).add(serializeProduction(production));
-                }
+        JsonObject productionsJson = new JsonObject();
+        productionsJson.add("buildings", new JsonArray());
+        productionsJson.add("units", new JsonArray());
+        JsonArray buildingsJsonArray = productionsJson.get("buildings").getAsJsonArray();
+        JsonArray unitsJsonArray = productionsJson.get("units").getAsJsonArray();
+        jsonObject.add("productions", productionsJson);
+        for (Production production : Production.getAllProductions()){
+            if (!cheat && !civilization.getTechnologyReached(production.getTechnologyRequired()))
+                continue;
+            if (production instanceof BuildingType) {
+                buildingsJsonArray.add(serializeProduction(production));
+            } else {
+                unitsJsonArray.add(serializeProduction(production));
             }
         }
         jsonObject.addProperty("ok", true);     
