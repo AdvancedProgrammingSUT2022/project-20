@@ -777,6 +777,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         if (civ == null)
             return messageToJsonObj(Message.USER_NOT_ON_GAME, false);
         Tile tile = mapController.getTileById(tileId);
+        mapController.getTilesInRange(tile, 2);
         if (tile == null)
             return messageToJsonObj(Message.INVALID_REQUEST, false);
         JsonObject response = new JsonObject();
