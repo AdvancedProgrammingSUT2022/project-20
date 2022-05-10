@@ -225,9 +225,13 @@ public class Civilization {
         return res;
     }
     public void removeUnit(Unit unit){
+        if (selectedUnit == unit)
+            selectedUnit = null;
         units.remove(unit);
     }
     public void removeCity(City city){
+        if (selectedCity == city)
+            selectedCity = null;
         cities.remove(city);
     }
     public void setCapital(City capital) {

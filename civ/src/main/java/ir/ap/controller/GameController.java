@@ -199,7 +199,8 @@ public class GameController extends AbstractGameController implements JsonRespon
     public JsonObject serializeUnit(Unit unit){
         JsonObject unitObject = new JsonObject();
         unitObject.addProperty("unitType", unit.getUnitType().name());
-        unitObject.addProperty("unitAction", unit.getUnitAction().name());
+        if (unit.getUnitAction() != null)
+            unitObject.addProperty("unitAction", unit.getUnitAction().name());
         unitObject.addProperty("mp", unit.getMp());
         unitObject.addProperty("hp", unit.getHp());
         unitObject.addProperty("Tile", unit.getTile().getIndex());
@@ -750,6 +751,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         }
         JsonObject response = new JsonObject();
         response.addProperty("end", end);
+        response.addProperty("msg", "turns increased successfully");
         return setOk(response, true);
     }
 
@@ -920,7 +922,6 @@ public class GameController extends AbstractGameController implements JsonRespon
         if (civ == null)
             return messageToJsonObj(Message.USER_NOT_ON_GAME, false);
         Tile tile = mapController.getTileById(tileId);
-        mapController.getTilesInRange(tile, 2);
         if (tile == null)
             return messageToJsonObj(Message.INVALID_REQUEST, false);
         JsonObject response = new JsonObject();

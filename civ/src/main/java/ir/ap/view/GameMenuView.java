@@ -221,7 +221,7 @@ public class GameMenuView extends AbstractMenuView {
         currentPlayer = usersInGame[currentTurnId];
         currentCiv = civsInGame[currentTurnId];
         printCurrentMap();
-        System.out.format("Turn: %s\n========================================\n", currentCiv);
+        System.out.format("Turn: %s\n========================================\n", getColoredStr(currentCiv, getCivColorById(currentTurnId)));
     }
 
     public Menu nextTurn(Matcher matcher) {
@@ -236,7 +236,7 @@ public class GameMenuView extends AbstractMenuView {
                 return responseAndGo(msg, Menu.MAIN);
             }
             printCurrentMap();
-            System.out.format("Turn: %s\n========================================\n", currentCiv);
+            System.out.format("Turn: %s\n========================================\n", getColoredStr(currentCiv, getCivColorById(currentTurnId)));
         }
         return responseAndGo(msg, Menu.GAME);
     }
@@ -434,12 +434,13 @@ public class GameMenuView extends AbstractMenuView {
                 if (i + 1 == args.length || !args[i + 1].matches("-?\\d+")) {
                     return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
                 } else {
-                    int amount = Integer.parseInt(args[i + 1]);
+                    int amount = Integer.parseInt(args[++i]);
                     JsonObject response = GAME_CONTROLLER.increaseGold(currentPlayer, amount);
                     if (!responseOk(response)) {
                         System.out.println(Message.E500);
                         continue;
                     }
+                    printCurrentMap();
                     String msg = getField(response, "msg", String.class);
                     System.out.println(msg);
                 }
@@ -447,34 +448,37 @@ public class GameMenuView extends AbstractMenuView {
                 if (i + 1 == args.length || !args[i + 1].matches("\\d+")) {
                     return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
                 } else {
-                    int amount = Integer.parseInt(args[i + 1]);
+                    int amount = Integer.parseInt(args[++i]);
                     JsonObject response = GAME_CONTROLLER.increaseTurn(currentPlayer, amount);
                     if (!responseOk(response)) {
                         System.out.println(Message.E500);
                         continue;
                     }
+                    printCurrentMap();
                     String msg = getField(response, "msg", String.class);
-                    System.out.println(msg);
+                    if (msg != null)
+                        System.out.println(msg);
                 }
             } else if (args[i].matches(Validator.ARG_HAPPINESS.toString())) {
                 if (i + 1 == args.length || !args[i + 1].matches("\\d+")) {
                     return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
                 } else {
-                    int amount = Integer.parseInt(args[i + 1]);
+                    int amount = Integer.parseInt(args[++i]);
                     JsonObject response = GAME_CONTROLLER.increaseHappiness(currentPlayer, amount);
                     if (!responseOk(response)) {
                         System.out.println(Message.E500);
                         continue;
                     }
+                    printCurrentMap();
                     String msg = getField(response, "msg", String.class);
-                    System.out.println(msg);
+                    if (msg != null)
+                        System.out.println(msg);
                 }
             } else {
                 return responseAndGo(Message.ARG_INVALID.toString()
                         .replace("%s", args[i]), Menu.GAME);
             }
         }
-        printCurrentMap();
         return responseAndGo(null, Menu.GAME);
     }
 
