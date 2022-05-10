@@ -40,47 +40,52 @@ public enum UnitType implements Production {
     }
 
     public enum UnitAction {
-        MOVETO, 
-        SLEEP, 
-        ALERT, 
-        FORTIFY, 
-        FORTIFY_HEAL, 
-        GARRISON, 
-        SETUP_RANGED, 
-        ATTACK, 
-        FOUND_CITY, 
-        CANCEL_MISSION, 
-        WAKE, 
-        DELETE, 
-        BUILD_ROAD(Technology.THE_WHEEL),
-        BUILD_RAILROAD(Technology.RAILROAD),
-        BUILD_BRIDGE(Technology.CONSTRUCTION),
-        BUILD_FARM, 
-        BUILD_MINE, 
-        BUILD_TRADINGPOST, 
-        BUILD_LUMBERMILL, 
-        BUILD_PASTURE, 
-        BUILD_CAMP, 
-        BUILD_PLANTATION, 
-        BUILD_QUARRY, 
-        REMOVE_JUNGLE(Technology.BRONZE_WORKING),
-        REMOVE_FOREST(Technology.MINING),
-        REMOVE_MARSH(Technology.MASONRY),
-        REMOVE_ROUTE, 
-        REPAIR; 
+        MOVETO(1), 
+        SLEEP(2), 
+        ALERT(3), 
+        FORTIFY(4), 
+        FORTIFY_HEAL(5), 
+        GARRISON(6), 
+        SETUP_RANGED(7), 
+        ATTACK(8), 
+        FOUND_CITY(9), 
+        CANCEL_MISSION(10), 
+        WAKE(11), 
+        DELETE(12), 
+        BUILD_ROAD(13, Technology.THE_WHEEL),
+        BUILD_RAILROAD(14, Technology.RAILROAD),
+        BUILD_BRIDGE(15, Technology.CONSTRUCTION),
+        BUILD_FARM(16), 
+        BUILD_MINE(17), 
+        BUILD_TRADINGPOST(18), 
+        BUILD_LUMBERMILL(19), 
+        BUILD_PASTURE(20), 
+        BUILD_CAMP(21), 
+        BUILD_PLANTATION(22), 
+        BUILD_QUARRY(23), 
+        REMOVE_JUNGLE(24, Technology.BRONZE_WORKING),
+        REMOVE_FOREST(25, Technology.MINING),
+        REMOVE_MARSH(26, Technology.MASONRY),
+        REMOVE_ROUTE(27), 
+        REPAIR(28); 
 
         private Technology technologyRequired;
+        private int id;
 
-        UnitAction() {
+        UnitAction(int id) {
             technologyRequired = null;
         }
 
-        UnitAction(Technology technologyRequired) {
+        UnitAction(int id, Technology technologyRequired) {
             this.technologyRequired = technologyRequired;
         }
 
         public Technology getTechnologyRequired() {
             return technologyRequired;
+        }
+
+        public int getId(){
+            return id;
         }
     }
 

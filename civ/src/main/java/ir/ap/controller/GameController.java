@@ -10,6 +10,7 @@ import com.google.gson.JsonObject;
 import ir.ap.model.*;
 import ir.ap.model.TerrainType.TerrainFeature;
 import ir.ap.model.Tile.TileKnowledge;
+import ir.ap.model.UnitType.UnitAction;
 
 public class GameController extends AbstractGameController implements JsonResponsor, AutoCloseable {
 
@@ -127,7 +128,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         return tileJsonObj;
     }
 
-    public JsonObject serializeCity(City city, Civilization civ) {
+    public JsonObject serializeCity(City city, Civilization civ, boolean fullDeatails) {
         if (!mapController.civCanSee(civ, city))
             return null;
         JsonObject cityObj = new JsonObject();
@@ -138,6 +139,16 @@ public class GameController extends AbstractGameController implements JsonRespon
         for (Tile tile : city.getTerritory()) {
             ((JsonArray) cityObj.get("territory")).add(tile.getIndex());
         }
+        if( fullDeatails == true ){
+            cityObj.addProperty("population", city.getPopulation());
+            cityObj.addProperty("defence power", city.getCombatStrength());
+            cityObj.addProperty("food yield", city.getFoodYield());
+            cityObj.addProperty("science yield", city.getScienceYield());
+            cityObj.addProperty("Gold", city.getGoldYield());
+            cityObj.addProperty("production yield", city.getProductionYield());
+            cityObj.add("current production", serializeProduction(city.getCurrentProduction()));
+            cityObj.addProperty("turns need to reach production", city.getTurnsLeftForProductionConstruction());
+        }
         return cityObj;
     }
 
@@ -145,14 +156,19 @@ public class GameController extends AbstractGameController implements JsonRespon
         JsonObject civObj = new JsonObject();
         civObj.addProperty("index", civ.getIndex());
         civObj.addProperty("name", civ.getName());
+        civObj.addProperty("Gold", civ.getGold());
         if (mapController.civCanSee(otherCiv, civ.getCapital())) {
-            civObj.add("capital", serializeCity(civ.getCapital(), otherCiv));
+            civObj.add("capital", serializeCity(civ.getCapital(), otherCiv, true));
         }
         civObj.add("cities", new JsonArray());
         for (City city : civ.getCities()) {
             if (mapController.civCanSee(otherCiv, city)) {
-                ((JsonArray) civObj.get("cities")).add(serializeCity(city, otherCiv));
+                ((JsonArray) civObj.get("cities")).add(serializeCity(city, otherCiv, true));
             }
+        }
+        civObj.add("units", new JsonArray());
+        for (Unit unit : civ.getUnits()){
+            ((JsonArray) civObj.get("units")).add(serializeUnit(unit));
         }
         return civObj;
     }
@@ -177,6 +193,16 @@ public class GameController extends AbstractGameController implements JsonRespon
             ((JsonArray) technologyObject.get("technologiesRequired")).add(jsonObject);
         }
         return technologyObject;
+    }
+
+    public JsonObject serializeUnit(Unit unit){
+        JsonObject unitObject = new JsonObject();
+        unitObject.addProperty("Unit Type", unit.getUnitType().getId());
+        unitObject.addProperty("Unit Action", unit.getUnitAction().getId());
+        unitObject.addProperty("mp", unit.getMp());
+        unitObject.addProperty("hp", unit.getHp());
+        unitObject.addProperty("Tile", unit.getTile().getIndex());
+        return unitObject;
     }
 
     public JsonObject getCivilizationByUsername(String username) {
@@ -267,59 +293,158 @@ public class GameController extends AbstractGameController implements JsonRespon
         if (civilization == null)
             return messageToJsonObj("invalid username", false);
         Technology technology = civilization.getCurrentResearch();
+        if( technology == null )
+            return messageToJsonObj("no technology is being research", false);
         JsonObject jsonObject = new JsonObject();
         jsonObject.add("Current Research", serializeTechnology(technology));
-        jsonObject.addProperty("Turns need research to be finished", civilization.gettur);      
-        return JSON_FALSE;
+        jsonObject.addProperty("Turns need research to be finished", civilization.getTurnsLeftForResearchFinish());      
+        jsonObject.add("Objects Unlocks", new JsonArray());
+        JsonObject improvementObject = new JsonObject();
+        JsonObject resourceObject = new JsonObject();
+        JsonObject unitTypeObject = new JsonObject();
+        JsonObject buildingTypeObject = new JsonObject();
+        JsonObject unitActionObject = new JsonObject();
+        JsonObject technologyObject = new JsonObject();
+        improvementObject.add("Improvements", new JsonArray());
+        resourceObject.add("Resources", new JsonArray());
+        unitTypeObject.add("Unit Types", new JsonArray());
+        buildingTypeObject.add("Building Types", new JsonArray());
+        unitActionObject.add("Unit Actions", new JsonArray());
+        technologyObject.add("Technologies", new JsonArray());
+        for(int i = 0 ; i < technology.getObjectsUnlocks().size() ; i ++){
+            Object obj = technology.getObjectsUnlocks().get( i );
+            JsonObject jsonObject2 = new JsonObject() ;
+            if( obj instanceof Improvement ){
+                jsonObject2.addProperty("name" , obj.toString());
+                ((JsonArray) improvementObject.get("Improvements")).add(jsonObject2);
+            }
+            else if( obj instanceof Resource ){
+                jsonObject2.addProperty("name" , obj.toString());
+                ((JsonArray) improvementObject.get("Resources")).add(jsonObject2);
+            }
+            else if( obj instanceof UnitType ){
+                jsonObject2.addProperty("name" , obj.toString());
+                ((JsonArray) improvementObject.get("Unit Types")).add(jsonObject2);
+            }
+            else if( obj instanceof BuildingType ){
+                jsonObject2.addProperty("name" , obj.toString());
+                ((JsonArray) improvementObject.get("Building Types")).add(jsonObject2);
+            }
+            else if( obj instanceof UnitAction ){
+                jsonObject2.addProperty("name" , obj.toString());
+                ((JsonArray) improvementObject.get("Unit Actions")).add(jsonObject2);
+            }
+            else if( obj instanceof Technology ){
+                jsonObject2.addProperty("name" , obj.toString());
+                ((JsonArray) improvementObject.get("Technologies")).add(jsonObject2);
+            }
+        }
+        ((JsonArray) jsonObject.get("Objects Unlocks")).add(improvementObject);
+        ((JsonArray) jsonObject.get("Objects Unlocks")).add(resourceObject);
+        ((JsonArray) jsonObject.get("Objects Unlocks")).add(unitTypeObject);
+        ((JsonArray) jsonObject.get("Objects Unlocks")).add(buildingTypeObject);
+        ((JsonArray) jsonObject.get("Objects Unlocks")).add(unitActionObject);
+        ((JsonArray) jsonObject.get("Objects Unlocks")).add(technologyObject);
+        return jsonObject;
     }
 
     public JsonObject infoUnits(String username) {
-        // TODO
-        return JSON_FALSE;
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid username", false);
+        ArrayList<Unit> units = civilization.getUnits();
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("units", new JsonArray());
+        for(int i = 0 ; i < units.size() ; i ++){
+            Unit unit = units.get( i );
+            ((JsonArray) jsonObject.get("units")).add(serializeUnit(unit));
+        }    
+        return jsonObject;
     }
 
     public JsonObject infoCities(String username) {
-        // TODO
-        return JSON_FALSE;
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid username", false);
+        ArrayList<City> cities = civilization.getCities();
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("cities", new JsonArray());
+        for(int i = 0 ; i < cities.size(); i ++){
+            City city = cities.get( i );
+            ((JsonArray) jsonObject.get("cities")).add(serializeCity(city, civilization, false));
+        }        
+        return jsonObject;
     }
 
     public JsonObject infoDiplomacy(String username) {
-        // TODO
+        // TODO: Phase 2 or 3
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid username", false);
+        JsonObject jsonObject = new JsonObject();
         return JSON_FALSE;
     }
 
     public JsonObject infoVictory(String username) {
-        // TODO
+        // TODO: Phase 2 or 3
         return JSON_FALSE;
     }
 
     public JsonObject infoDemographics(String username) {
-        // TODO
-        return JSON_FALSE;
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid username", false);
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("civilization", serializeCiv(civilization, civilization));
+        //TODO: Need anything else?
+        return jsonObject;
     }
 
     public JsonObject infoNotifications(String username) {
-        // TODO
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid username", false);
+        //TODO: ??        
         return JSON_FALSE;
     }
 
     public JsonObject infoMilitary(String username) {
-        // TODO
-        return JSON_FALSE;
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid username", false);
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("units", new JsonArray());
+        for (Unit unit : civilization.getUnits()){
+            ((JsonArray) jsonObject.get("units")).add(serializeUnit(unit));
+        }
+        return jsonObject;
     }
 
     public JsonObject infoEconomic(String username) {
-        // TODO
-        return JSON_FALSE;
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid username", false);
+        ArrayList<City> cities = civilization.getCities();
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("cities", new JsonArray());
+        for(int i = 0 ; i < cities.size(); i ++){
+            City city = cities.get( i );
+            ((JsonArray) jsonObject.get("cities")).add(serializeCity(city, civilization, true));
+        }        
+        return jsonObject;
     }
 
     public JsonObject infoDiplomatic(String username) {
-        // TODO
+        // TODO: Phase 2 or 3
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid username", false);
+        JsonObject jsonObject = new JsonObject();
         return JSON_FALSE;
     }
 
     public JsonObject infoDeals(String username) {
-        // TODO
+        // TODO: Phase 2 or 3
         return JSON_FALSE;
     }
     // TODO: cheat
@@ -834,7 +959,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         jsonObject.addProperty("ScienceYield", city.getScienceYield());
         int constantCityTurn = City.TURN_NEEDED_TO_EXTEND_TILES;
         jsonObject.addProperty("Turns need to extend city territory", (constantCityTurn-(gameArea.getTurn()%constantCityTurn))%constantCityTurn );
-        // TODO: Turns need to extend population        
+        jsonObject.addProperty("Turns need to extend city population", city.getTurnsLeftForNextCitizen());
         return jsonObject;
     }
 
