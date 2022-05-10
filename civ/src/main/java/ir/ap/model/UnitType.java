@@ -70,26 +70,32 @@ public enum UnitType implements Production {
         REPAIR; 
 
         private Technology technologyRequired;
+        private int id;
 
         UnitAction() {
             technologyRequired = null;
         }
 
         public static void initAll() {
-            BUILD_ROAD.init(Technology.THE_WHEEL);
-            BUILD_RAILROAD.init(Technology.RAILROAD);
-            BUILD_BRIDGE.init(Technology.CONSTRUCTION);
-            REMOVE_JUNGLE.init(Technology.BRONZE_WORKING);
-            REMOVE_FOREST.init(Technology.MINING);
-            REMOVE_MARSH.init(Technology.MASONRY);
+            BUILD_ROAD.init(1, Technology.THE_WHEEL);
+            BUILD_RAILROAD.init(2, Technology.RAILROAD);
+            BUILD_BRIDGE.init(3, Technology.CONSTRUCTION);
+            REMOVE_JUNGLE.init(4, Technology.BRONZE_WORKING);
+            REMOVE_FOREST.init(5, Technology.MINING);
+            REMOVE_MARSH.init(6, Technology.MASONRY);
         }
 
-        void init(Technology technologyRequired) {
+        void init(int id,Technology technologyRequired) {
             this.technologyRequired = technologyRequired;
+            this.id = id;
         }
 
         public Technology getTechnologyRequired() {
             return technologyRequired;
+        }
+
+        public int getId(){
+            return id;
         }
     }
 
