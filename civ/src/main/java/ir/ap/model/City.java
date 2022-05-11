@@ -24,6 +24,7 @@ public class City {
 
     private Production currentProduction;
     private int productionSpent;
+    private boolean actionThisTurn;
 
     private int hp;
     private int food;
@@ -42,6 +43,7 @@ public class City {
 
         currentProduction = null;
         productionSpent = 0;
+        actionThisTurn = false;
 
         hp = DEFAULT_HP;
         food = 0;
@@ -61,6 +63,7 @@ public class City {
 
         currentProduction = null;
         productionSpent = 0;
+        actionThisTurn = false;
 
         hp = DEFAULT_HP;
         food = 0;
@@ -201,6 +204,14 @@ public class City {
 
     public void addToProductionSpent(int delta) {
         this.productionSpent += delta;
+    }
+
+    public void setActionThisTurn(boolean value) {
+        actionThisTurn = value;
+    }
+
+    public boolean didActionThisTurn() {
+        return actionThisTurn;
     }
 
     public int getCostLeftForProductionConstruction() {

@@ -954,6 +954,21 @@ public class GameController extends AbstractGameController implements JsonRespon
         return mapShow(username, city.getTile().getIndex());
     }
 
+    public JsonObject cityAttack(String username, int tileId, boolean cheat) {
+        Civilization civ = civController.getCivilizationByUsername(username);
+        if (civ == null)
+            return messageToJsonObj(Message.USER_NOT_ON_GAME, false);
+        City city = civ.getSelectedCity();
+        if (city == null)
+            return messageToJsonObj(Message.INVALID_REQUEST, false);
+        Tile target = mapController.getTileById(tileId);
+        if (target == null)
+            return messageToJsonObj(Message.INVALID_REQUEST, false);
+        if (!cityController.cityAttack(city, target, cheat))
+            return messageToJsonObj(Message.INVALID_REQUEST, false);
+        return messageToJsonObj("City attack done", true);
+    }
+
     public JsonObject cityAddCitizenToWorkOnTile(String username, int tileId) {
         Civilization civilization = civController.getCivilizationByUsername(username);
         if (civilization == null)

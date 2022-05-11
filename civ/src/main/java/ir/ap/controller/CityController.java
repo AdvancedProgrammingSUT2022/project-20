@@ -7,6 +7,7 @@ import ir.ap.model.GameArea;
 import ir.ap.model.Map;
 import ir.ap.model.Production;
 import ir.ap.model.Tile;
+import ir.ap.model.Unit;
 import ir.ap.model.UnitType;
 import ir.ap.model.Tile.TileKnowledge;
 
@@ -134,6 +135,44 @@ public class CityController extends AbstractGameController {
                 gameArea.setTileKnowledgeByCivilization(civ, neighbor, TileKnowledge.REVEALED);
         }
         return true;
+    }
+
+    public boolean cityAttack(City city, Tile target, boolean cheat) {
+        if (city == null || (!cheat && city.didActionThisTurn())) return false;
+        Civilization civilization = city.getCivilization();
+        Tile curTile = city.getTile();
+        Unit enemyUnit = target.getCombatUnit();
+        City enemyCity = target.getCity();
+        if (enemyUnit == null || enemyUnit.getCivilization() == civilization)
+            enemyUnit = target.getNonCombatUnit();
+        if(enemyUnit == null && enemyCity == null) return false;
+        Civilization otherCiv = (enemyUnit == null ? (enemyCity == null ? null : enemyCity.getCivilization()) : enemyUnit.getCivilization());
+        if (otherCiv == null) return false;
+
+        int dist = mapController.getDistanceInTiles(curTile, target);
+        if (dist > city.getTerritoryRange()) return false;
+        int combatStrength = (cheat ? 1000 : city.getCombatStrength());
+        if (enemyCity != null && enemyCity.getCivilization() != civilization) {
+            enemyCity.setHp(enemyCity.getHp() - combatStrength);
+            city.setActionThisTurn(true);
+
+            if (enemyCity.isDead()) {
+                changeCityOwner(enemyCity, civilization);
+            }
+
+            return true;
+        }
+        else if(enemyUnit != null && enemyUnit.getCivilization() != civilization){
+            enemyUnit.setHp(enemyUnit.getHp() - combatStrength);
+            city.setActionThisTurn(true);
+
+            if (enemyUnit.getHp() <= 0) {
+                unitController.removeUnit(enemyUnit);
+            }
+
+            return true;
+        }
+        return false;
     }
 
     public boolean cityAddCitizenToWorkOnTile(City city, Tile tile) {

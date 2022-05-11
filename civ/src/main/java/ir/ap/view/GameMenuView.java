@@ -933,6 +933,13 @@ public class GameMenuView extends AbstractMenuView {
     private JsonObject getCityActionResponse(String[] args, boolean cheat) {
         int tileId;
         switch (args[0]) {
+            case "attack":
+                try {
+                    tileId = Integer.parseInt(args[1]);
+                    return GAME_CONTROLLER.cityAttack(currentPlayer, tileId, cheat);
+                } catch (Exception ex) {
+                    return null;
+                }
             case "work":
                 try {
                     tileId = Integer.parseInt(args[1]);

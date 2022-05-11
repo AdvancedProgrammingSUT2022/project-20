@@ -172,139 +172,108 @@ public class UnitController extends AbstractGameController {
         if (civilization == null || target == null) return false;
         Unit unit = civilization.getSelectedUnit();
         if (unit == null || (!cheat && !unit.canMove())) return false;
-        unit.setHowManyTurnWeKeepAction(0);
-        City city = civilization.getSelectedCity();
+        Tile curTile = unit.getTile();
         Unit enemyUnit = target.getCombatUnit();
         City enemyCity = target.getCity();
         if (enemyUnit == null || enemyUnit.getCivilization() == civilization) enemyUnit = target.getNonCombatUnit();
-        Tile curTile = (unit == null ? (city == null ? null : city.getTile()) : unit.getTile());
-        if((unit == null && city == null) || (enemyUnit == null && enemyCity == null) || curTile == null) return false;
+        if(enemyUnit == null && enemyCity == null) return false;
         Civilization otherCiv = (enemyUnit == null ? (enemyCity == null ? null : enemyCity.getCivilization()) : enemyUnit.getCivilization());
         if (otherCiv == null) return false;
 
         int dist = mapController.getDistanceInTiles(curTile, target);
-        if(city != null) {
-            int combatStrength = (cheat ? 1000 : city.getCombatStrength());
-            if (enemyCity != null) {
-                if (enemyCity.getCivilization() == civilization) return false;
-                if (dist > city.getTerritoryRange()) return false;
-                enemyCity.setHp(enemyCity.getHp() - combatStrength);
-                if (!cheat) unit.addToMp(-UnitType.MAX_MOVEMENT);
-
-                if (enemyCity.isDead()) {
-                    cityController.changeCityOwner(enemyCity, civilization);
-                }
-
-                return true;
-            }
-            else if(enemyUnit != null){
-                if (enemyUnit.getCivilization() == civilization) return false;
-                if (dist > city.getTerritoryRange()) return false;
+        unit.setHowManyTurnWeKeepAction(0);
+        int combatStrength = (cheat ? 1000 : unit.getCombatStrength());
+        if(unit.getUnitType().getCombatType() == UnitType.CombatType.CIVILIAN) return false;
+        if(enemyUnit != null) {
+            if (enemyUnit.getCivilization() == civilization) return false;
+            if (unit.getCombatType() == UnitType.CombatType.ARCHERY || unit.getCombatType() == UnitType.CombatType.SIEGE) {
+                if (dist > unit.getRange()) return false;
+                if (unit.getCombatType() == UnitType.CombatType.SIEGE && unit.getUnitAction() != UnitType.UnitAction.SETUP_RANGED)
+                    return false;
                 enemyUnit.setHp(enemyUnit.getHp() - combatStrength);
                 if (!cheat) unit.addToMp(-UnitType.MAX_MOVEMENT);
-
-                if (enemyUnit.getHp() <= 0) {
+                if (enemyUnit.isDead()) {
                     removeUnit(enemyUnit);
                 }
+                if (unit.isDead()) {
+                    removeUnit(unit);
+                }
+                return true;
+                // in this type of attack we will kill worker
+            }
 
+            if (unit.getCombatType() == UnitType.CombatType.MOUNTED || unit.getCombatType() == UnitType.CombatType.MELEE || unit.getCombatType() == UnitType.CombatType.GUNPOWDER || unit.getCombatType() == UnitType.CombatType.ARMORED || unit.getCombatType() == UnitType.CombatType.RECON) {
+                if (dist > 1) return false;
+                if (enemyUnit.getUnitType().getCombatType() == UnitType.CombatType.CIVILIAN) {
+                    if (enemyCity == null) {
+                        changeUnitOwner(enemyUnit, civilization);
+                        return true;
+                    }
+                } else {
+                    enemyUnit.setHp(enemyUnit.getHp() - combatStrength);
+                    if (!cheat) unit.addToMp(-UnitType.MAX_MOVEMENT);
+                    if (!cheat) unit.setHp(unit.getHp() - enemyUnit.getCombatStrength());
+                    if (enemyUnit.getHp() <= 0) {
+                        removeUnit(enemyUnit);
+                        unitMoveTo(civilization, target, cheat);
+                    }
+                    if (unit.getHp() <= 0) {
+                        removeUnit(unit);
+                    }
+                    return true;
+                }
+                // in this type of attack we got worker if it is not city
+            }
+        }
+        if (enemyCity != null) {
+            if (enemyCity.getCivilization() == civilization) return false;
+            if (unit.getCombatType() == UnitType.CombatType.ARCHERY || unit.getCombatType() == UnitType.CombatType.SIEGE) {
+                if (dist > unit.getRange()) return false;
+                if (unit.getCombatType() == UnitType.CombatType.SIEGE && unit.getUnitAction() != UnitType.UnitAction.SETUP_RANGED)
+                    return false;
+                enemyCity.setHp(enemyCity.getHp() - combatStrength);
+                if (!cheat) unit.addToMp(-UnitType.MAX_MOVEMENT);
+                if (!cheat) unit.setHp(unit.getHp() - enemyCity.getCombatStrength());
+
+                if (unit.getHp() <= 0) {
+                    removeUnit(unit);
+                }
+                return true;
+            }
+
+            if (unit.getCombatType() == UnitType.CombatType.MOUNTED || unit.getCombatType() == UnitType.CombatType.MELEE || unit.getCombatType() == UnitType.CombatType.GUNPOWDER || unit.getCombatType() == UnitType.CombatType.ARMORED || unit.getCombatType() == UnitType.CombatType.RECON) {
+                if (dist > 1) return false;
+                enemyCity.setHp(enemyCity.getHp() - combatStrength);
+                if (!cheat) unit.addToMp(-UnitType.MAX_MOVEMENT);
+                if (!cheat) unit.setHp(unit.getHp() - enemyCity.getCombatStrength());
+                if (enemyCity.getHp() <= 0) {
+                    unitMoveTo(civilization, target, cheat);
+                    cityController.changeCityOwner(enemyCity, civilization);
+                    if(enemyUnit.getUnitType().getCombatType() == UnitType.CombatType.CIVILIAN)
+                    {
+                        changeUnitOwner(enemyUnit, civilization);
+                    }
+                }
+                if (unit.getHp() <= 0) {
+                    civilization.removeUnit(unit);
+                }
                 return true;
             }
         }
-        
-        if(unit != null) {
-            int combatStrength = (cheat ? 1000 : unit.getCombatStrength());
-            if(unit.getUnitType().getCombatType() == UnitType.CombatType.CIVILIAN) return false;
-            if(enemyUnit != null) {
-                if (enemyUnit.getCivilization() == civilization) return false;
-                if (unit.getCombatType() == UnitType.CombatType.ARCHERY || unit.getCombatType() == UnitType.CombatType.SIEGE) {
-                    if (dist > unit.getRange()) return false;
-                    if (unit.getCombatType() == UnitType.CombatType.SIEGE && unit.getUnitAction() != UnitType.UnitAction.SETUP_RANGED)
-                        return false;
-                    enemyUnit.setHp(enemyUnit.getHp() - combatStrength);
-                    if (!cheat) unit.addToMp(-UnitType.MAX_MOVEMENT);
-                    if (enemyUnit.isDead()) {
-                        removeUnit(enemyUnit);
-                    }
-                    if (unit.isDead()) {
-                        removeUnit(unit);
-                    }
-                    return true;
-                    // in this type of attack we will kill worker
-                }
+        if (unit.getUnitType().getCombatType() != UnitType.CombatType.ARMORED && unit.getUnitType().getCombatType() != UnitType.CombatType.MOUNTED)
+            unit.setMp(0);
+        else
+            unit.setMp(unit.getMp() - dist);
 
-                if (unit.getCombatType() == UnitType.CombatType.MOUNTED || unit.getCombatType() == UnitType.CombatType.MELEE || unit.getCombatType() == UnitType.CombatType.GUNPOWDER || unit.getCombatType() == UnitType.CombatType.ARMORED || unit.getCombatType() == UnitType.CombatType.RECON) {
-                    if (dist > 1) return false;
-                    if (enemyUnit.getUnitType().getCombatType() == UnitType.CombatType.CIVILIAN) {
-                        if (enemyCity == null) {
-                            changeUnitOwner(enemyUnit, civilization);
-                            return true;
-                        }
-                    } else {
-                        enemyUnit.setHp(enemyUnit.getHp() - combatStrength);
-                        if (!cheat) unit.addToMp(-UnitType.MAX_MOVEMENT);
-                        if (!cheat) unit.setHp(unit.getHp() - enemyUnit.getCombatStrength());
-                        if (enemyUnit.getHp() <= 0) {
-                            removeUnit(enemyUnit);
-                            unitMoveTo(civilization, target, cheat);
-                        }
-                        if (unit.getHp() <= 0) {
-                            removeUnit(unit);
-                        }
-                        return true;
-                    }
-                    // in this type of attack we got worker if it is not city
-                }
+        if(unit.getTile() == target) {
+            if(target.hasImprovement() && target.getOwnerCity().getCivilization() != civilization){
+                Improvement improvement = target.getImprovement();
+                improvement.setIsDead(true);
+                target.setImprovement(improvement);
             }
-            if (enemyCity != null) {
-                if (enemyCity.getCivilization() == civilization) return false;
-                if (unit.getCombatType() == UnitType.CombatType.ARCHERY || unit.getCombatType() == UnitType.CombatType.SIEGE) {
-                    if (dist > unit.getRange()) return false;
-                    if (unit.getCombatType() == UnitType.CombatType.SIEGE && unit.getUnitAction() != UnitType.UnitAction.SETUP_RANGED)
-                        return false;
-                    enemyCity.setHp(enemyCity.getHp() - combatStrength);
-                    if (!cheat) unit.addToMp(-UnitType.MAX_MOVEMENT);
-                    if (!cheat) unit.setHp(unit.getHp() - enemyCity.getCombatStrength());
-
-                    if (unit.getHp() <= 0) {
-                        removeUnit(unit);
-                    }
-                    return true;
-                }
-
-                if (unit.getCombatType() == UnitType.CombatType.MOUNTED || unit.getCombatType() == UnitType.CombatType.MELEE || unit.getCombatType() == UnitType.CombatType.GUNPOWDER || unit.getCombatType() == UnitType.CombatType.ARMORED || unit.getCombatType() == UnitType.CombatType.RECON) {
-                    if (dist > 1) return false;
-                    enemyCity.setHp(enemyCity.getHp() - combatStrength);
-                    if (!cheat) unit.addToMp(-UnitType.MAX_MOVEMENT);
-                    if (!cheat) unit.setHp(unit.getHp() - enemyCity.getCombatStrength());
-                    if (enemyCity.getHp() <= 0) {
-                        unitMoveTo(civilization, target, cheat);
-                        cityController.changeCityOwner(enemyCity, civilization);
-                        if(enemyUnit.getUnitType().getCombatType() == UnitType.CombatType.CIVILIAN)
-                        {
-                            changeUnitOwner(enemyUnit, civilization);
-                        }
-                    }
-                    if (unit.getHp() <= 0) {
-                        civilization.removeUnit(unit);
-                    }
-                    return true;
-                }
-            }
-            if (unit.getUnitType().getCombatType() != UnitType.CombatType.ARMORED && unit.getUnitType().getCombatType() != UnitType.CombatType.MOUNTED)
-                unit.setMp(0);
-            else
-                unit.setMp(unit.getMp() - dist);
-
-            if(unit.getTile() == target) {
-                if(target.hasImprovement() && target.getOwnerCity().getCivilization() != civilization){
-                    Improvement improvement = target.getImprovement();
-                    improvement.setIsDead(true);
-                    target.setImprovement(improvement);
-                }
-            }
-            unit.setUnitAction(UnitType.UnitAction.ATTACK);
         }
-        return false;
+        unit.setUnitAction(UnitType.UnitAction.ATTACK);
+        return true;
     }
 
     public boolean unitFoundCity(Civilization civilization, boolean cheat)
