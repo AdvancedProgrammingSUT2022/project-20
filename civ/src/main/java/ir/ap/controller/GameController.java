@@ -436,12 +436,15 @@ public class GameController extends AbstractGameController implements JsonRespon
         return setOk(jsonObject, true);
     }
 
-    public JsonObject infoNotifications(String username, int i) {
+    public JsonObject infoNotifications(String username) {
         Civilization civilization = civController.getCivilizationByUsername(username);
         if (civilization == null)
             return messageToJsonObj("invalid username", false);
-        //TODO:yadam nist chejori tabdilesh mikardim be json
-        return messageToJsonObj(civilization.getMessageQueue(i),true);
+        JsonObject response = new JsonObject();
+        response.add("notifications",
+            GSON.fromJson(GSON.toJson(civilization.getMessageQueue()),
+                JsonObject.class));
+        return setOk(response, true);
     }
 
     public JsonObject infoMilitary(String username) {

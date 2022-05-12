@@ -1,9 +1,5 @@
 package ir.ap.model;
 
-import com.google.gson.JsonObject;
-import ir.ap.controller.GameController;
-import ir.ap.controller.JsonResponsor;
-
 import java.util.ArrayList;
 
 public class Civilization {
@@ -30,6 +26,11 @@ public class Civilization {
     int[] accessibleResourceCount;
     boolean[] technologyReached;
     private ArrayList<String> messageQueue;
+
+    public ArrayList<String> getMessageQueue() {
+        return new ArrayList<>(messageQueue);
+    }
+
     public ArrayList<String> getMessageQueue(int x) {
         ArrayList<String> out = new ArrayList<String>();
         for(int i = Math.max(messageQueue.size()-x,0); i < messageQueue.size(); i++)
