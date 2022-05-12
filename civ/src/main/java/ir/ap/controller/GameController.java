@@ -13,7 +13,6 @@ import ir.ap.model.Tile.TileKnowledge;
 import ir.ap.model.UnitType.UnitAction;
 
 public class GameController extends AbstractGameController implements JsonResponsor, AutoCloseable {
-
     public enum Validator {
         ;
 
@@ -437,12 +436,12 @@ public class GameController extends AbstractGameController implements JsonRespon
         return setOk(jsonObject, true);
     }
 
-    public JsonObject infoNotifications(String username) {
+    public JsonObject infoNotifications(String username, int i) {
         Civilization civilization = civController.getCivilizationByUsername(username);
         if (civilization == null)
             return messageToJsonObj("invalid username", false);
-        //TODO: ??        
-        return JSON_FALSE;
+        //TODO:yadam nist chejori tabdilesh mikardim be json
+        return messageToJsonObj(civilization.getMessageQueue(i),true);
     }
 
     public JsonObject infoMilitary(String username) {

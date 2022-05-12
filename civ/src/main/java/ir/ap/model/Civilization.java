@@ -1,5 +1,9 @@
 package ir.ap.model;
 
+import com.google.gson.JsonObject;
+import ir.ap.controller.GameController;
+import ir.ap.controller.JsonResponsor;
+
 import java.util.ArrayList;
 
 public class Civilization {
@@ -25,6 +29,17 @@ public class Civilization {
 
     int[] accessibleResourceCount;
     boolean[] technologyReached;
+    private ArrayList<String> messageQueue;
+    public ArrayList<String> getMessageQueue(int x) {
+        ArrayList<String> out = new ArrayList<String>();
+        for(int i = Math.max(messageQueue.size()-x,0); i < messageQueue.size(); i++)
+            out.add(messageQueue.get(i));
+        return out;
+    }
+
+    public void addToMessageQueue(String message) {
+        this.messageQueue.add(message);
+    }
 
     public Civilization(int index) {
         this.index = index;
@@ -72,6 +87,8 @@ public class Civilization {
 
         accessibleResourceCount = new int[40];
         technologyReached = new boolean[60];
+
+        this.addToMessageQueue("Civilization " + name + " with capital city " + capital + " has been initialized");
     }
 
     public int getIndex() {
@@ -95,6 +112,7 @@ public class Civilization {
     }
 
     public void addCity(City city) {
+        this.addToMessageQueue("city " + city.getName() + "has benn added to Civilization " + this.getName());
         cities.add(city);
     }
 
@@ -103,6 +121,7 @@ public class Civilization {
     }
 
     public void addCityDestroyed(City city) {
+        this.addToMessageQueue("city " + city.getName() + " from Civilization " + this.getName() + " has been destroyed");
         citiesDestroyed.add(city);
     }
 
@@ -111,6 +130,7 @@ public class Civilization {
     }
 
     public void addCitiesAnnexed(City city) {
+        this.addToMessageQueue("city " + city.getName() + " has been annexed by Civilization " + this.getName());
         citiesAnnexed.add(city);
     }
 
@@ -119,6 +139,7 @@ public class Civilization {
     }
 
     public void addUnit(Unit unit) {
+        this.addToMessageQueue("one unit with type " + unit.getUnitType() + " has been added to Civilization " + this.getName());
         units.add(unit);
     }
 
@@ -127,6 +148,7 @@ public class Civilization {
     }
 
     public void setSelectedCity(City city) {
+        this.addToMessageQueue("city " + city.getName() + " has been selected by Civilization " + this.getName());
         this.selectedCity = city;
     }
 
@@ -135,6 +157,7 @@ public class Civilization {
     }
 
     public void setSelectedUnit(Unit selectedUnit) {
+        this.addToMessageQueue("one unit whit type " + selectedUnit.getUnitType() + " has been selected by Civilization " + this.getName());
         this.selectedUnit = selectedUnit;
     }
 
@@ -143,6 +166,7 @@ public class Civilization {
     }
 
     public void setCurrentResearch(Technology currentResearch) {
+        this.addToMessageQueue("Civilization " + this.getName() + " started research about Technology " + currentResearch);
         this.currentResearch = currentResearch;
     }
 
@@ -172,10 +196,12 @@ public class Civilization {
     }
 
     public void setGold(int gold) {
+        this.addToMessageQueue("number of golds in Civilization " + this.getName() + " has been changed to " + gold);
         this.gold = gold;
     }
 
     public void addToGold(int delta) {
+        this.addToMessageQueue("number of golds in Civilization " + this.getName() + " has been changed to " + gold+delta);
         this.gold += delta;
     }
 
@@ -192,10 +218,12 @@ public class Civilization {
     }
 
     public void setScience(int science) {
+        this.addToMessageQueue("Science Civilization " + this.getName() + " has been changed to " + science);
         this.science = science;
     }
 
     public void addToScience(int delta) {
+        this.addToMessageQueue("Science Civilization " + this.getName() + " has been changed to " + science+delta);
         this.science += delta;
     }
 
@@ -214,6 +242,8 @@ public class Civilization {
 
     public void setTechnologyReached(Technology tech, boolean value) {
         if (tech == null) return;
+        if(value == true)
+            this.addToMessageQueue("Civilization " + this.getName() + " reached to technology " + tech);
         this.technologyReached[tech.getId()] = value;
     }
 
@@ -225,16 +255,19 @@ public class Civilization {
         return res;
     }
     public void removeUnit(Unit unit){
+        this.addToMessageQueue("one unit of type " + unit.getUnitType() + " has been removed from Civilization " + this.getName());
         if (selectedUnit == unit)
             selectedUnit = null;
         units.remove(unit);
     }
     public void removeCity(City city){
+        this.addToMessageQueue("city " + city.getName() + " has been removed from Civilization " + this.getName());
         if (selectedCity == city)
             selectedCity = null;
         cities.remove(city);
     }
     public void setCapital(City capital) {
+        this.addToMessageQueue("capital of Civilization " + this.getName() + " has been set to city " + capital.getName());
         this.capital = capital;
     }
 
@@ -278,6 +311,7 @@ public class Civilization {
     }
 
     public void addToHappiness(int delta) {
+        this.addToMessageQueue("happiness of Civilization " + this.getName() + " has been added by " + delta);
         this.extraHappiness += delta;
     }
 
@@ -305,6 +339,7 @@ public class Civilization {
 
     public void finishResearch() {
         if (currentResearch == null) return;
+        this.addToMessageQueue("Civilization " + this.getName() + " reached to research " + currentResearch);
         technologyReached[currentResearch.getId()] = true;
         scienceSpentForResearch = 0;
         science = 0;

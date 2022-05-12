@@ -1,5 +1,6 @@
 package ir.ap.controller;
 
+import com.google.gson.JsonObject;
 import ir.ap.model.*;
 import ir.ap.model.UnitType.UnitAction;
 
@@ -34,7 +35,6 @@ public class CivilizationController extends AbstractGameController {
     public boolean nextTurn(Civilization civilization)
     {
         // TODO: check knoim aslan mishe raft turn baadi?!
-        if (civilization == null) return false;
         civilization.addToGold(civilization.getGoldYield());
         civilization.addToScience(civilization.getScienceYield());
         if (civilization.getGold() < 0) {
