@@ -158,15 +158,22 @@ public class GameController extends AbstractGameController implements JsonRespon
         civObj.addProperty("index", civ.getIndex());
         civObj.addProperty("name", civ.getName());
         civObj.addProperty("gold", civ.getGold());
+        civObj.addProperty("goldYield", civ.getGoldYield());
+        civObj.addProperty("science", civ.getScience());
+        civObj.addProperty("scienceYield", civ.getScienceYield());
+        civObj.addProperty("happiness", civ.getHappiness());
+        civObj.addProperty("population", civ.getCitiesPopulationSum());
         if (mapController.civCanSee(otherCiv, civ.getCapital())) {
             civObj.add("capital", serializeCity(civ.getCapital(), otherCiv, true));
         }
+        civObj.addProperty("citiesCount", civ.getCities().size());
         civObj.add("cities", new JsonArray());
         for (City city : civ.getCities()) {
             if (mapController.civCanSee(otherCiv, city)) {
                 ((JsonArray) civObj.get("cities")).add(serializeCity(city, otherCiv, true));
             }
         }
+        civObj.addProperty("unitsCount", civ.getUnits().size());
         civObj.add("units", new JsonArray());
         for (Unit unit : civ.getUnits()){
             ((JsonArray) civObj.get("units")).add(serializeUnit(unit));
@@ -426,7 +433,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("invalid username", false);
         JsonObject jsonObject = new JsonObject();
         jsonObject.add("civilization", serializeCiv(civilization, civilization));
-        //TODO: EMTIAZ aslan pyade nashode
+        //TODO: emtiaz aslan pyade nashode PHASE2
         return setOk(jsonObject, true);
     }
 

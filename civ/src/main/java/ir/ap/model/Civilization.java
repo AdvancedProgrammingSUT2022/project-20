@@ -242,13 +242,13 @@ public class Civilization {
         this.name = name;
     }
 
-    public int getRealPopulation() {
-        int res = 0;
-        for (City city : cities) {
-            res += city.getRealPopulation();
-        }
-        return res;
-    }
+    // public int getRealPopulation() {
+    //     int res = 0;
+    //     for (City city : cities) {
+    //         res += city.getRealPopulation();
+    //     }
+    //     return res;
+    // }
 
     public int[] getAllResourcesCount() {
         int[] resourceCount = new int[40];
