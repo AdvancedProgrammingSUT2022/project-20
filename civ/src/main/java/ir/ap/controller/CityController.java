@@ -77,6 +77,7 @@ public class CityController extends AbstractGameController {
             return false;
         }
         city.getCivilization().addCity(city);
+        city.getCivilization().addToMessageQueue("city " + city.getName() + " has been added to Civilization " + city.getCivilization().getName());
         return true;
     }
 
@@ -85,12 +86,14 @@ public class CityController extends AbstractGameController {
         Civilization civ = city.getCivilization();
         if (civ != null)
             civ.removeCity(city);
+        city.getCivilization().addToMessageQueue("city " + city.getName() + " has been removed from Civilization " + city.getCivilization().getName());
         return removeCityFromMap(city);
     }
 
     public boolean changeCityOwner(City city, Civilization newCiv) {
         removeCity(city);
         city.setCivilization(newCiv);
+        city.getCivilization().addToMessageQueue("owner of city " + city.getName() + " has been changed to Civilization " + city.getCivilization().getName());
         return addCity(city);
     }
 

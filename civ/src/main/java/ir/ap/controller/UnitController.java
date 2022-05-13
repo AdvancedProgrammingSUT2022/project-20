@@ -13,6 +13,7 @@ public class UnitController extends AbstractGameController {
     public boolean addUnit(Civilization civilization, Tile tile, UnitType unitType){
         Unit unit = new Unit(unitType, civilization, tile);
         civilization.addUnit(unit);
+        civilization.addToMessageQueue("one unit with type " + unit.getUnitType() + " has been added to Civilization " + civilization.getName());
         return addUnitToMap(unit);
     }
 
@@ -20,11 +21,14 @@ public class UnitController extends AbstractGameController {
         Civilization civ = unit.getCivilization();
         if (civ != null)
             civ.removeUnit(unit);
+        civ.addToMessageQueue("one unit with type " + unit.getUnitType() + " removed from Civilization " + civ.getName());
         return removeUnitFromMap(unit);
     }
 
     public boolean changeUnitOwner(Unit unit, Civilization newCiv) {
         if (unit == null || newCiv == null) return false;
+        unit.getCivilization().addToMessageQueue("new owner of unit " + unit.getUnitType() + " has been changed to Civilization " + newCiv.getName());
+        newCiv.addToMessageQueue("new owner of unit " + unit.getUnitType() + " has been changed to Civilization " + newCiv.getName());
         removeUnit(unit);
         addUnit(newCiv, unit.getTile(), unit.getUnitType());
         return true;

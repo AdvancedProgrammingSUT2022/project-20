@@ -499,6 +499,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("selected tile doesn't have unit", false);
         if (!unit.getCivilization().equals(civilization))
             return messageToJsonObj("unit does not belong to your civ", false);
+        civilization.addToMessageQueue("one unit whit type " + unit.getUnitType() + " has been selected by Civilization " + civilization.getName());
         civilization.setSelectedUnit(unit);
         return messageToJsonObj("unit selected", true);
     }
@@ -515,6 +516,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("selected tile doesn't have unit", false);
         if (!unit.getCivilization().equals(civilization))
             return messageToJsonObj("unit does not belong to your civ", false);
+        civilization.addToMessageQueue("one unit whit type " + unit.getUnitType() + " has been selected by Civilization " + civilization.getName());
         civilization.setSelectedUnit(unit);
         return messageToJsonObj("unit selected", true);
     }
@@ -531,6 +533,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("selected tile doesn't have city", false);
         if (!city.getCivilization().equals(civilization))
             return messageToJsonObj("city does not belong to your civ", false);
+        civilization.addToMessageQueue("city " + city.getName() + " has been selected by Civilization " + civilization.getName());
         civilization.setSelectedCity(city);
         return messageToJsonObj("city selected", true);
     }
@@ -544,6 +547,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("invalid cityName", false);
         if (!city.getCivilization().equals(civilization))
             return messageToJsonObj("city does not belong to your civ", false);
+        civilization.addToMessageQueue("city " + city.getName() + " has been selected by Civilization " + civilization.getName());
         civilization.setSelectedCity(city);
         return messageToJsonObj("city selected", true);
     }
@@ -557,6 +561,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("invalid tileId", false);
         if (unitController.unitMoveTo(civilization, tile, cheat) == false)
             return messageToJsonObj("something is invalid", false);
+        civilization.addToMessageQueue("one unit from civilization " + civilization.getName() + " moved to tile " + tile.getIndex());
         return messageToJsonObj("unit moved", true);
     }
 
@@ -624,6 +629,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("invalid tileId", false);
         if (unitController.unitAttack(civilization, tile, cheat) == false)
             return messageToJsonObj("something is invalid", false);
+        civilization.addToMessageQueue("one unit from civilization " + civilization.getName() + " attacked to tile " + tile.getIndex());
         return messageToJsonObj("unit Attacked", true);
     }
 
@@ -633,6 +639,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("invalid civUsername", false);
         if (unitController.unitFoundCity(civilization, cheat) == false)
             return messageToJsonObj("something is invalid", false);
+        civilization.addToMessageQueue("one unit from civilization " + civilization.getName() + " founded city on tile " + civilization.getSelectedUnit().getTile().getIndex());
         return messageToJsonObj("unit found city", true);
     }
 
@@ -661,6 +668,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         Unit unit = civilization.getSelectedUnit();
         if (unit == null)
             return messageToJsonObj("we don`t have selected unit", false);
+        civilization.addToMessageQueue("one unit from civilization " + civilization.getName() + " of type " + civilization.getSelectedUnit().getUnitType() + " deleted");
         unitController.removeUnit(unit);
         return messageToJsonObj("has been deleted successfully", true);
     }
@@ -758,6 +766,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             end |= civController.nextTurn(civ);
             if (end) break;
         }
+        civ.addToMessageQueue("turn increased");
         JsonObject response = new JsonObject();
         response.addProperty("end", end);
         response.addProperty("msg", "turns increased successfully");
@@ -975,6 +984,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj(Message.INVALID_REQUEST, false);
         if (!cityController.cityAttack(city, target, cheat))
             return messageToJsonObj(Message.INVALID_REQUEST, false);
+        civ.addToMessageQueue("city " + city.getName() + " from civilization " + civ.getName() + " attacked to tile " + target.getIndex());
         return messageToJsonObj("City attack done", true);
     }
 
@@ -1135,6 +1145,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             int last_gold = civilization.getGold();
             civilization.setGold(last_gold-production.getCost());        
         }
+        civilization.addToMessageQueue("civilization " + civilization.getName() + " bought production " + production.getName());
         return messageToJsonObj("production successfully bought", true);
     }
 
@@ -1194,7 +1205,8 @@ public class GameController extends AbstractGameController implements JsonRespon
         if ( city.getCivilization() == civilization )        
             return messageToJsonObj("city is invalid", false);
         if ( cityController.cityDestroy(city, civilization) == false )
-            return messageToJsonObj("something is invalid", false);  
+            return messageToJsonObj("something is invalid", false);
+        civilization.addToMessageQueue("city " + city.getName() + " from civilization " + civilization.getName() + " destroyed");
         return messageToJsonObj("city destroyed successfully", true);
         // TODO: check if city is attacked and get by civilization (city.isDead()?)
     }
@@ -1212,7 +1224,8 @@ public class GameController extends AbstractGameController implements JsonRespon
         if ( city.getCivilization() == civilization )        
             return messageToJsonObj("city is invalid", false);
         if ( cityController.cityAnnex(city, civilization) == false )
-            return messageToJsonObj("something is invalid", false);  
+            return messageToJsonObj("something is invalid", false);
+        civilization.addToMessageQueue("city " + city.getName() + " from civilization " + civilization.getName() + " annexed");
         return messageToJsonObj("city Annexed successfully", true);
         // TODO: check if city is attacked and get by civilization (city.isDead)
     }
