@@ -124,6 +124,17 @@ public class Tile {
         return setWeightOnSide(dir, weight);
     }
 
+    public boolean addWeightOnSide(int dirId, int weight){
+        if( dirId<0 || dirId>5 )return false;
+        if( this.weight[ dirId ]+weight < 0 )return false;
+        this.weight[ dirId ] += weight;
+        return true;
+    }
+
+    public boolean addWeightOnSide(Direction dir, int weight){
+        return addWeightOnSide(dir.getId(), weight);
+    }
+
     public int getWeightOnSide(Direction dir) {
         if (dir == null)
             return -1;
