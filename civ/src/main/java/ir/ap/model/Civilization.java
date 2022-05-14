@@ -3,6 +3,8 @@ package ir.ap.model;
 import java.util.ArrayList;
 
 public class Civilization {
+    private static final int DEFAULT_STARTING_HAPPINESS = 7;
+
     private int index;
     private String name;
     private City capital;
@@ -60,6 +62,7 @@ public class Civilization {
 
         gold = 0;
         science = 0;
+        extraHappiness = DEFAULT_STARTING_HAPPINESS;
 
         accessibleResourceCount = new int[40];
         technologyReached = new boolean[60];
@@ -85,6 +88,7 @@ public class Civilization {
 
         gold = 0;
         science = 0;
+        extraHappiness = DEFAULT_STARTING_HAPPINESS;
 
         accessibleResourceCount = new int[40];
         technologyReached = new boolean[60];

@@ -64,7 +64,8 @@ public class CityController extends AbstractGameController {
             return false;
         tile.setCity(city);
         for (Tile territoryTile : mapController.getTilesInRange(city, city.getTerritoryRange())) {
-            addTileToTerritoryOfCity(city, territoryTile);
+            if (!territoryTile.isDeepWaterTile())
+                addTileToTerritoryOfCity(city, territoryTile);
         }
         return true;
     }

@@ -473,6 +473,14 @@ public class Tile {
                 (terrainFeature != null && terrainFeature.isSourceOfWater());
     }
 
+    public boolean isDeepWaterTile() {
+        boolean result = terrainType.isSourceOfWater();
+        for (int i = 0; i < 6; i++) {
+            result &= (neighbors[i] != null && neighbors[i].getTerrainType().isSourceOfWater());
+        }
+        return result;
+    }
+
     public boolean isBlock() {
         return terrainFeature == TerrainFeature.FOREST ||
                 terrainType == TerrainType.MOUNTAIN ||
