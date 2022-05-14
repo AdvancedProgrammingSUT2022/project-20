@@ -25,7 +25,7 @@ public class Civilization {
 
     int[] accessibleResourceCount;
     boolean[] technologyReached;
-    private ArrayList<String> messageQueue;
+    private ArrayList<String> messageQueue = new ArrayList<>();
 
     public ArrayList<String> getMessageQueue() {
         return new ArrayList<>(messageQueue);
@@ -88,8 +88,6 @@ public class Civilization {
 
         accessibleResourceCount = new int[40];
         technologyReached = new boolean[60];
-
-        this.addToMessageQueue("Civilization " + name + " with capital city " + capital + " has been initialized");
     }
 
     public int getIndex() {

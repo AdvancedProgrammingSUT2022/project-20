@@ -13,6 +13,7 @@ public class City {
     private static final int DEFAULT_HP = 20;
     private static final int DEFAULT_TERRITORY_RANGE = 5;
 
+    private int id;
     private String name;
     private Civilization civilization;
 
@@ -31,7 +32,8 @@ public class City {
 
     private double population;
 
-    public City(String name) {
+    public City(int id, String name) {
+        this.id = id;
         this.name = name;
         civilization = null;
 
@@ -51,7 +53,8 @@ public class City {
         population = 1;
     }
 
-    public City(String name, Civilization civilization, Tile tile) {
+    public City(int id, String name, Civilization civilization, Tile tile) {
+        this.id = id;
         this.name = name;
         this.civilization = civilization;
 
@@ -105,6 +108,10 @@ public class City {
 
     public static String getCityName(int index) {
         return cityNames.get(Math.abs(index) % cityNames.size());
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {
@@ -221,7 +228,7 @@ public class City {
     }
 
     public int getTurnsLeftForProductionConstruction() {
-        return getCostLeftForProductionConstruction() / getProductionYield();
+        return (int) Math.ceil(1.0 * getCostLeftForProductionConstruction() / getProductionYield());
     }
 
     public int getCombatStrength() {

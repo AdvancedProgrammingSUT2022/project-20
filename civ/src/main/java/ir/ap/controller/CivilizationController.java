@@ -76,6 +76,7 @@ public class CivilizationController extends AbstractGameController {
                         tile.setImprovement(improvement);
                         unit.setHowManyTurnWeKeepAction(0);
                         unit.setUnitAction(null);
+                        civilization.addToMessageQueue("Repaired " + improvement.name() + "on tile " + tile.getIndex());
                     }
                     if (tile.hasCity()) {
                         City city = tile.getCity();
@@ -84,6 +85,7 @@ public class CivilizationController extends AbstractGameController {
                         if (city.getHp() >= 20) {
                             unit.setHowManyTurnWeKeepAction(0);
                             unit.setUnitAction(null);;
+                            civilization.addToMessageQueue("Repaired " + city.getName() + "on tile " + tile.getIndex());
                         }
                     }
                 }
@@ -99,34 +101,42 @@ public class CivilizationController extends AbstractGameController {
                     if (unit.getUnitAction() == UnitType.UnitAction.BUILD_CAMP) {
                         mapController.addImprovement(tile, Improvement.CAMP);
                         unit.setHowManyTurnWeKeepAction(0);
+                        civilization.addToMessageQueue("Built CAMP on tile " + tile.getIndex());
                     }
                     if (unit.getUnitAction() == UnitType.UnitAction.BUILD_FARM) {
                         mapController.addImprovement(tile, Improvement.FARM);
                         unit.setHowManyTurnWeKeepAction(0);
+                        civilization.addToMessageQueue("Built FARM on tile " + tile.getIndex());
                     }
                     if (unit.getUnitAction() == UnitType.UnitAction.BUILD_LUMBERMILL) {
                         mapController.addImprovement(tile, Improvement.LUMBER_MILL);
                         unit.setHowManyTurnWeKeepAction(0);
+                        civilization.addToMessageQueue("Built LUMBERMILL on tile " + tile.getIndex());
                     }
                     if (unit.getUnitAction() == UnitType.UnitAction.BUILD_MINE) {
                         mapController.addImprovement(tile, Improvement.MINE);
                         unit.setHowManyTurnWeKeepAction(0);
+                        civilization.addToMessageQueue("Built MINE on tile " + tile.getIndex());
                     }
                     if (unit.getUnitAction() == UnitType.UnitAction.BUILD_PASTURE) {
                         mapController.addImprovement(tile, Improvement.PASTURE);
                         unit.setHowManyTurnWeKeepAction(0);
+                        civilization.addToMessageQueue("Built PASTURE on tile " + tile.getIndex());
                     }
                     if (unit.getUnitAction() == UnitType.UnitAction.BUILD_PLANTATION) {
                         mapController.addImprovement(tile, Improvement.PLANTATION);
                         unit.setHowManyTurnWeKeepAction(0);
+                        civilization.addToMessageQueue("Built PLANTATION on tile " + tile.getIndex());
                     }
                     if (unit.getUnitAction() == UnitType.UnitAction.BUILD_QUARRY) {
                         mapController.addImprovement(tile, Improvement.QUARRY);
                         unit.setHowManyTurnWeKeepAction(0);
+                        civilization.addToMessageQueue("Built QUARRY on tile " + tile.getIndex());
                     }
                     if (unit.getUnitAction() == UnitType.UnitAction.BUILD_TRADINGPOST) {
                         mapController.addImprovement(tile, Improvement.TRADING_POST);
                         unit.setHowManyTurnWeKeepAction(0);
+                        civilization.addToMessageQueue("Built TRADINGPOST on tile " + tile.getIndex());
                     }
                 } else
                     unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
@@ -135,6 +145,7 @@ public class CivilizationController extends AbstractGameController {
                     if (unit.getHowManyTurnWeKeepAction() >= 3) {
                         mapController.addRailRoad(tile);
                         unit.setHowManyTurnWeKeepAction(0);
+                        civilization.addToMessageQueue("Built RAILROAD on tile " + tile.getIndex());
                     } else
                         unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
                 }
@@ -142,18 +153,21 @@ public class CivilizationController extends AbstractGameController {
                     if (unit.getHowManyTurnWeKeepAction() >= 3) {
                         mapController.addRoad(tile);
                         unit.setHowManyTurnWeKeepAction(0);
+                        civilization.addToMessageQueue("Built ROAD on tile " + tile.getIndex());
                     } else
                         unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
                 }
                 if (unit.getUnitAction() == UnitType.UnitAction.REMOVE_ROUTE) {
                     mapController.removeRoad(tile);
                     mapController.removeRailRoad(tile);
+                    civilization.addToMessageQueue("Removed routes on tile " + tile.getIndex());
                     unit.setHowManyTurnWeKeepAction(0);
                 }
                 if (unit.getUnitAction() == UnitType.UnitAction.REMOVE_FOREST) {
                     if (unit.getHowManyTurnWeKeepAction() >= 4) {
                         mapController.removeTerrainFeature(tile);
                         unit.setHowManyTurnWeKeepAction(0);
+                        civilization.addToMessageQueue("Removed FOREST on tile " + tile.getIndex());
                     } else
                         unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
                 }
@@ -161,6 +175,7 @@ public class CivilizationController extends AbstractGameController {
                     if (unit.getHowManyTurnWeKeepAction() >= 7) {
                         mapController.removeTerrainFeature(tile);
                         unit.setHowManyTurnWeKeepAction(0);
+                        civilization.addToMessageQueue("Removed JUNGLE on tile " + tile.getIndex());
                     } else
                         unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
                 }
@@ -168,6 +183,7 @@ public class CivilizationController extends AbstractGameController {
                     if (unit.getHowManyTurnWeKeepAction() >= 6) {
                         mapController.removeTerrainFeature(tile);
                         unit.setHowManyTurnWeKeepAction(0);
+                        civilization.addToMessageQueue("Removed MARSH on tile " + tile.getIndex());
                     } else
                         unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
                 }

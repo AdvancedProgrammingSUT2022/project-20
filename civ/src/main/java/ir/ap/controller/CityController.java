@@ -16,6 +16,16 @@ public class CityController extends AbstractGameController {
         super(gameArea);
     }
 
+    public City getCityById(int cityId) {
+        for (Civilization civ : civController.getAllCivilizations()) {
+            for (City city : civ.getCities()) {
+                if (city.getId() == cityId)
+                    return city;
+            }
+        }
+        return null;
+    }
+
     public void nextTurn(City city) {
         if (city == null) return;
         city.addToHp(1);
@@ -24,22 +34,26 @@ public class CityController extends AbstractGameController {
         if (city.getCurrentProduction() != null) {
             city.addToProductionSpent(city.getProductionYield());
             if (city.getCostLeftForProductionConstruction() <= 0) {
+                city.getCivilization().addToMessageQueue("City " + city.getName() + " constructed " + city.getCurrentProduction().getName());
                 cityConstructProduction(city);
             }
         }
         if( gameArea.getTurn() % City.TURN_NEEDED_TO_EXTEND_TILES == 0 ){
-            addRandomTileToCity(city);
+            Tile tile = addRandomTileToCity(city);
+            city.getCivilization().addToMessageQueue("City " + city.getName() + " added tile " + tile.getIndex() + " to territory");
         }
     }
     
-    public void addRandomTileToCity( City city ){
-        if( city == null )return ;
+    public Tile addRandomTileToCity( City city ){
+        if( city == null )return null;
         for(int i = 0 ; i < Map.MAX_H ; i ++){
             for(int j = 0; j < Map.MAX_W ; j ++){
                 Tile tile = gameArea.getMap().getTiles()[ i ][ j ] ;
-                if( cityPurchaseTile(city, tile) == true )return;
+                if (cityPurchaseTile(city, tile))
+                    return tile;
             }
-        }        
+        }
+        return null;
     }
 
     public boolean addCityToMap(City city) {

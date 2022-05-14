@@ -8,6 +8,7 @@ public class Unit {
     private static final int DEFAULT_VISITING_RANGE = 2;
 
     private final UnitType unitType;
+    private int id;
     private UnitAction unitAction;
     private int mp;
     private int hp;
@@ -17,7 +18,8 @@ public class Unit {
     private int howManyTurnWeKeepAction;
     private boolean isSleep;
 
-    public Unit(UnitType unitType, Civilization civilization, Tile tile) {
+    public Unit(int id, UnitType unitType, Civilization civilization, Tile tile) {
+        this.id = id;
         this.unitType = unitType;
         unitAction = null;
         mp = unitType.getMovement();
@@ -30,6 +32,10 @@ public class Unit {
 
     public static int getMaxHp() {
         return MAX_HP;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public int getHowManyTurnWeKeepAction() {

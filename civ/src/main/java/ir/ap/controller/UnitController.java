@@ -6,15 +6,31 @@ import ir.ap.model.Tile.TileKnowledge;
 import ir.ap.model.UnitType.UnitAction;
 
 public class UnitController extends AbstractGameController {
+    private int unitCount = 0;
+    private int cityCount = 0;
+
     public UnitController(GameArea gameArea) {
         super(gameArea);
     }
 
+    public Unit getUnitById(int unitId) {
+        for (Civilization civ : civController.getAllCivilizations()) {
+            for (Unit unit : civ.getUnits()) {
+                if (unit.getId() == unitId)
+                    return unit;
+            }
+        }
+        return null;
+    }
+
     public boolean addUnit(Civilization civilization, Tile tile, UnitType unitType){
-        Unit unit = new Unit(unitType, civilization, tile);
+        Unit unit = new Unit(unitCount++, unitType, civilization, tile);
         civilization.addUnit(unit);
-        civilization.addToMessageQueue("one unit with type " + unit.getUnitType() + " has been added to Civilization " + civilization.getName());
-        return addUnitToMap(unit);
+        if (addUnitToMap(unit)) {
+            civilization.addToMessageQueue("one unit with type " + unit.getUnitType() + " has been added to Civilization " + civilization.getName());
+            return true;
+        }
+        return false;
     }
 
     public boolean removeUnit(Unit unit) {
@@ -45,9 +61,10 @@ public class UnitController extends AbstractGameController {
         } else {
             tile.setCombatUnit(unit);
         }
+        Civilization civilization = unit.getCivilization();
         for (Tile visitingTile : mapController.getUnitVisitingTiles(unit)) {
             visitingTile.addVisitingUnit(unit);
-            gameArea.setTileKnowledgeByCivilization(unit.getCivilization(), visitingTile, TileKnowledge.VISIBLE);
+            gameArea.setTileKnowledgeByCivilization(civilization, visitingTile, TileKnowledge.VISIBLE);
         }
         return true;
     }
@@ -96,8 +113,10 @@ public class UnitController extends AbstractGameController {
         if (curTile == target) {
             unit.setTarget(null);
             unit.setUnitAction(null);
+            return true;
+        } else {
+            return !cheat;
         }
-        return true;
     }
 
     public boolean moveUnitTowardsTarget(Unit unit) {
@@ -114,8 +133,7 @@ public class UnitController extends AbstractGameController {
         if (tile == null || target.isUnreachable()) return false;
         unit.setTarget(target);
         unit.setUnitAction(UnitType.UnitAction.MOVETO);
-        moveUnitTowardsTarget(unit, cheat);
-        return true;
+        return moveUnitTowardsTarget(unit, cheat);
     }
 
     public boolean unitSleep(Civilization civilization)
@@ -295,7 +313,7 @@ public class UnitController extends AbstractGameController {
         City city;
         int cnt = 10;
         do {
-            city = new City(City.getCityName(RANDOM.nextInt()), civilization, target);
+            city = new City(cityCount++, City.getCityName(RANDOM.nextInt()), civilization, target);
         } while (!cityController.addCity(city) && cnt --> 0);
         if (cnt < 0)
             return false;
@@ -325,6 +343,7 @@ public class UnitController extends AbstractGameController {
         if(civilization.getTechnologyReached(Technology.THE_WHEEL) == false) return false;
 
         unit.setUnitAction(UnitType.UnitAction.BUILD_ROAD);
+        civilization.addToMessageQueue("Started building ROAD on tile " + tile.getIndex());
         return true;
     }
 
@@ -339,6 +358,7 @@ public class UnitController extends AbstractGameController {
         if(civilization.getTechnologyReached(Technology.RAILROAD) == false) return false;
 
         unit.setUnitAction(UnitType.UnitAction.BUILD_RAILROAD);
+        civilization.addToMessageQueue("Started building RAILROAD on tile " + tile.getIndex());
         return true;
     }
 
@@ -359,34 +379,42 @@ public class UnitController extends AbstractGameController {
         if(improvement == Improvement.FARM) {
             if(tile.getTerrainFeature() == TerrainFeature.ICE) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_FARM);
+            civilization.addToMessageQueue("Started building FARM on tile " + tile.getIndex());
         }
         if(improvement == Improvement.MINE){
             if(tile.getTerrainType() != TerrainType.HILL) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_MINE);
+            civilization.addToMessageQueue("Started building MINE on tile " + tile.getIndex());
         }
         if(improvement == Improvement.TRADING_POST) {
             if(civilization.getTechnologyReached(Technology.TRAPPING) == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_TRADINGPOST);
+            civilization.addToMessageQueue("Started building TRADING_POST on tile " + tile.getIndex());
         }
         if(improvement == Improvement.LUMBER_MILL) {
             if(civilization.getTechnologyReached(Technology.CONSTRUCTION) == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_LUMBERMILL);
+            civilization.addToMessageQueue("Started building LUMBER_MILL on tile " + tile.getIndex());
         }
         if(improvement == Improvement.PASTURE) {
             if(civilization.getTechnologyReached(Technology.ANIMAL_HUSBANDRY) == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_PASTURE);
+            civilization.addToMessageQueue("Started building PASTURE on tile " + tile.getIndex());
         }
         if(improvement == Improvement.CAMP) {
             if(civilization.getTechnologyReached(Technology.TRAPPING) == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_CAMP);
+            civilization.addToMessageQueue("Started building CAMP on tile " + tile.getIndex());
         }
         if(improvement == Improvement.PLANTATION) {
             if(civilization.getTechnologyReached(Technology.CALENDAR) == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_PLANTATION);
+            civilization.addToMessageQueue("Started building PLANTATION on tile " + tile.getIndex());
         }
         if(improvement == Improvement.QUARRY) {
             if(civilization.getTechnologyReached(Technology.ENGINEERING) == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_QUARRY);
+            civilization.addToMessageQueue("Started building QUARRY on tile " + tile.getIndex());
         }
         return true;
     }
@@ -400,6 +428,7 @@ public class UnitController extends AbstractGameController {
         if(civilization.getTechnologyReached(Technology.BRONZE_WORKING) == false) return false;
 
         unit.setUnitAction(UnitType.UnitAction.REMOVE_JUNGLE);
+        civilization.addToMessageQueue("Started removing JUNGLE on tile " + tile.getIndex());
         return true;
     }
     public boolean unitRemoveForest(Civilization civilization, boolean cheat)
@@ -412,6 +441,7 @@ public class UnitController extends AbstractGameController {
         if(civilization.getTechnologyReached(Technology.MINING) == false) return false;
 
         unit.setUnitAction(UnitType.UnitAction.REMOVE_FOREST);
+        civilization.addToMessageQueue("Started removing FOREST on tile " + tile.getIndex());
         return true;
     }
 
@@ -424,6 +454,7 @@ public class UnitController extends AbstractGameController {
         if(civilization.getTechnologyReached(Technology.MASONRY) == false) return false;
 
         unit.setUnitAction(UnitType.UnitAction.REMOVE_MARSH);
+        civilization.addToMessageQueue("Started removing MARSH on tile " + tile.getIndex());
         return true;
     }
 
@@ -436,6 +467,7 @@ public class UnitController extends AbstractGameController {
         unit.setHowManyTurnWeKeepAction((cheat ? 1000 : 0));
 
         unit.setUnitAction(UnitType.UnitAction.REMOVE_ROUTE);
+        civilization.addToMessageQueue("Started removing routes on tile " + tile.getIndex());
         return true;
     }
 
@@ -450,6 +482,7 @@ public class UnitController extends AbstractGameController {
         // TODO: repair building PHASE2
 
         unit.setUnitAction(UnitType.UnitAction.REPAIR);
+        civilization.addToMessageQueue("Started repairing on tile " + tile.getIndex());
         return true;
     }
 
