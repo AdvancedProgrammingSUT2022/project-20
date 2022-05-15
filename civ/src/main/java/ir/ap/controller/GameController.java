@@ -1273,7 +1273,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         // TODO: check if city is attacked and get by civilization (city.isDead)
     }
 
-    public JsonObject civSetCurrentResearch(String username, int techId){
+    public JsonObject civSetCurrentResearch(String username, int techId, boolean cheat){
         Civilization civilization = civController.getCivilizationByUsername(username);
         if (civilization == null)
             return messageToJsonObj("invalid civUsername", false);
@@ -1281,8 +1281,16 @@ public class GameController extends AbstractGameController implements JsonRespon
         if( technology == null )
             return messageToJsonObj("invalid Technology", false);
         civilization.setCurrentResearch(technology);
-        civilization.setScienceSpentForCurrentResearch(0);
-        civilization.setScience(0);
-        return messageToJsonObj("Technology is start sesearching successfully", true);
+        String message = "";
+        if( cheat == true ){
+            civilization.finishResearch();
+            message = "Technology Researched successfully";
+        }
+        else{
+            civilization.setScienceSpentForCurrentResearch(0);
+            civilization.setScience(0);
+            message = "Technology is start researching successfully";
+        }
+        return messageToJsonObj(message, true);
     }
 }
