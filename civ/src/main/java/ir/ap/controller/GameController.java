@@ -52,6 +52,7 @@ public class GameController extends AbstractGameController implements JsonRespon
 
     public GameController() {
         super();
+        initAll();
     }
 
     public GameController(boolean readData) {
@@ -59,6 +60,18 @@ public class GameController extends AbstractGameController implements JsonRespon
         if (readData) {
             readCityNames();
         }
+        initAll();
+    }
+
+    public void initAll() {
+        BuildingType.initAll();
+        Improvement.initAll();
+        Resource.initAll();
+        Technology.initAll();
+        TerrainType.initAll();
+        TerrainFeature.initAll();
+        UnitType.initAll();
+        UnitAction.initAll();
     }
 
     @Override

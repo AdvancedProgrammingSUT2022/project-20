@@ -110,6 +110,9 @@ public class UnitController extends AbstractGameController {
             if (unit.isCivilian() && nxtTile.getCombatUnit() != null &&
                 unit.getCivilization() != nxtTile.getCombatUnit().getCivilization())
                 break;
+            if (nxtTile.getCity() != null && !nxtTile.getCity().isDead() &&
+                nxtTile.getCity().getCivilization() != unit.getCivilization())
+                break;
             removeUnitFromMap(unit);
             if (!cheat)
                 unit.addToMp(-dist);
@@ -141,7 +144,6 @@ public class UnitController extends AbstractGameController {
         unit.setHowManyTurnWeKeepAction(0);
         Tile tile = unit.getTile();
         if (tile == null || target.isUnreachable()) return false;
-        if (target.getCity() != null && target.getCity().getCivilization() != civilization) return false;
         unit.setTarget(target);
         unit.setUnitAction(UnitType.UnitAction.MOVETO);
         return moveUnitTowardsTarget(unit, cheat);
