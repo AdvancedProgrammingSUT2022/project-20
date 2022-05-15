@@ -1178,7 +1178,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         if ( city == null )
             return messageToJsonObj("no city selected", false);        
         Production[] allProductions = Production.getAllProductions();
-        if ( prodId >= allProductions.length )
+        if ( prodId >= allProductions.length || prodId < 0 )
             return messageToJsonObj("proId is invalid", false);
         Production production = allProductions[ prodId ];
         if ( cheat == true ){ 
@@ -1277,10 +1277,9 @@ public class GameController extends AbstractGameController implements JsonRespon
         Civilization civilization = civController.getCivilizationByUsername(username);
         if (civilization == null)
             return messageToJsonObj("invalid civUsername", false);
-        Technology[] technologies = Technology.values();
-        if( techId >= technologies.length || techId < 0 )
+        Technology technology = Technology.getTechnologyById(techId);
+        if( technology == null )
             return messageToJsonObj("invalid Technology", false);
-        Technology technology = technologies[ techId ];
         civilization.setCurrentResearch(technology);
         civilization.setScienceSpentForCurrentResearch(0);
         civilization.setScience(0);
