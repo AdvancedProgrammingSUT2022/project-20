@@ -285,7 +285,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             if (gameArea.getUserByUsername(username) != null)
                 return messageToJsonObj("duplicate users", false);
             User curUser = User.getUser(username);
-            if (curUser == null) // TODO login in server PHASE2
+            if (curUser == null) // TODO login in server PHASE3
                 return messageToJsonObj(Message.USER_NOT_LOGGED_IN, false);
             Civilization curCiv = new Civilization(cnt++, curUser.getNickname() + ".civ", null);;
             gameArea.addUser(curUser, curCiv);
@@ -449,7 +449,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("invalid username", false);
         JsonObject jsonObject = new JsonObject();
         jsonObject.add("demographics", serializeCiv(civilization, civilization));
-        //TODO: emtiaz aslan pyade nashode PHASE2
+        //TODO: emtiaz aslan pyade sazi nashode PHASE2
         return setOk(jsonObject, true);
     }
 
@@ -823,6 +823,8 @@ public class GameController extends AbstractGameController implements JsonRespon
         Civilization civilization = civController.getCivilizationByUsername(username);
         if (civilization == null)
             return messageToJsonObj("invalid civUsername", false);
+        if( amount < 0 )
+            return messageToJsonObj("invalid amount", false);
         civilization.addToHappiness(amount);        
         return messageToJsonObj("Happiness added successfully", true);
         // Happiness in civilization
