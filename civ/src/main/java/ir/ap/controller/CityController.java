@@ -34,8 +34,11 @@ public class CityController extends AbstractGameController {
         if (city.getCurrentProduction() != null) {
             city.addToProductionSpent(city.getProductionYield());
             if (city.getCostLeftForProductionConstruction() <= 0) {
-                city.getCivilization().addToMessageQueue("City " + city.getName() + " constructed " + city.getCurrentProduction().getName());
-                cityConstructProduction(city);
+                if (cityConstructProduction(city)) {
+                    city.getCivilization().addToMessageQueue("City " + city.getName() + " constructed " + city.getCurrentProduction().getName());
+                } else {
+                    city.getCivilization().addToMessageQueue("City " + city.getName() + " is unable to add production " + city.getCurrentProduction().getName());
+                }
             }
         }
         if( gameArea.getTurn() % City.TURN_NEEDED_TO_EXTEND_TILES == 0 ){
@@ -219,8 +222,10 @@ public class CityController extends AbstractGameController {
         if (city == null) return false;
         if (!cheat && !city.getCivilization().getTechnologyReached(production.getTechnologyRequired()))
             return false;
+        if (!city.setCurrentProduction(production)) {
+            return false;
+        }
         city.setProductionSpent(0);
-        city.setCurrentProduction(production);
         if( cheat == true ){
             cityConstructProduction(city);
         }
@@ -236,7 +241,9 @@ public class CityController extends AbstractGameController {
         city.setProductionSpent(0);
         city.setCurrentProduction(null);
         if (production instanceof UnitType) {
-            unitController.addUnit(city.getCivilization(), city.getTile(), (UnitType) production);
+            boolean res = unitController.addUnit(city.getCivilization(), city.getTile(), (UnitType) production);
+            if (!res)
+                return false;
         } else if (production instanceof BuildingType) {
             // TODO: PHASE2
         }

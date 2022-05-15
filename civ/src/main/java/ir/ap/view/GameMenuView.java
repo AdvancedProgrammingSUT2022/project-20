@@ -444,6 +444,20 @@ public class GameMenuView extends AbstractMenuView {
                 return responseAndGo(msg, Menu.GAME);
             return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         }
+        if (response.has("cityDead")) {
+            int cityId = response.get("cityDead").getAsInt();
+            System.out.println("City dead! Enter 'A' for Annex or 'D' for Destroy");
+            while (true) {
+                String line = SCANNER.nextLine().trim();
+                if (line.equals("A")) {
+                    response = GAME_CONTROLLER.cityAnnex(currentPlayer, cityId);
+                    break;
+                } else if (line.equals("D")) {
+                    response = GAME_CONTROLLER.cityDestroy(currentPlayer, cityId);
+                    break;
+                }
+            }
+        }
         printCurrentMap();
         String msg = getField(response, "msg", String.class);
         return responseAndGo(msg, Menu.GAME);

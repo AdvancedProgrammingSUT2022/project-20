@@ -144,7 +144,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             cityObj.addProperty("defencePower", city.getCombatStrength());
             cityObj.addProperty("foodYield", city.getFoodYield());
             cityObj.addProperty("scienceYield", city.getScienceYield());
-            cityObj.addProperty("gold", city.getGoldYield());
+            cityObj.addProperty("goldYield", city.getGoldYield());
             cityObj.addProperty("productionYield", city.getProductionYield());
             if (city.getCurrentProduction() != null)
                 cityObj.add("currentProduction", serializeProduction(city.getCurrentProduction()));
@@ -658,7 +658,12 @@ public class GameController extends AbstractGameController implements JsonRespon
         if (unitController.unitAttack(civilization, tile, cheat) == false)
             return messageToJsonObj("something is invalid", false);
         civilization.addToMessageQueue("one unit from civilization " + civilization.getName() + " attacked to tile " + tile.getIndex());
-        return messageToJsonObj("unit Attacked", true);
+        JsonObject response = new JsonObject();
+        response.addProperty("msg", "Unit Attacked");
+        if (tile.getCity() != null && tile.getCity().isDead()) {
+            response.addProperty("cityDead", tile.getCity().getId());
+        }
+        return setOk(response, true);
     }
 
     public JsonObject unitFoundCity(String username, boolean cheat) {
@@ -1194,7 +1199,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         JsonArray unitsJsonArray = productionsJson.get("units").getAsJsonArray();
         jsonObject.add("productions", productionsJson);
         for (Production production : Production.getAllProductions()){
-            if (!cheat && !civilization.getTechnologyReached(production.getTechnologyRequired()))
+            if (!cheat && !city.canProduce(production))
                 continue;
             if (production instanceof BuildingType) {
                 // TODO: PHASE2
@@ -1223,14 +1228,11 @@ public class GameController extends AbstractGameController implements JsonRespon
         return jsonObject;
     }
 
-    public JsonObject cityDestroy(String username, int tileId) {
+    public JsonObject cityDestroy(String username, int cityId) {
         Civilization civilization = civController.getCivilizationByUsername(username);
         if (civilization == null)
             return messageToJsonObj("invalid civUsername", false);
-        Tile tile = mapController.getTileById(tileId);
-        if ( tile == null )
-            return messageToJsonObj("invalid tileId", false);
-        City city = tile.getCity();
+        City city = cityController.getCityById(cityId);
         if ( city == null )
             return messageToJsonObj("no city selected", false);        
         if ( city.getCivilization() == civilization )        
@@ -1242,14 +1244,11 @@ public class GameController extends AbstractGameController implements JsonRespon
         // TODO: check if city is attacked and get by civilization (city.isDead()?)
     }
 
-    public JsonObject cityAnnex(String username, int tileId) {
+    public JsonObject cityAnnex(String username, int cityId) {
         Civilization civilization = civController.getCivilizationByUsername(username);
         if (civilization == null)
             return messageToJsonObj("invalid civUsername", false);
-        Tile tile = mapController.getTileById(tileId);
-        if ( tile == null )
-            return messageToJsonObj("invalid tileId", false);
-        City city = tile.getCity();
+        City city = cityController.getCityById(cityId);
         if ( city == null )
             return messageToJsonObj("no city selected", false);
         if ( city.getCivilization() == civilization )        

@@ -30,6 +30,8 @@ public class UnitController extends AbstractGameController {
             civilization.addToMessageQueue("one unit with type " + unit.getUnitType() + " has been added to Civilization " + civilization.getName());
             return true;
         }
+        civilization.addToMessageQueue("unable to add unit " + unit.getUnitType() + " to tile " + tile.getIndex());
+        civilization.removeUnit(unit);
         return false;
     }
 
@@ -57,8 +59,12 @@ public class UnitController extends AbstractGameController {
         if (tile == null)
             return false;
         if (unit.isCivilian()) {
+            if (tile.hasNonCombatUnit())
+                return false;
             tile.setNonCombatUnit(unit);
         } else {
+            if (tile.hasCombatUnit())
+                return false;
             tile.setCombatUnit(unit);
         }
         Civilization civilization = unit.getCivilization();
@@ -89,6 +95,7 @@ public class UnitController extends AbstractGameController {
 
     public boolean moveUnitTowardsTarget(Unit unit, boolean cheat) {
         if (unit == null || unit.getUnitAction() != UnitAction.MOVETO || unit.getTarget() == null) return false;
+        Tile startingPos = unit.getTile();
         while (cheat || unit.canMove()) {
             Tile target = unit.getTarget();
             Tile curTile = unit.getTile();
@@ -99,6 +106,9 @@ public class UnitController extends AbstractGameController {
             if ((unit.isCivilian() && nxtTile.getNonCombatUnit() != null) ||
                 (!unit.isCivilian() && nxtTile.getCombatUnit() != null) ||
                 (!cheat && unit.hasMovedThisTurn() && unit.getMp() < dist))
+                break;
+            if (unit.isCivilian() && nxtTile.getCombatUnit() != null &&
+                unit.getCivilization() != nxtTile.getCombatUnit().getCivilization())
                 break;
             removeUnitFromMap(unit);
             if (!cheat)
@@ -115,7 +125,7 @@ public class UnitController extends AbstractGameController {
             unit.setUnitAction(null);
             return true;
         } else {
-            return !cheat;
+            return (!cheat || startingPos != curTile);
         }
     }
 
@@ -131,6 +141,7 @@ public class UnitController extends AbstractGameController {
         unit.setHowManyTurnWeKeepAction(0);
         Tile tile = unit.getTile();
         if (tile == null || target.isUnreachable()) return false;
+        if (target.getCity() != null && target.getCity().getCivilization() != civilization) return false;
         unit.setTarget(target);
         unit.setUnitAction(UnitType.UnitAction.MOVETO);
         return moveUnitTowardsTarget(unit, cheat);
@@ -206,14 +217,19 @@ public class UnitController extends AbstractGameController {
         unit.setHowManyTurnWeKeepAction(0);
         int combatStrength = (cheat ? 1000 : unit.getCombatStrength());
         if(unit.getUnitType().getCombatType() == UnitType.CombatType.CIVILIAN) return false;
-        if(enemyUnit != null) {
-            if (enemyUnit.getCivilization() == civilization) return false;
+        unit.setUnitAction(UnitType.UnitAction.ATTACK);
+        if(enemyUnit != null && enemyUnit.getCivilization() != civilization) {
             if (unit.getCombatType() == UnitType.CombatType.ARCHERY || unit.getCombatType() == UnitType.CombatType.SIEGE) {
                 if (dist > unit.getRange()) return false;
                 if (unit.getCombatType() == UnitType.CombatType.SIEGE && unit.getUnitAction() != UnitType.UnitAction.SETUP_RANGED)
                     return false;
                 enemyUnit.setHp(enemyUnit.getHp() - combatStrength);
-                if (!cheat) unit.addToMp(-UnitType.MAX_MOVEMENT);
+                if (!cheat) {
+                    if (unit.getUnitType().getCombatType() != UnitType.CombatType.ARMORED && unit.getUnitType().getCombatType() != UnitType.CombatType.MOUNTED)
+                        unit.setMp(0);
+                    else
+                        unit.setMp(unit.getMp() - dist);
+                }
                 if (enemyUnit.isDead()) {
                     removeUnit(enemyUnit);
                 }
@@ -233,7 +249,12 @@ public class UnitController extends AbstractGameController {
                     }
                 } else {
                     enemyUnit.setHp(enemyUnit.getHp() - combatStrength);
-                    if (!cheat) unit.addToMp(-UnitType.MAX_MOVEMENT);
+                    if (!cheat) {
+                        if (unit.getUnitType().getCombatType() != UnitType.CombatType.ARMORED && unit.getUnitType().getCombatType() != UnitType.CombatType.MOUNTED)
+                            unit.setMp(0);
+                        else
+                            unit.setMp(unit.getMp() - dist);
+                    }
                     if (!cheat) unit.setHp(unit.getHp() - enemyUnit.getCombatStrength());
                     if (enemyUnit.getHp() <= 0) {
                         removeUnit(enemyUnit);
@@ -247,14 +268,18 @@ public class UnitController extends AbstractGameController {
                 // in this type of attack we got worker if it is not city
             }
         }
-        if (enemyCity != null) {
-            if (enemyCity.getCivilization() == civilization) return false;
+        if (enemyCity != null && enemyCity.getCivilization() != civilization) {
             if (unit.getCombatType() == UnitType.CombatType.ARCHERY || unit.getCombatType() == UnitType.CombatType.SIEGE) {
                 if (dist > unit.getRange()) return false;
                 if (unit.getCombatType() == UnitType.CombatType.SIEGE && unit.getUnitAction() != UnitType.UnitAction.SETUP_RANGED)
                     return false;
                 enemyCity.setHp(enemyCity.getHp() - combatStrength);
-                if (!cheat) unit.addToMp(-UnitType.MAX_MOVEMENT);
+                if (!cheat) {
+                    if (unit.getUnitType().getCombatType() != UnitType.CombatType.ARMORED && unit.getUnitType().getCombatType() != UnitType.CombatType.MOUNTED)
+                        unit.setMp(0);
+                    else
+                        unit.setMp(unit.getMp() - dist);
+                }
                 if (!cheat) unit.setHp(unit.getHp() - enemyCity.getCombatStrength());
 
                 if (unit.getHp() <= 0) {
@@ -266,12 +291,17 @@ public class UnitController extends AbstractGameController {
             if (unit.getCombatType() == UnitType.CombatType.MOUNTED || unit.getCombatType() == UnitType.CombatType.MELEE || unit.getCombatType() == UnitType.CombatType.GUNPOWDER || unit.getCombatType() == UnitType.CombatType.ARMORED || unit.getCombatType() == UnitType.CombatType.RECON) {
                 if (dist > 1) return false;
                 enemyCity.setHp(enemyCity.getHp() - combatStrength);
-                if (!cheat) unit.addToMp(-UnitType.MAX_MOVEMENT);
+                if (!cheat) {
+                    if (unit.getUnitType().getCombatType() != UnitType.CombatType.ARMORED && unit.getUnitType().getCombatType() != UnitType.CombatType.MOUNTED)
+                        unit.setMp(0);
+                    else
+                        unit.setMp(unit.getMp() - dist);
+                }
                 if (!cheat) unit.setHp(unit.getHp() - enemyCity.getCombatStrength());
                 if (enemyCity.getHp() <= 0) {
                     unitMoveTo(civilization, target, cheat);
-                    cityController.changeCityOwner(enemyCity, civilization);
-                    if(enemyUnit.getUnitType().getCombatType() == UnitType.CombatType.CIVILIAN)
+                    // cityController.changeCityOwner(enemyCity, civilization);
+                    if(enemyUnit != null && enemyUnit.getUnitType().getCombatType() == UnitType.CombatType.CIVILIAN)
                     {
                         changeUnitOwner(enemyUnit, civilization);
                     }
@@ -286,7 +316,6 @@ public class UnitController extends AbstractGameController {
             unit.setMp(0);
         else
             unit.setMp(unit.getMp() - dist);
-
         if(unit.getTile() == target) {
             if(target.hasImprovement() && target.getOwnerCity().getCivilization() != civilization){
                 Improvement improvement = target.getImprovement();
@@ -294,7 +323,6 @@ public class UnitController extends AbstractGameController {
                 target.setImprovement(improvement);
             }
         }
-        unit.setUnitAction(UnitType.UnitAction.ATTACK);
         return true;
     }
 
