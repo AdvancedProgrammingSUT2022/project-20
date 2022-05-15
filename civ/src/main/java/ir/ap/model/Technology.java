@@ -141,4 +141,13 @@ public enum Technology {
     public String getName(){
         return this.name();
     }
+    public static Technology getTechnologyById(int techId){
+        for(int i = 0 ; i < Technology.values().length ; i ++){
+            if( Technology.values()[ i ].getId() == techId ){
+                return Technology.values()[ i ];
+            }
+        }
+        return null;
+    } 
+    
 }
