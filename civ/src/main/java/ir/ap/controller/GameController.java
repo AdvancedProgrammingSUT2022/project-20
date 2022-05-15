@@ -825,7 +825,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("invalid civUsername", false);
         civilization.addToHappiness(amount);        
         return messageToJsonObj("Happiness added successfully", true);
-        // TODO: Happiness in civilization
+        // Happiness in civilization
     }
 
     public JsonObject getTileIndexByXY(int x, int y) {
@@ -1168,7 +1168,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         if( cityController.cityChangeCurrentProduction(city, selectedProd, cheat) == false )
             return messageToJsonObj(Message.INVALID_REQUEST, false);
         return messageToJsonObj("current production changed successfully", true);
-    }
+    }   
 
     public JsonObject cityBuyProduction(String username, int prodId, boolean cheat) {
         Civilization civilization = civController.getCivilizationByUsername(username);
@@ -1215,12 +1215,12 @@ public class GameController extends AbstractGameController implements JsonRespon
             if (!cheat && !city.canProduce(production))
                 continue;
             if (production instanceof BuildingType) {
-                // TODO: PHASE2
-                // buildingsJsonArray.add(serializeProduction(production));
-            } else {
-                unitsJsonArray.add(serializeProduction(production));
-            }
-        }
+                // TODO: PHASE2 
+                // buildingsJsonArray.add(serializeProduction(production)); 
+            } else { 
+                unitsJsonArray.add(serializeProduction(production)); 
+            } 
+        } 
         jsonObject.addProperty("ok", true);     
         return jsonObject;
     }
@@ -1271,5 +1271,19 @@ public class GameController extends AbstractGameController implements JsonRespon
         civilization.addToMessageQueue("city " + city.getName() + " from civilization " + civilization.getName() + " annexed");
         return messageToJsonObj("city Annexed successfully", true);
         // TODO: check if city is attacked and get by civilization (city.isDead)
+    }
+
+    public JsonObject civSetCurrentResearch(String username, int techId){
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid civUsername", false);
+        Technology[] technologies = Technology.values();
+        if( techId >= technologies.length || techId < 0 )
+            return messageToJsonObj("invalid Technology", false);
+        Technology technology = technologies[ techId ];
+        civilization.setCurrentResearch(technology);
+        civilization.setScienceSpentForCurrentResearch(0);
+        civilization.setScience(0);
+        return messageToJsonObj("Technology is start sesearching successfully", true);
     }
 }

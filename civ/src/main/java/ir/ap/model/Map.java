@@ -100,7 +100,7 @@ public class Map {
                 Tile tile = this.getTileByIndex( (i*30)+j );
                 for(int z = 1 ; z <= 3 ; z ++){
                     boolean is_river = false;
-                    if( randomobj.nextInt( 5 ) == 1 ){
+                    if( randomobj.nextInt( 10 ) == 1 ){
                         is_river = true;
                     }
                     tile.setHasRiverOnSide(z, is_river);
