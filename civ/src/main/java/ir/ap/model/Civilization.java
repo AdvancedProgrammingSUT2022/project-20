@@ -163,9 +163,8 @@ public class Civilization {
     }
 
     public void setCurrentResearch(Technology currentResearch) {
-        //this.addToMessageQueue("Civilization " + this.getName() + " started research about Technology " + currentResearch);
-        //TODO:chera fagat to in class setCurrentResearch ro darim?
         this.currentResearch = currentResearch;
+        this.addToMessageQueue("Civilization " + this.getName() + " started research about Technology " + currentResearch);
     }
 
     public int getScienceSpentForCurrentResearch() {

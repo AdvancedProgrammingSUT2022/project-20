@@ -28,7 +28,6 @@ public class GameController extends AbstractGameController implements JsonRespon
         }
     }
 
-    // TODO: message queue
     public enum Message {
         GAME_STARTED("game started successfully"),
         USER_NOT_LOGGED_IN("user is not logged in"),
