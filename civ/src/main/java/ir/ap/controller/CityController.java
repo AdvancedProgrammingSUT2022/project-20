@@ -173,22 +173,22 @@ public class CityController extends AbstractGameController {
         int dist = mapController.getDistanceInTiles(curTile, target);
         if (dist > city.getTerritoryRange()) return false;
         int combatStrength = (cheat ? 1000 : city.getCombatStrength());
-        if (enemyCity != null && enemyCity.getCivilization() != civilization) {
-            enemyCity.setHp(enemyCity.getHp() - combatStrength);
-            city.setActionThisTurn(true);
-
-            if (enemyCity.isDead()) {
-                changeCityOwner(enemyCity, civilization);
-            }
-
-            return true;
-        }
-        else if(enemyUnit != null && enemyUnit.getCivilization() != civilization){
+        if(enemyUnit != null && enemyUnit.getCivilization() != civilization){
             enemyUnit.setHp(enemyUnit.getHp() - combatStrength);
             city.setActionThisTurn(true);
 
             if (enemyUnit.getHp() <= 0) {
                 unitController.removeUnit(enemyUnit);
+            }
+
+            return true;
+        }
+        else if (enemyCity != null && enemyCity.getCivilization() != civilization) {
+            enemyCity.setHp(enemyCity.getHp() - combatStrength);
+            city.setActionThisTurn(true);
+
+            if (enemyCity.isDead()) {
+                changeCityOwner(enemyCity, civilization);
             }
 
             return true;

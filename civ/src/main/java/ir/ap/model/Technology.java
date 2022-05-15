@@ -142,9 +142,10 @@ public enum Technology {
         return this.name();
     }
     public static Technology getTechnologyById(int techId){
-        for(int i = 0 ; i < Technology.values().length ; i ++){
-            if( Technology.values()[ i ].getId() == techId ){
-                return Technology.values()[ i ];
+        Technology[] technologies = Technology.values();
+        for(int i = 0 ; i < technologies.length ; i ++){
+            if( technologies[ i ].getId() == techId ){
+                return technologies[ i ];
             }
         }
         return null;

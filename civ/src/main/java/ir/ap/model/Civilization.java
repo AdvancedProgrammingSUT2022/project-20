@@ -235,8 +235,8 @@ public class Civilization {
 
     public void setTechnologyReached(Technology tech, boolean value) {
         if (tech == null) return;
-        //if(value == true)
-        // TODO:   this.addToMessageQueue("Civilization " + this.getName() + " reached to technology " + tech);
+        if(value == true)
+            this.addToMessageQueue("Civilization " + this.getName() + " reached to technology " + tech);
         this.technologyReached[tech.getId()] = value;
     }
 
@@ -328,8 +328,8 @@ public class Civilization {
 
     public void finishResearch() {
         if (currentResearch == null) return;
-        this.addToMessageQueue("Civilization " + this.getName() + " reached to research " + currentResearch);
-        technologyReached[currentResearch.getId()] = true;
+        // this.addToMessageQueue("Civilization " + this.getName() + " reached to research " + currentResearch);
+        setTechnologyReached(currentResearch, true);
         scienceSpentForResearch = 0;
         science = 0;
         currentResearch = null;

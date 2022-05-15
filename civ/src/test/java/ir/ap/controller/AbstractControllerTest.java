@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import ir.ap.model.Civilization;
+import ir.ap.model.Unit;
 import ir.ap.model.User;
 
 public class AbstractControllerTest {
@@ -16,12 +17,13 @@ public class AbstractControllerTest {
     protected static final User player2 = new User("user2", "nick2", "pass2");
     protected static Civilization civ1;
     protected static Civilization civ2;
+    protected static Unit civ1CombatUnit, civ1NonCombatUnit;
+    protected static Unit civ2CombatUnit, civ2NonCombatUnit;
 
     protected static boolean login(User user) {
-        JsonObject response = USER_CONTROLLER.register(user.getUsername(), user.getNickname(), user.getPassword());
+        USER_CONTROLLER.register(user.getUsername(), user.getNickname(), user.getPassword());
+        JsonObject response = USER_CONTROLLER.login(user.getUsername(), user.getPassword());
         boolean result = response.get("ok").getAsBoolean();
-        response = USER_CONTROLLER.login(user.getUsername(), user.getPassword());
-        result |= response.get("ok").getAsBoolean();
         return result;
     }
 
