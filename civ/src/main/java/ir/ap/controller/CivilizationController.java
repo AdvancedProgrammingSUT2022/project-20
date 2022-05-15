@@ -33,7 +33,7 @@ public class CivilizationController extends AbstractGameController {
 
     public boolean nextTurn(Civilization civilization)
     {
-        // TODO: check knoim aslan mishe raft turn baadi?!
+        //check knoim aslan mishe raft turn baadi?!
         civilization.addToGold(civilization.getGoldYield());
         civilization.addToScience(civilization.getScienceYield());
         if (civilization.getGold() < 0) {
