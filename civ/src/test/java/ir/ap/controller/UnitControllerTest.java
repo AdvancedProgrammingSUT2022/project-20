@@ -2,7 +2,6 @@ package ir.ap.controller;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeNoException;
 
 import org.junit.Before;
 import org.junit.Test;
