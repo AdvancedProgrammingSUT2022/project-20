@@ -61,12 +61,12 @@ public class Map {
                 
                 terrainType = allTerrainTypes.get( randomobj.nextInt(allTerrainTypes.size()) ) ;
                 if (terrainType.getFeaturesPossible().size() > 0){
-                    if( randomobj.nextInt( 2 ) == 0 )terrainFeature = terrainType.getFeaturesPossible().get( randomobj.nextInt( terrainType.getFeaturesPossible().size() ) );
+                    if( randomobj.nextInt( 3 ) == 0 )terrainFeature = terrainType.getFeaturesPossible().get( randomobj.nextInt( terrainType.getFeaturesPossible().size() ) );
                 }
                 for(int z = 0 ; z < allResources.length; z ++){
                     if( (terrainType.isResourcePossible( allResources[ z ] ) == true) ||
                         (terrainFeature != null && terrainFeature.isResourcePossible( allResources[ z ] ) == true) ){
-                        if( randomobj.nextInt( 2 ) == 0 ){
+                        if( randomobj.nextInt( 4 ) == 0 ){
                             resources.add( allResources[ z ] );
                         }
                     }
@@ -100,7 +100,7 @@ public class Map {
                 Tile tile = this.getTileByIndex( (i*30)+j );
                 for(int z = 1 ; z <= 3 ; z ++){
                     boolean is_river = false;
-                    if( randomobj.nextInt( 2 ) == 1 ){
+                    if( randomobj.nextInt( 10 ) == 1 ){
                         is_river = true;
                     }
                     tile.setHasRiverOnSide(z, is_river);
@@ -154,8 +154,8 @@ public class Map {
             nextWeightedDist[ tile.getIndex() ][ neighbor.getIndex() ] = neighbor.getIndex();    
         }
         else{
-            tile.setWeightOnSide(dirId, 5);
-            dist[ tile.getIndex() ][ neighbor.getIndex() ] = Math.min(dist[ tile.getIndex() ][ neighbor.getIndex() ], 5);
+            tile.addWeightOnSide(dirId, 5);
+            dist[ tile.getIndex() ][ neighbor.getIndex() ] = tile.getWeightOnSide(dirId);
             nextWeightedDist[ tile.getIndex() ][ neighbor.getIndex() ] = neighbor.getIndex();    
         }
     }
@@ -207,7 +207,7 @@ public class Map {
                 Tile neighbor = tile.getNeighborOnSide( z );
                 if( neighbor == null )continue;
                 setWeight(tile, neighbor, direction);
-                setRiverWeight(tile, neighbor, z);
+                if( tile.getHasRiverOnSide( z ) == true )setRiverWeight(tile, neighbor, z);
             } 
         }
     }

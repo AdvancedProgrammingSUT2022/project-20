@@ -1,5 +1,6 @@
 package ir.ap.view;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 
 import com.google.gson.Gson;
@@ -14,6 +15,7 @@ public class GameMenuView extends AbstractMenuView {
         EXIT_MENU("menu exit"),
         SHOW_MENU("menu show-current"),
         INFO("info (?<arg>\\S+)"),
+        RESEARCH("research"),
         SELECT_UNIT("select unit (?<type>combat|noncombat) (?<tileId>\\d+)"),
         SELECT_CITY("select city (?<nameOrId>\\S+)"),
         UNIT_ACTION("unit (?<args>.*)"),
@@ -254,7 +256,6 @@ public class GameMenuView extends AbstractMenuView {
     }
 
     public Menu info(Matcher matcher) {
-        // TODO
         String arg = matcher.group("arg");
         JsonObject response = getInfoResponse(arg);
         if (response == null)
@@ -265,9 +266,141 @@ public class GameMenuView extends AbstractMenuView {
             }
             return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
         }
+        if (response.has("research"))
+            infoResearch(response.get("research").getAsJsonObject());
+        if (response.has("units"))
+            infoUnits(response.get("units").getAsJsonArray());
+        if (response.has("cities"))
+            infoCities(response.get("cities").getAsJsonArray());
+        if (response.has("demographics"))
+            infoDemographics(response.get("demographics").getAsJsonObject());
+        if (response.has("notifications"))
+            infoNotifications(response.get("notifications").getAsJsonArray());
+        if (response.has("military"))
+            infoMilitary(response.get("military").getAsJsonArray());
+        if (response.has("economic"))
+            infoEconomic(response.get("economic").getAsJsonArray());
         String msg = getField(response, "msg", String.class);
-        printCurrentMap();
+        // printCurrentMap();
         return responseAndGo(msg, Menu.GAME);
+    }
+
+    private void infoResearch(JsonObject researchJson) {
+        JsonObject toPrint = researchJson.deepCopy();
+        toPrint.addProperty("title", "INFO RESEARCH");
+        printResponse(toPrint);
+    }
+
+    private void infoUnits(JsonArray unitsJson) {
+        System.out.println(" >>> INFO UNITS:");
+        if (unitsJson.size() == 0) {
+            System.out.println("\tNo units right now.");
+            return;
+        }
+        ArrayList<Integer> unitIds = new ArrayList<>();
+        for (int i = 0; i < unitsJson.size(); i++) {
+            JsonObject unit = unitsJson.get(i).getAsJsonObject();
+            int tileId = unit.get("tileId").getAsInt();
+            int unitId = unit.get("id").getAsInt();
+            unitIds.add(unitId);
+            System.out.format("\t%d - %s on tile %d\n", unitId,
+                unit.get("unitType").getAsString(),
+                tileId);
+        }
+        System.out.format("Enter unit id or 'military' or 'end'\n", unitIds.size());
+        while (SCANNER.hasNextLine()) {
+            String line = SCANNER.nextLine().trim();
+            if (line.equals("end"))
+                return;
+            if (line.equals("military")) {
+                infoMilitary(unitsJson);
+                return;
+            }
+            try {
+                int unitId = -1;
+                unitId = Integer.parseInt(line);
+                JsonObject response = GAME_CONTROLLER.selectUnit(currentPlayer, unitId);
+                String msg = getField(response, "msg", String.class);
+                if (msg != null)
+                    System.out.println(msg);
+                if (responseOk(response))
+                    return;
+            } catch (Exception ex) {
+                System.out.println(Message.ARG_INVALID.toString().replace("%s", line));
+            }
+        }
+    }
+
+    private void infoCities(JsonArray citiesJson) {
+        System.out.println(" >>> INFO CITIES:");
+        if (citiesJson.size() == 0) {
+            System.out.println("\tNo cities right now.");
+            return;
+        }
+        ArrayList<Integer> cityIds = new ArrayList<>();
+        for (int i = 0; i < citiesJson.size(); i++) {
+            JsonObject city = citiesJson.get(i).getAsJsonObject();
+            int tileId = city.get("tileId").getAsInt();
+            int cityId = city.get("id").getAsInt();
+            cityIds.add(cityId);
+            System.out.format("\t%d - %s on tile %d\n", cityId,
+                city.get("name").getAsString(),
+                tileId);
+        }
+        System.out.println("Enter city id or 'economic' or 'end'");
+        while (SCANNER.hasNextLine()) {
+            String line = SCANNER.nextLine().trim();
+            if (line.equals("end"))
+                return;
+            if (line.equals("economic")) {
+                infoEconomic(GAME_CONTROLLER.infoEconomic(currentPlayer)
+                    .get("economic").getAsJsonArray());
+                return;
+            }
+            try {
+                int cityId = -1;
+                cityId = Integer.parseInt(line);
+                JsonObject response = GAME_CONTROLLER.selectCityById(currentPlayer, cityId);
+                String msg = getField(response, "msg", String.class);
+                if (msg != null)
+                    System.out.println(msg);
+                if (responseOk(response))
+                    return;
+            } catch (Exception ex) {
+                System.out.println(Message.ARG_INVALID.toString().replace("%s", line));
+            }
+        }
+    }
+
+    private void infoDemographics(JsonObject demographicsJson) {
+        demographicsJson.addProperty("title", "INFO DEMOGRAPHICS");
+        printResponse(demographicsJson);
+    }
+
+    private void infoNotifications(JsonArray notificationsJson) {
+        JsonObject toPrint = new JsonObject();
+        toPrint.addProperty("title", "INFO NOTIFICATIONS");
+        toPrint.add("Notifications", notificationsJson);
+        printResponse(toPrint);
+    }
+
+    private void infoMilitary(JsonArray unitsJson) {
+        JsonObject toPrint = new JsonObject();
+        toPrint.addProperty("title", "INFO MILITARY");
+        toPrint.add("Units", unitsJson);
+        printResponse(toPrint);
+    }
+
+    private void infoEconomic(JsonArray citiesJson) {
+        JsonObject toPrint = new JsonObject();
+        toPrint.addProperty("title", "INFO ECONOMIC");
+        toPrint.add("Cities", citiesJson);
+        printResponse(toPrint);
+    }
+
+    public Menu research(Matcher matcher) {
+        // TODO
+        return responseAndGo(null, Menu.GAME);
     }
 
     public Menu selectUnit(Matcher matcher) {
@@ -299,22 +432,38 @@ public class GameMenuView extends AbstractMenuView {
     }
 
     public Menu unitAction(Matcher matcher) {
-        // TODO
         String[] args = matcher.group("args").trim().split("\\s+");
         boolean cheat = false;
         for (String arg : args) {
             cheat |= arg.matches("(--cheat|-c)");
         }
         JsonObject response = getUnitActionResponse(args, cheat);
-        if (!responseOk(response))
+        if (!responseOk(response)) {
+            String msg = getField(response, "msg", String.class);
+            if (msg != null)
+                return responseAndGo(msg, Menu.GAME);
             return responseAndGo(Message.INVALID_REQUEST, Menu.GAME);
+        }
+        if (response.has("cityDead")) {
+            int cityId = response.get("cityDead").getAsInt();
+            System.out.println("City dead! Enter 'A' for Annex or 'D' for Destroy");
+            while (true) {
+                String line = SCANNER.nextLine().trim();
+                if (line.equals("A")) {
+                    response = GAME_CONTROLLER.cityAnnex(currentPlayer, cityId);
+                    break;
+                } else if (line.equals("D")) {
+                    response = GAME_CONTROLLER.cityDestroy(currentPlayer, cityId);
+                    break;
+                }
+            }
+        }
         printCurrentMap();
         String msg = getField(response, "msg", String.class);
         return responseAndGo(msg, Menu.GAME);
     }
 
     public Menu cityAction(Matcher matcher) {
-        // TODO
         String[] args = matcher.group("args").trim().split("\\s+");
         boolean cheat = false;
         for (String arg : args) {
@@ -357,6 +506,12 @@ public class GameMenuView extends AbstractMenuView {
             workingTilesJson.addProperty("title", "WORKING TILES");
             workingTilesJson.addProperty("City name", cityName);
             printResponse(workingTilesJson);
+        }
+        if (response.has("output")) {
+            JsonObject outputJson = response.get("output").getAsJsonObject().deepCopy();
+            outputJson.addProperty("title", "CITY OUTPUT");
+            outputJson.addProperty("City name", cityName);
+            printResponse(outputJson);
         }
         String msg = getField(response, "msg", String.class);
         return responseAndGo(msg, Menu.GAME);

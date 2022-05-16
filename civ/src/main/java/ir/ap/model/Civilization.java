@@ -3,6 +3,8 @@ package ir.ap.model;
 import java.util.ArrayList;
 
 public class Civilization {
+    private static final int DEFAULT_STARTING_HAPPINESS = 7;
+
     private int index;
     private String name;
     private City capital;
@@ -25,7 +27,7 @@ public class Civilization {
 
     int[] accessibleResourceCount;
     boolean[] technologyReached;
-    private ArrayList<String> messageQueue;
+    private ArrayList<String> messageQueue = new ArrayList<>();
 
     public ArrayList<String> getMessageQueue() {
         return new ArrayList<>(messageQueue);
@@ -60,6 +62,7 @@ public class Civilization {
 
         gold = 0;
         science = 0;
+        extraHappiness = DEFAULT_STARTING_HAPPINESS;
 
         accessibleResourceCount = new int[40];
         technologyReached = new boolean[60];
@@ -85,11 +88,10 @@ public class Civilization {
 
         gold = 0;
         science = 0;
+        extraHappiness = DEFAULT_STARTING_HAPPINESS;
 
         accessibleResourceCount = new int[40];
         technologyReached = new boolean[60];
-
-        this.addToMessageQueue("Civilization " + name + " with capital city " + capital + " has been initialized");
     }
 
     public int getIndex() {
@@ -161,9 +163,8 @@ public class Civilization {
     }
 
     public void setCurrentResearch(Technology currentResearch) {
-        //this.addToMessageQueue("Civilization " + this.getName() + " started research about Technology " + currentResearch);
-        //TODO:chera fagat to in class setCurrentResearch ro darim?
         this.currentResearch = currentResearch;
+        this.addToMessageQueue("Civilization " + this.getName() + " started research about Technology " + currentResearch);
     }
 
     public int getScienceSpentForCurrentResearch() {
@@ -234,8 +235,8 @@ public class Civilization {
 
     public void setTechnologyReached(Technology tech, boolean value) {
         if (tech == null) return;
-        //if(value == true)
-        // TODO:   this.addToMessageQueue("Civilization " + this.getName() + " reached to technology " + tech);
+        if(value == true)
+            this.addToMessageQueue("Civilization " + this.getName() + " reached to technology " + tech);
         this.technologyReached[tech.getId()] = value;
     }
 
@@ -327,8 +328,8 @@ public class Civilization {
 
     public void finishResearch() {
         if (currentResearch == null) return;
-        this.addToMessageQueue("Civilization " + this.getName() + " reached to research " + currentResearch);
-        technologyReached[currentResearch.getId()] = true;
+        // this.addToMessageQueue("Civilization " + this.getName() + " reached to research " + currentResearch);
+        setTechnologyReached(currentResearch, true);
         scienceSpentForResearch = 0;
         science = 0;
         currentResearch = null;
