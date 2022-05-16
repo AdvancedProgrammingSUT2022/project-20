@@ -505,8 +505,6 @@ public class GameController extends AbstractGameController implements JsonRespon
         // TODO: Phase 2 or 3
         return JSON_FALSE;
     }
-    // cheat
-    // TODO: test
 
     public JsonObject selectUnit(String username, int unitId) {
         Civilization civilization = civController.getCivilizationByUsername(username);

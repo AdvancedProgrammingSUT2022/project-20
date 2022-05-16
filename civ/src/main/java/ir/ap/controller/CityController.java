@@ -190,7 +190,8 @@ public class CityController extends AbstractGameController {
             return false;
         if (city.getWorkingTiles().size() >= city.getPopulation())
             return false;
-        if (tile.getOwnerCity() != city || gameArea.getDistanceInTiles(city.getTile(), tile) > 2)
+        int dist = gameArea.getDistanceInTiles(city.getTile(), tile);
+        if (tile.getOwnerCity() != city || dist < 1 || dist > 2)
             return false;
         return city.addToWorkingTiles(tile);
     }
