@@ -673,7 +673,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         civilization.addToMessageQueue("one unit from civilization " + civilization.getName() + " attacked to tile " + tile.getIndex());
         JsonObject response = new JsonObject();
         response.addProperty("msg", "Unit Attacked");
-        if (tile.getCity() != null && tile.getCity().isDead()) {
+        if (tile.getCity() != null && tile.getCity().isDead() && civilization.getSelectedUnit().isMelee()) {
             response.addProperty("cityDead", tile.getCity().getId());
         }
         return setOk(response, true);
@@ -1254,7 +1254,6 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("something is invalid", false);
         civilization.addToMessageQueue("city " + city.getName() + " from civilization " + civilization.getName() + " destroyed");
         return messageToJsonObj("city destroyed successfully", true);
-        // TODO: check if city is attacked and get by civilization (city.isDead()?)
     }
 
     public JsonObject cityAnnex(String username, int cityId) {
@@ -1270,7 +1269,6 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("something is invalid", false);
         civilization.addToMessageQueue("city " + city.getName() + " from civilization " + civilization.getName() + " annexed");
         return messageToJsonObj("city Annexed successfully", true);
-        // TODO: check if city is attacked and get by civilization (city.isDead)
     }
 
     public JsonObject civSetCurrentResearch(String username, int techId, boolean cheat){

@@ -184,4 +184,7 @@ public class Unit {
         return unitType.isCivilian();
     }
 
+    public boolean isMelee(){
+        return !(getCombatType() == UnitType.CombatType.ARCHERY || getCombatType() == UnitType.CombatType.SIEGE);
+    }
 }

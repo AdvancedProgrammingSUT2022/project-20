@@ -201,7 +201,6 @@ public class UnitController extends AbstractGameController {
         unit.setUnitAction(UnitType.UnitAction.SETUP_RANGED);
         return true;
     }
-
     public boolean unitAttack(Civilization civilization, Tile target, boolean cheat)
     {
         if (civilization == null || target == null) return false;
