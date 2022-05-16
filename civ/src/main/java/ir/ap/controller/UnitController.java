@@ -347,6 +347,7 @@ public class UnitController extends AbstractGameController {
         if (cnt < 0)
             return false;
         unit.setUnitAction(UnitType.UnitAction.FOUND_CITY);
+        removeUnit(unit);
         return true;
     }
 
