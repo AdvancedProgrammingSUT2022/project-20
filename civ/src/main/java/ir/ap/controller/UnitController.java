@@ -369,7 +369,7 @@ public class UnitController extends AbstractGameController {
         if (tile == null || tile.getHasRoad()) return false;
         unit.setHowManyTurnWeKeepAction((cheat ? 1000 : 0));
         if(unit.getUnitType() != UnitType.WORKER) return false;
-        if(civilization.getTechnologyReached(Technology.THE_WHEEL) == false) return false;
+        if(civilization.getTechnologyReached(Technology.THE_WHEEL) == false && cheat == false) return false;
 
         unit.setUnitAction(UnitType.UnitAction.BUILD_ROAD);
         civilization.addToMessageQueue("Started building ROAD on tile " + tile.getIndex());
@@ -384,7 +384,7 @@ public class UnitController extends AbstractGameController {
         if (tile == null || tile.getHasRailRoad()) return false;
         unit.setHowManyTurnWeKeepAction((cheat ? 1000 : 0));
         if(unit.getUnitType() != UnitType.WORKER) return false;
-        if(civilization.getTechnologyReached(Technology.RAILROAD) == false) return false;
+        if(civilization.getTechnologyReached(Technology.RAILROAD) == false && cheat == false) return false;
 
         unit.setUnitAction(UnitType.UnitAction.BUILD_RAILROAD);
         civilization.addToMessageQueue("Started building RAILROAD on tile " + tile.getIndex());
@@ -399,7 +399,7 @@ public class UnitController extends AbstractGameController {
         Tile tile = unit.getTile();
         if (tile == null || tile.hasImprovement()) return false;
 
-        if(civilization.getTechnologyReached(improvement.getTechnologyRequired()) == false)
+        if(civilization.getTechnologyReached(improvement.getTechnologyRequired()) == false && cheat == false)
             return false;
         if(tile.getTerrainFeature() == TerrainFeature.FOREST) return false;
         if(tile.getTerrainFeature() == TerrainFeature.JUNGLE) return false;
@@ -416,32 +416,32 @@ public class UnitController extends AbstractGameController {
             civilization.addToMessageQueue("Started building MINE on tile " + tile.getIndex());
         }
         if(improvement == Improvement.TRADING_POST) {
-            if(civilization.getTechnologyReached(Technology.TRAPPING) == false) return false;
+            if(civilization.getTechnologyReached(Technology.TRAPPING) == false && cheat == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_TRADINGPOST);
             civilization.addToMessageQueue("Started building TRADING_POST on tile " + tile.getIndex());
         }
         if(improvement == Improvement.LUMBER_MILL) {
-            if(civilization.getTechnologyReached(Technology.CONSTRUCTION) == false) return false;
+            if(civilization.getTechnologyReached(Technology.CONSTRUCTION) == false && cheat == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_LUMBERMILL);
             civilization.addToMessageQueue("Started building LUMBER_MILL on tile " + tile.getIndex());
         }
         if(improvement == Improvement.PASTURE) {
-            if(civilization.getTechnologyReached(Technology.ANIMAL_HUSBANDRY) == false) return false;
+            if(civilization.getTechnologyReached(Technology.ANIMAL_HUSBANDRY) == false && cheat == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_PASTURE);
             civilization.addToMessageQueue("Started building PASTURE on tile " + tile.getIndex());
         }
         if(improvement == Improvement.CAMP) {
-            if(civilization.getTechnologyReached(Technology.TRAPPING) == false) return false;
+            if(civilization.getTechnologyReached(Technology.TRAPPING) == false && cheat == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_CAMP);
             civilization.addToMessageQueue("Started building CAMP on tile " + tile.getIndex());
         }
         if(improvement == Improvement.PLANTATION) {
-            if(civilization.getTechnologyReached(Technology.CALENDAR) == false) return false;
+            if(civilization.getTechnologyReached(Technology.CALENDAR) == false && cheat == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_PLANTATION);
             civilization.addToMessageQueue("Started building PLANTATION on tile " + tile.getIndex());
         }
         if(improvement == Improvement.QUARRY) {
-            if(civilization.getTechnologyReached(Technology.ENGINEERING) == false) return false;
+            if(civilization.getTechnologyReached(Technology.ENGINEERING) == false && cheat == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_QUARRY);
             civilization.addToMessageQueue("Started building QUARRY on tile " + tile.getIndex());
         }
@@ -454,7 +454,7 @@ public class UnitController extends AbstractGameController {
         Tile tile = unit.getTile();
         if (tile == null || tile.getTerrainFeature() != TerrainFeature.JUNGLE) return false;
         unit.setHowManyTurnWeKeepAction((cheat ? 1000 : 0));
-        if(civilization.getTechnologyReached(Technology.BRONZE_WORKING) == false) return false;
+        if(civilization.getTechnologyReached(Technology.BRONZE_WORKING) == false && cheat == false) return false;
 
         unit.setUnitAction(UnitType.UnitAction.REMOVE_JUNGLE);
         civilization.addToMessageQueue("Started removing JUNGLE on tile " + tile.getIndex());
@@ -467,7 +467,7 @@ public class UnitController extends AbstractGameController {
         Tile tile = unit.getTile();
         if (tile == null || tile.getTerrainFeature() != TerrainFeature.FOREST) return false;
         unit.setHowManyTurnWeKeepAction((cheat ? 1000 : 0));
-        if(civilization.getTechnologyReached(Technology.MINING) == false) return false;
+        if(civilization.getTechnologyReached(Technology.MINING) == false && cheat == false) return false;
 
         unit.setUnitAction(UnitType.UnitAction.REMOVE_FOREST);
         civilization.addToMessageQueue("Started removing FOREST on tile " + tile.getIndex());
@@ -480,7 +480,7 @@ public class UnitController extends AbstractGameController {
         unit.setHowManyTurnWeKeepAction((cheat ? 1000 : 0));
         Tile tile = unit.getTile();
         if (tile == null || tile.getTerrainFeature() != TerrainFeature.MARSH) return false;
-        if(civilization.getTechnologyReached(Technology.MASONRY) == false) return false;
+        if(civilization.getTechnologyReached(Technology.MASONRY) == false && cheat == false) return false;
 
         unit.setUnitAction(UnitType.UnitAction.REMOVE_MARSH);
         civilization.addToMessageQueue("Started removing MARSH on tile " + tile.getIndex());

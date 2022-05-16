@@ -80,15 +80,16 @@ public class MapController extends AbstractGameController {
     }
 
     public boolean removeRoad(Tile tile) {
-        // TODO : udpate distance?
         if (tile == null) return false;
         tile.setHasRoad(false);
+        gameArea.getMap().updateDistances();
         return true;
     }
 
     public boolean removeRailRoad(Tile tile) {
         if (tile == null) return false;
         tile.setHasRailRoad(false);
+        gameArea.getMap().updateDistances();
         return true;
     }
 
