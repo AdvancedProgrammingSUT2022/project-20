@@ -11,7 +11,7 @@ public class City {
     public static final int TURN_NEEDED_TO_EXTEND_TILES = 20;
 
     private static final int DEFAULT_HP = 20;
-    private static final int DEFAULT_TERRITORY_RANGE = 5;
+    private static final int DEFAULT_TERRITORY_RANGE = 3;
 
     private int id;
     private String name;
@@ -200,6 +200,10 @@ public class City {
     }
 
     public boolean setCurrentProduction(Production production) {
+        if (production == null) {
+            this.currentProduction = null;
+            return true;
+        }
         if (!canProduce(production)) {
             if (production != null)
                 getCivilization().addToMessageQueue("Unable to set production " + production.getName() + " for city "

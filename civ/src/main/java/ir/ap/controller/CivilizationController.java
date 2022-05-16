@@ -33,7 +33,6 @@ public class CivilizationController extends AbstractGameController {
 
     public boolean nextTurn(Civilization civilization)
     {
-        //check knoim aslan mishe raft turn baadi?!
         civilization.addToGold(civilization.getGoldYield());
         civilization.addToScience(civilization.getScienceYield());
         if (civilization.getGold() < 0) {
@@ -146,6 +145,7 @@ public class CivilizationController extends AbstractGameController {
                     if (unit.getHowManyTurnWeKeepAction() >= 3) {
                         mapController.addRailRoad(tile);
                         unit.setHowManyTurnWeKeepAction(0);
+                        unit.setUnitAction(null);
                         civilization.addToMessageQueue("Built RAILROAD on tile " + tile.getIndex());
                     } else
                         unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
@@ -154,6 +154,7 @@ public class CivilizationController extends AbstractGameController {
                     if (unit.getHowManyTurnWeKeepAction() >= 3) {
                         mapController.addRoad(tile);
                         unit.setHowManyTurnWeKeepAction(0);
+                        unit.setUnitAction(null);
                         civilization.addToMessageQueue("Built ROAD on tile " + tile.getIndex());
                     } else
                         unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
@@ -163,11 +164,13 @@ public class CivilizationController extends AbstractGameController {
                     mapController.removeRailRoad(tile);
                     civilization.addToMessageQueue("Removed routes on tile " + tile.getIndex());
                     unit.setHowManyTurnWeKeepAction(0);
+                    unit.setUnitAction(null);
                 }
                 if (unit.getUnitAction() == UnitType.UnitAction.REMOVE_FOREST) {
                     if (unit.getHowManyTurnWeKeepAction() >= 4) {
                         mapController.removeTerrainFeature(tile);
                         unit.setHowManyTurnWeKeepAction(0);
+                        unit.setUnitAction(null);
                         civilization.addToMessageQueue("Removed FOREST on tile " + tile.getIndex());
                     } else
                         unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
@@ -176,6 +179,7 @@ public class CivilizationController extends AbstractGameController {
                     if (unit.getHowManyTurnWeKeepAction() >= 7) {
                         mapController.removeTerrainFeature(tile);
                         unit.setHowManyTurnWeKeepAction(0);
+                        unit.setUnitAction(null);
                         civilization.addToMessageQueue("Removed JUNGLE on tile " + tile.getIndex());
                     } else
                         unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
@@ -184,6 +188,7 @@ public class CivilizationController extends AbstractGameController {
                     if (unit.getHowManyTurnWeKeepAction() >= 6) {
                         mapController.removeTerrainFeature(tile);
                         unit.setHowManyTurnWeKeepAction(0);
+                        unit.setUnitAction(null);
                         civilization.addToMessageQueue("Removed MARSH on tile " + tile.getIndex());
                     } else
                         unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);

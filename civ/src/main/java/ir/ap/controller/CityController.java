@@ -228,15 +228,15 @@ public class CityController extends AbstractGameController {
         Production production = city.getCurrentProduction();
         if (city.getCostLeftForProductionConstruction() > 0)
             return false;
-        city.setProductionSpent(0);
-        city.setCurrentProduction(null);
         if (production instanceof UnitType) {
             boolean res = unitController.addUnit(city.getCivilization(), city.getTile(), (UnitType) production);
             if (!res)
-                return false;
+            return false;
         } else if (production instanceof BuildingType) {
             // TODO: PHASE2
         }
+        city.setProductionSpent(0);
+        city.setCurrentProduction(null);
         return true;
     }
 
