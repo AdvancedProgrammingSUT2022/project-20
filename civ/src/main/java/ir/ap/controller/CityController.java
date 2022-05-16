@@ -217,6 +217,8 @@ public class CityController extends AbstractGameController {
         if( cheat == true ){
             cityConstructProduction(city);
         }
+        Civilization civ = city.getCivilization();
+        civ.addToMessageQueue("production city " + city.getName() + " has been changed to " + production.getName());
         return true;
     }
 
