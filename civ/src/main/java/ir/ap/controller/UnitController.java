@@ -218,12 +218,12 @@ public class UnitController extends AbstractGameController {
         unit.setHowManyTurnWeKeepAction(0);
         int combatStrength = (cheat ? 1000 : unit.getCombatStrength());
         if(unit.getUnitType().getCombatType() == UnitType.CombatType.CIVILIAN) return false;
+        if (unit.getCombatType() == UnitType.CombatType.SIEGE && unit.getUnitAction() != UnitType.UnitAction.SETUP_RANGED)
+            return false;
         unit.setUnitAction(UnitType.UnitAction.ATTACK);
         if(enemyUnit != null && enemyUnit.getCivilization() != civilization) {
             if (unit.getCombatType() == UnitType.CombatType.ARCHERY || unit.getCombatType() == UnitType.CombatType.SIEGE) {
                 if (dist > unit.getRange()) return false;
-                if (unit.getCombatType() == UnitType.CombatType.SIEGE && unit.getUnitAction() != UnitType.UnitAction.SETUP_RANGED)
-                    return false;
                 enemyUnit.setHp(enemyUnit.getHp() - combatStrength);
                 if (!cheat) {
                     if (unit.getUnitType().getCombatType() != UnitType.CombatType.ARMORED && unit.getUnitType().getCombatType() != UnitType.CombatType.MOUNTED)
@@ -272,8 +272,7 @@ public class UnitController extends AbstractGameController {
         if (enemyCity != null && enemyCity.getCivilization() != civilization) {
             if (unit.getCombatType() == UnitType.CombatType.ARCHERY || unit.getCombatType() == UnitType.CombatType.SIEGE) {
                 if (dist > unit.getRange()) return false;
-                if (unit.getCombatType() == UnitType.CombatType.SIEGE && unit.getUnitAction() != UnitType.UnitAction.SETUP_RANGED)
-                    return false;
+
                 enemyCity.setHp(enemyCity.getHp() - combatStrength);
                 if (!cheat) {
                     if (unit.getUnitType().getCombatType() != UnitType.CombatType.ARMORED && unit.getUnitType().getCombatType() != UnitType.CombatType.MOUNTED)

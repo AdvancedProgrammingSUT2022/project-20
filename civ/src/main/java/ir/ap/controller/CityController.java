@@ -212,7 +212,7 @@ public class CityController extends AbstractGameController {
         if (city == null) return false;
         if (!cheat && !city.getCivilization().getTechnologyReached(production.getTechnologyRequired()))
             return false;
-        if (!city.setCurrentProduction(production)) {
+        if (!city.setCurrentProduction(production, !cheat)) {
             return false;
         }
         city.setProductionSpent(0);

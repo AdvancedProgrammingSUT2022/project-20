@@ -1,13 +1,13 @@
 package ir.ap.controller;
 
-import static org.junit.Assert.assertTrue;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import ir.ap.model.Civilization;
-import ir.ap.model.Unit;
-import ir.ap.model.User;
+import ir.ap.model.*;
+import org.junit.Before;
+
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 public class AbstractControllerTest {
     protected static final UserController USER_CONTROLLER = new UserController(true);
@@ -19,6 +19,67 @@ public class AbstractControllerTest {
     protected static Civilization civ2;
     protected static Unit civ1CombatUnit, civ1NonCombatUnit;
     protected static Unit civ2CombatUnit, civ2NonCombatUnit;
+
+    protected static String username1, username2;
+
+    protected void foundCities() {
+        assertOk(GAME_CONTROLLER.selectUnit(username1, civ1NonCombatUnit.getId()));
+        outer:
+        for (int i = 0; i < Map.MAX_H; i++) {
+            for (int j = 0; j < Map.MAX_W; j++) {
+                Tile tile = getMapController().getTileByIndices(i, j);
+                if (tile.hasOwnerCity() || tile.isUnreachable())
+                    continue;
+                assertOk(GAME_CONTROLLER.unitMoveTo(username1, tile.getIndex(), true));
+                assertOk(GAME_CONTROLLER.unitFoundCity(username1, false));
+                break outer;
+            }
+        }
+        assertOk(GAME_CONTROLLER.selectUnit(username2, civ2NonCombatUnit.getId()));
+        outer:
+        for (int i = 0; i < Map.MAX_H; i++) {
+            for (int j = 0; j < Map.MAX_W; j++) {
+                Tile tile = getMapController().getTileByIndices(i, j);
+                if (tile.hasOwnerCity() || tile.isUnreachable())
+                    continue;
+                assertOk(GAME_CONTROLLER.unitMoveTo(username2, tile.getIndex(), true));
+                assertOk(GAME_CONTROLLER.unitFoundCity(username2, false));
+                break outer;
+            }
+        }
+    }
+
+    protected City getCity(int id) {
+        return (id == 1 ? civ1.getCities().get(0) : civ2.getCities().get(0));
+    }
+
+    @Before
+    public void init() {
+        assertTrue(login(player1));
+        assertTrue(login(player2));
+        assertTrue(newGame());
+        civ1 = getCivController().getCivilizationByUsername(player1.getUsername());
+        civ2 = getCivController().getCivilizationByUsername(player2.getUsername());
+        username1 = player1.getUsername();
+        username2 = player2.getUsername();
+
+        for (Unit unit : civ1.getUnits()) {
+            if (unit.isCivilian())
+                civ1NonCombatUnit = unit;
+            else
+                civ1CombatUnit = unit;
+        }
+        assertNotNull(civ1CombatUnit);
+        assertNotNull(civ1NonCombatUnit);
+        for (Unit unit : civ2.getUnits()) {
+            if (unit.isCivilian())
+                civ2NonCombatUnit = unit;
+            else
+                civ2CombatUnit = unit;
+        }
+        assertNotNull(civ2CombatUnit);
+        assertNotNull(civ2NonCombatUnit);
+    }
 
     protected static boolean login(User user) {
         USER_CONTROLLER.register(user.getUsername(), user.getNickname(), user.getPassword());
@@ -44,6 +105,10 @@ public class AbstractControllerTest {
         return GAME_CONTROLLER.getCityController();
     }
 
+    protected static MapController getMapController() {
+        return GAME_CONTROLLER.getMapController();
+    }
+
     protected static boolean responseOk(JsonObject response) {
         return response != null && response.has("ok") && response.get("ok").getAsBoolean();
     }
@@ -67,5 +132,9 @@ public class AbstractControllerTest {
 
     protected static void assertOk(JsonObject response) {
         assertTrue(responseOk(response));
+    }
+
+    protected static void assertNotOk(JsonObject response) {
+        assertFalse(responseOk(response));
     }
 }

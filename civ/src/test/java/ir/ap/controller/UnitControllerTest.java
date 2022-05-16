@@ -1,45 +1,11 @@
 package ir.ap.controller;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Before;
 import org.junit.Test;
 
 import ir.ap.model.City;
 import ir.ap.model.Unit;
 
 public class UnitControllerTest extends AbstractControllerTest {
-
-    private static String username1, username2;
-
-    @Before
-    public void init() {
-        assertTrue(login(player1));
-        assertTrue(login(player2));
-        assertTrue(newGame());
-        civ1 = getCivController().getCivilizationByUsername(player1.getUsername());
-        civ2 = getCivController().getCivilizationByUsername(player2.getUsername());
-        username1 = player1.getUsername();
-        username2 = player2.getUsername();
-
-        for (Unit unit : civ1.getUnits()) {
-            if (unit.isCivilian())
-                civ1NonCombatUnit = unit;
-            else
-                civ1CombatUnit = unit;
-        }
-        assertNotNull(civ1CombatUnit);
-        assertNotNull(civ1NonCombatUnit);
-        for (Unit unit : civ2.getUnits()) {
-            if (unit.isCivilian())
-                civ2NonCombatUnit = unit;
-            else
-                civ2CombatUnit = unit;
-        }
-        assertNotNull(civ2CombatUnit);
-        assertNotNull(civ2NonCombatUnit);
-    }
 
     @Test
     public void testUnitAttackNull() {
@@ -60,10 +26,55 @@ public class UnitControllerTest extends AbstractControllerTest {
         City city1 = civ1.getCities().get(0);
 
         assertOk(GAME_CONTROLLER.selectUnit(username2, civ2CombatUnit.getId()));
+        GAME_CONTROLLER.unitMoveTo(username1, 300, true);
+        GAME_CONTROLLER.unitMoveTo(username1, 400, true);
+        GAME_CONTROLLER.unitMoveTo(username1, 500, true);
         assertOk(GAME_CONTROLLER.unitMoveTo(username2, city1.getTile().getIndex(), true));
 
+        assertOk(GAME_CONTROLLER.unitAttack(username2, city1.getTile().getIndex(), false));
         assertOk(GAME_CONTROLLER.unitAttack(username2, city1.getTile().getIndex(), true));
         assertOk(GAME_CONTROLLER.unitAttack(username2, city1.getTile().getIndex(), true));
         assertOk(GAME_CONTROLLER.cityAnnex(username2, city1.getId(), false));
+    }
+
+    @Test
+    public void testUnitAttackUnit() {
+        assertOk(GAME_CONTROLLER.selectUnit(username1, civ1CombatUnit.getId()));
+        if (getMapController().getDistanceInTiles(civ1CombatUnit.getTile(), civ2CombatUnit.getTile()) > 1) {
+            assertNotOk(GAME_CONTROLLER.unitAttack(username1, civ2CombatUnit.getTile().getIndex(), false));
+        }
+        foundCities();
+        City city1 = getCity(1);
+        City city2 = getCity(2);
+        assertOk(GAME_CONTROLLER.selectCity(username1, city1.getTile().getIndex()));
+        assertOk(GAME_CONTROLLER.citySetCurrentProduction(username1, 1, true));
+        GAME_CONTROLLER.selectCombatUnit(username1, city1.getTile().getIndex());
+        GAME_CONTROLLER.unitDelete(username1);
+        assertOk(GAME_CONTROLLER.increaseTurn(username1, 20));
+        Unit archer1 = city1.getTile().getCombatUnit();
+        assertOk(GAME_CONTROLLER.selectUnit(username1, archer1.getId()));
+        GAME_CONTROLLER.unitAttack(username1, archer1.getTile().getIndex(), true);
+        GAME_CONTROLLER.unitAttack(username1, civ2CombatUnit.getTile().getIndex(), false);
+        GAME_CONTROLLER.unitAttack(username1, civ2CombatUnit.getTile().getIndex(), true);
+        GAME_CONTROLLER.unitMoveTo(username1, 300, true);
+        GAME_CONTROLLER.unitMoveTo(username1, 400, true);
+        GAME_CONTROLLER.unitMoveTo(username1, 500, true);
+        GAME_CONTROLLER.unitMoveTo(username1, civ2CombatUnit.getTile().getIndex(), true);
+        GAME_CONTROLLER.increaseTurn(username1, 1);
+        GAME_CONTROLLER.unitAttack(username1, civ2CombatUnit.getTile().getIndex(), false);
+        GAME_CONTROLLER.unitAttack(username1, civ2CombatUnit.getTile().getIndex(), true);
+        GAME_CONTROLLER.unitAttack(username1, city2.getTile().getIndex(), false);
+        GAME_CONTROLLER.increaseTurn(username1, 1);
+        GAME_CONTROLLER.unitAttack(username1, city2.getTile().getIndex(), false);
+
+        assertOk(GAME_CONTROLLER.selectCity(username1, city1.getTile().getIndex()));
+        assertOk(GAME_CONTROLLER.citySetCurrentProduction(username1, 16, true));
+        GAME_CONTROLLER.selectCombatUnit(username1, city1.getTile().getIndex());
+        GAME_CONTROLLER.unitDelete(username1);
+        GAME_CONTROLLER.increaseTurn(username1, 70);
+        GAME_CONTROLLER.selectCombatUnit(username1, city1.getTile().getIndex());
+        assertNotOk(GAME_CONTROLLER.unitAttack(username1, city1.getTile().getIndex(), true));
+        assertNotOk(GAME_CONTROLLER.unitAttack(username1, 200, true));
+        assertNotOk(GAME_CONTROLLER.unitAttack(username1, city2.getTile().getIndex(), true));
     }
 }

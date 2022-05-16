@@ -199,12 +199,12 @@ public class City {
                 !(production == UnitType.SETTLER && (civilization.isUnhappy() || getPopulation() < 2));
     }
 
-    public boolean setCurrentProduction(Production production) {
+    public boolean setCurrentProduction(Production production, boolean checkReachable) {
         if (production == null) {
             this.currentProduction = null;
             return true;
         }
-        if (!canProduce(production)) {
+        if (checkReachable && !canProduce(production)) {
             if (production != null)
                 getCivilization().addToMessageQueue("Unable to set production " + production.getName() + " for city "
                     + getName() + " with population " + getPopulation());
@@ -213,6 +213,10 @@ public class City {
         this.currentProduction = production;
         getCivilization().addToMessageQueue("Production " + production.getName() + " set for " + getName());
         return true;
+    }
+
+    public boolean setCurrentProduction(Production production) {
+        return setCurrentProduction(production, true);
     }
 
     public int getProductionSpent() {
