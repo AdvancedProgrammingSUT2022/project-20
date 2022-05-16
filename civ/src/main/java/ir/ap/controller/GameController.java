@@ -725,7 +725,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("invalid civUsername", false);
         if (unitController.unitBuildRoad(civilization, cheat) == false)
             return messageToJsonObj("something is invalid", false);
-        return messageToJsonObj("unit built road", true);
+        return messageToJsonObj("unit started build road", true);
     }
 
     public JsonObject unitBuildRailRoad(String username, boolean cheat) {
@@ -734,7 +734,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("invalid civUsername", false);
         if (unitController.unitBuildRailRoad(civilization, cheat) == false)
             return messageToJsonObj("something is invalid", false);
-        return messageToJsonObj("unit built rail road", true);
+        return messageToJsonObj("unit started build railroad", true);
     }
 
     public JsonObject unitBuildImprovement(String username, int imprId, boolean cheat) {
@@ -746,7 +746,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("invalid imprID", false);
         if (unitController.unitBuildImprovement(civilization, improvement, cheat) == false)
             return messageToJsonObj("something is invalid", false);
-        return messageToJsonObj("unit built improvement", true);
+        return messageToJsonObj("unit started build improvement", true);
     }
 
     public JsonObject unitRemoveJungle(String username, boolean cheat) {
@@ -755,7 +755,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("invalid civUsername", false);
         if (unitController.unitRemoveJungle(civilization, cheat) == false)
             return messageToJsonObj("something is invalid", false);
-        return messageToJsonObj("unit removed jungle", true);
+        return messageToJsonObj("unit started remove jungle", true);
     }
 
     public JsonObject unitRemoveForest(String username, boolean cheat) {
@@ -764,7 +764,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("invalid civUsername", false);
         if (unitController.unitRemoveForest(civilization, cheat) == false)
             return messageToJsonObj("something is invalid", false);
-        return messageToJsonObj("unit removed forest", true);
+        return messageToJsonObj("unit started remove forest", true);
     }
 
     public JsonObject unitRemoveMarsh(String username, boolean cheat) {
@@ -773,7 +773,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("invalid civUsername", false);
         if (unitController.unitRemoveMarsh(civilization, cheat) == false)
             return messageToJsonObj("something is invalid", false);
-        return messageToJsonObj("unit removed marsh", true);
+        return messageToJsonObj("unit started remove marsh", true);
     }
 
     public JsonObject unitRemoveRoute(String username, boolean cheat) {
@@ -782,7 +782,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("invalid civUsername", false);
         if (unitController.unitRemoveRoute(civilization, cheat) == false)
             return messageToJsonObj("something is invalid", false);
-        return messageToJsonObj("unit removed route", true);
+        return messageToJsonObj("unit started remove route", true);
     }
 
     public JsonObject unitRepair(String username, boolean cheat) {
@@ -791,7 +791,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("invalid civUsername", false);
         if (unitController.unitRepair(civilization, cheat) == false)
             return messageToJsonObj("something is invalid", false);
-        return messageToJsonObj("unit repaired", true);
+        return messageToJsonObj("unit started repair", true);
     }
 
     public JsonObject increaseGold(String username, int amount) {

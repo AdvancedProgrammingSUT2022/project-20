@@ -138,6 +138,7 @@ public class CivilizationController extends AbstractGameController {
                         unit.setHowManyTurnWeKeepAction(0);
                         civilization.addToMessageQueue("Built TRADINGPOST on tile " + tile.getIndex());
                     }
+                    unit.setUnitAction(null);
                 } else
                     unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
 
