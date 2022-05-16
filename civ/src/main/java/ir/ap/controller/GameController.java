@@ -118,6 +118,9 @@ public class GameController extends AbstractGameController implements JsonRespon
             if (tile.getImprovement() != null) {
                 tileJsonObj.addProperty("improvementId", tile.getImprovement().getId());
             }
+            if (tile.getResourceVisibleByCivilization(civ) != null) {
+                tileJsonObj.addProperty("resourceId", tile.getResourceVisibleByCivilization(civ).getId());
+            }
             if (tile.getNonCombatUnit() != null) {
                 JsonObject nonCombatUnit = new JsonObject();
                 nonCombatUnit.addProperty("unitTypeId", tile.getNonCombatUnit().getUnitType().getId());
