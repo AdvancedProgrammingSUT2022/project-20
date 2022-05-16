@@ -64,6 +64,6 @@ public class UnitControllerTest extends AbstractControllerTest {
 
         assertOk(GAME_CONTROLLER.unitAttack(username2, city1.getTile().getIndex(), true));
         assertOk(GAME_CONTROLLER.unitAttack(username2, city1.getTile().getIndex(), true));
-        assertOk(GAME_CONTROLLER.cityAnnex(username2, city1.getId()));
+        assertOk(GAME_CONTROLLER.cityAnnex(username2, city1.getId(), false));
     }
 }

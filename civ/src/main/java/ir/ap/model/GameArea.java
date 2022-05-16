@@ -57,7 +57,7 @@ public class GameArea {
     }
 
     public boolean end() {
-        return (turn == MAX_TURN * getUserCount());
+        return (turn >= MAX_TURN * getUserCount());
     }
 
     public int getYear() {

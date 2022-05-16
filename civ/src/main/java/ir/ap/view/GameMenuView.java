@@ -14,8 +14,8 @@ public class GameMenuView extends AbstractMenuView {
         ENTER_MENU("menu enter (?<menuName>\\w+)"),
         EXIT_MENU("menu exit"),
         SHOW_MENU("menu show-current"),
-        INFO("info (?<arg>\\S+)"),
-        RESEARCH("research"),
+        INFO("info (?<args>.*)"),
+        RESEARCH("research(?<args>.*)"),
         SELECT_UNIT("select unit (?<type>combat|noncombat) (?<tileId>\\d+)"),
         SELECT_CITY("select city (?<nameOrId>\\S+)"),
         UNIT_ACTION("unit (?<args>.*)"),
@@ -256,10 +256,14 @@ public class GameMenuView extends AbstractMenuView {
     }
 
     public Menu info(Matcher matcher) {
-        String arg = matcher.group("arg");
-        JsonObject response = getInfoResponse(arg);
+        String[] args = matcher.group("args").trim().split("\\s+");
+        boolean cheat = false;
+        for (String arg : args) {
+            cheat |= arg.matches("(--cheat|-c)");
+        }
+        JsonObject response = getInfoResponse(args[0], cheat);
         if (response == null)
-            return responseAndGo(Message.ARG_INVALID.toString().replace("%s", arg), Menu.GAME);
+            return responseAndGo(Message.ARG_INVALID.toString().replace("%s", args[0]), Menu.GAME);
         if (!responseOk(response)) {
             if (response != null && response.has("msg")) {
                 return responseAndGo(response.get("msg").getAsString(), Menu.GAME);
@@ -326,7 +330,7 @@ public class GameMenuView extends AbstractMenuView {
                 if (responseOk(response))
                     return;
             } catch (Exception ex) {
-                System.out.println(Message.ARG_INVALID.toString().replace("%s", line));
+                System.out.println("invalid id");
             }
         }
     }
@@ -367,7 +371,7 @@ public class GameMenuView extends AbstractMenuView {
                 if (responseOk(response))
                     return;
             } catch (Exception ex) {
-                System.out.println(Message.ARG_INVALID.toString().replace("%s", line));
+                System.out.println("invalid id");
             }
         }
     }
@@ -399,8 +403,43 @@ public class GameMenuView extends AbstractMenuView {
     }
 
     public Menu research(Matcher matcher) {
-        // TODO
-        return responseAndGo(null, Menu.GAME);
+        String[] args = matcher.group("args").trim().split("\\s+");
+        boolean cheat = false;
+        for (String arg : args) {
+            cheat |= arg.matches("(--cheat|-c)");
+        }
+        System.out.println("========RESEARCH========================\n");
+        JsonObject response = null;
+        JsonObject latestTechResponse = GAME_CONTROLLER.civGetLatestResearch(currentPlayer);
+        if (latestTechResponse.has("latestResearch")) {
+            JsonObject latestTech = latestTechResponse.get("latestResearch").getAsJsonObject();
+            latestTech.addProperty("title", "LATEST");
+            printResponse(latestTech);
+        }
+        JsonObject availableTechsResponse = GAME_CONTROLLER.civGetAllAvailableResearches(currentPlayer, cheat);
+        if (availableTechsResponse.has("technologies")) {
+            JsonArray techs = availableTechsResponse.get("technologies").getAsJsonArray();
+            JsonObject techsJson = new JsonObject();
+            techsJson.add("techs", techs);
+            techsJson.addProperty("title", "AVAILABLE TECHS");
+            printResponse(techsJson);
+        }
+        System.out.println("Enter new tech id to set, or 'end':");
+        while (SCANNER.hasNextLine()) {
+            String line = SCANNER.nextLine().trim();
+            if (line.equals("end")) {
+                break;
+            }
+            try {
+                int techId = Integer.parseInt(line);
+                response = GAME_CONTROLLER.civSetCurrentResearch(currentPlayer, techId, cheat);
+                break;
+            } catch (Exception ex) {
+                System.out.println("invalid id");
+                continue;
+            }
+        }
+        return responseAndGo(getField(response, "msg", String.class), Menu.GAME);
     }
 
     public Menu selectUnit(Matcher matcher) {
@@ -450,10 +489,10 @@ public class GameMenuView extends AbstractMenuView {
             while (true) {
                 String line = SCANNER.nextLine().trim();
                 if (line.equals("A")) {
-                    response = GAME_CONTROLLER.cityAnnex(currentPlayer, cityId);
+                    response = GAME_CONTROLLER.cityAnnex(currentPlayer, cityId, cheat);
                     break;
                 } else if (line.equals("D")) {
-                    response = GAME_CONTROLLER.cityDestroy(currentPlayer, cityId);
+                    response = GAME_CONTROLLER.cityDestroy(currentPlayer, cityId, cheat);
                     break;
                 }
             }
@@ -611,6 +650,9 @@ public class GameMenuView extends AbstractMenuView {
                     }
                     printCurrentMap();
                     String msg = getField(response, "msg", String.class);
+                    if (getField(response, "end", Boolean.class) == true) {
+                        return responseAndGo(msg, Menu.MAIN);
+                    }
                     if (msg != null)
                         System.out.println(msg);
                 }
@@ -848,15 +890,17 @@ public class GameMenuView extends AbstractMenuView {
                             getCivColorById(nonCombatUnitCivId), true);
                 }
 
-                if (tile.get("resourceId") != null) {
-                    int resourceId = tile.get("resourceId").getAsInt();
+                if (tile.get("resource") != null) {
+                    int resourceId = tile.get("resource").getAsJsonObject().get("id").getAsInt();
+                    boolean isImproved = tile.get("resource").getAsJsonObject().get("improved").getAsBoolean();
                     String resourceStr = getResourceStrById(resourceId);
-                    plain[upLeftX + 4][centerY - 2] = getColoredStr(resourceStr, tileColor, true);
+                    plain[upLeftX + 4][centerY - 2] = getColoredStr(resourceStr, (isImproved ? Color.BG_GREEN : tileColor), true);
                 }
-                if (tile.get("improvementId") != null) {
-                    int improvementId = tile.get("improvementId").getAsInt();
+                if (tile.get("improvement") != null) {
+                    int improvementId = tile.get("improvement").getAsJsonObject().get("id").getAsInt();
+                    boolean isDead = tile.get("improvement").getAsJsonObject().get("dead").getAsBoolean();
                     String improvementStr = getImprovementStrById(improvementId);
-                    plain[upLeftX + 4][centerY + 2] = getColoredStr(improvementStr, tileColor, true);
+                    plain[upLeftX + 4][centerY + 2] = getColoredStr(improvementStr, (isDead ? Color.BG_RED : tileColor), true);
                 }
 
             }
@@ -958,14 +1002,14 @@ public class GameMenuView extends AbstractMenuView {
         return Character.toString((char) ((int) 'A' + civId));
     }
 
-    private JsonObject getInfoResponse(String arg) {
+    private JsonObject getInfoResponse(String arg, boolean cheat) {
         switch (arg) {
             case "research":
                 return GAME_CONTROLLER.infoResearch(currentPlayer);
             case "units":
                 return GAME_CONTROLLER.infoUnits(currentPlayer);
             case "cities":
-                return GAME_CONTROLLER.infoCities(currentPlayer);
+                return GAME_CONTROLLER.infoCities(currentPlayer, cheat);
             case "diplomacy":
                 return GAME_CONTROLLER.infoDiplomacy(currentPlayer);
             case "victory":
@@ -1162,15 +1206,15 @@ public class GameMenuView extends AbstractMenuView {
                 }
             case "destroy":
                 try {
-                    tileId = Integer.parseInt(args[1]);
-                    return GAME_CONTROLLER.cityDestroy(currentPlayer, tileId);
+                    int cityId = Integer.parseInt(args[1]);
+                    return GAME_CONTROLLER.cityDestroy(currentPlayer, cityId, cheat);
                 } catch (Exception ex) {
                     return null;
                 }
             case "annex":
                 try {
-                    tileId = Integer.parseInt(args[1]);
-                    return GAME_CONTROLLER.cityAnnex(currentPlayer, tileId);
+                    int cityId = Integer.parseInt(args[1]);
+                    return GAME_CONTROLLER.cityAnnex(currentPlayer, cityId, cheat);
                 } catch (Exception ex) {
                     return null;
                 }

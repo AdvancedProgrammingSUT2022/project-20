@@ -236,7 +236,11 @@ public class Tile {
     }
 
     public Resource getResourceVisibleByCivilization(Civilization civ) {
-        for (Resource rsrc : this.resources) {
+        for (Resource rsrc : getImprovedResources()) {
+            if (civ.getTechnologyReached(rsrc.getTechnologyRequired()))
+                return rsrc;
+        }
+        for (Resource rsrc : getResources()) {
             if (civ.getTechnologyReached(rsrc.getTechnologyRequired()))
                 return rsrc;
         }
