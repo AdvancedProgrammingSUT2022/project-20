@@ -96,50 +96,96 @@ public class CivilizationController extends AbstractGameController {
                     }
                 }
 
-                if (unit.getHowManyTurnWeKeepAction() >= 6) {
-                    if (unit.getUnitAction() == UnitType.UnitAction.BUILD_CAMP) {
+                if (unit.getUnitAction() == UnitType.UnitAction.BUILD_CAMP) {
+                    if (unit.getHowManyTurnWeKeepAction() >= 6) {
                         mapController.addImprovement(tile, Improvement.CAMP);
                         unit.setHowManyTurnWeKeepAction(0);
                         civilization.addToMessageQueue("Built CAMP on tile " + tile.getIndex());
+                        unit.setUnitAction(null);
+                    } else {
+                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
                     }
-                    if (unit.getUnitAction() == UnitType.UnitAction.BUILD_FARM) {
+                }
+                if (unit.getUnitAction() == UnitType.UnitAction.BUILD_FARM) {
+                    if (unit.getHowManyTurnWeKeepAction() >= 6) {
                         mapController.addImprovement(tile, Improvement.FARM);
                         unit.setHowManyTurnWeKeepAction(0);
                         civilization.addToMessageQueue("Built FARM on tile " + tile.getIndex());
+                        unit.setUnitAction(null);
+                    } else {
+                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
                     }
-                    if (unit.getUnitAction() == UnitType.UnitAction.BUILD_LUMBERMILL) {
+                }
+                if (unit.getUnitAction() == UnitType.UnitAction.BUILD_LUMBERMILL) {
+                    if (unit.getHowManyTurnWeKeepAction() >= 6) {
                         mapController.addImprovement(tile, Improvement.LUMBER_MILL);
                         unit.setHowManyTurnWeKeepAction(0);
                         civilization.addToMessageQueue("Built LUMBERMILL on tile " + tile.getIndex());
+                        unit.setUnitAction(null);
+                    } else {
+                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
                     }
-                    if (unit.getUnitAction() == UnitType.UnitAction.BUILD_MINE) {
+                }
+                if (unit.getUnitAction() == UnitType.UnitAction.BUILD_MINE) {
+                    if (unit.getHowManyTurnWeKeepAction() >= 6) {
                         mapController.addImprovement(tile, Improvement.MINE);
                         unit.setHowManyTurnWeKeepAction(0);
                         civilization.addToMessageQueue("Built MINE on tile " + tile.getIndex());
+                        unit.setUnitAction(null);
+                    } else {
+                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
                     }
-                    if (unit.getUnitAction() == UnitType.UnitAction.BUILD_PASTURE) {
+                }
+                if (unit.getUnitAction() == UnitType.UnitAction.BUILD_PASTURE) {
+                    if (unit.getHowManyTurnWeKeepAction() >= 6) {
                         mapController.addImprovement(tile, Improvement.PASTURE);
                         unit.setHowManyTurnWeKeepAction(0);
                         civilization.addToMessageQueue("Built PASTURE on tile " + tile.getIndex());
+                        unit.setUnitAction(null);
+                    } else {
+                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
                     }
-                    if (unit.getUnitAction() == UnitType.UnitAction.BUILD_PLANTATION) {
+                }
+                if (unit.getUnitAction() == UnitType.UnitAction.BUILD_PLANTATION) {
+                    if (unit.getHowManyTurnWeKeepAction() >= 6) {
                         mapController.addImprovement(tile, Improvement.PLANTATION);
                         unit.setHowManyTurnWeKeepAction(0);
                         civilization.addToMessageQueue("Built PLANTATION on tile " + tile.getIndex());
+                        unit.setUnitAction(null);
+                    } else {
+                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
                     }
-                    if (unit.getUnitAction() == UnitType.UnitAction.BUILD_QUARRY) {
+                }
+                if (unit.getUnitAction() == UnitType.UnitAction.BUILD_QUARRY) {
+                    if (unit.getHowManyTurnWeKeepAction() >= 6) {
                         mapController.addImprovement(tile, Improvement.QUARRY);
                         unit.setHowManyTurnWeKeepAction(0);
                         civilization.addToMessageQueue("Built QUARRY on tile " + tile.getIndex());
+                        unit.setUnitAction(null);
+                    } else {
+                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
                     }
-                    if (unit.getUnitAction() == UnitType.UnitAction.BUILD_TRADINGPOST) {
+                }
+                if (unit.getUnitAction() == UnitType.UnitAction.BUILD_TRADINGPOST) {
+                    if (unit.getHowManyTurnWeKeepAction() >= 6) {
                         mapController.addImprovement(tile, Improvement.TRADING_POST);
                         unit.setHowManyTurnWeKeepAction(0);
                         civilization.addToMessageQueue("Built TRADINGPOST on tile " + tile.getIndex());
+                        unit.setUnitAction(null);
+                    } else {
+                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
                     }
-                    unit.setUnitAction(null);
-                } else
-                    unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
+                }
+                if (unit.getUnitAction() == UnitType.UnitAction.BUILD_FACTORY) {
+                    if (unit.getHowManyTurnWeKeepAction() >= 6) {
+                        mapController.addImprovement(tile, Improvement.FACTORY);
+                        unit.setHowManyTurnWeKeepAction(0);
+                        civilization.addToMessageQueue("Built TRADINGPOST on tile " + tile.getIndex());
+                        unit.setUnitAction(null);
+                    } else {
+                        unit.setHowManyTurnWeKeepAction(unit.getHowManyTurnWeKeepAction() + 1);
+                    }
+                }
 
                 if (unit.getUnitAction() == UnitType.UnitAction.BUILD_RAILROAD) {
                     if (unit.getHowManyTurnWeKeepAction() >= 3) {

@@ -32,12 +32,13 @@ public class CityController extends AbstractGameController {
         city.addToFood(city.getExtraFood());
         city.addToPopulation(city.getPopulationGrowth());
         if (city.getCurrentProduction() != null) {
+            Production production = city.getCurrentProduction();
             city.addToProductionSpent(city.getProductionYield());
             if (city.getCostLeftForProductionConstruction() <= 0) {
                 if (cityConstructProduction(city)) {
-                    city.getCivilization().addToMessageQueue("City " + city.getName() + " constructed " + city.getCurrentProduction().getName());
+                    city.getCivilization().addToMessageQueue("City " + city.getName() + " constructed " + production.getName());
                 } else {
-                    city.getCivilization().addToMessageQueue("City " + city.getName() + " is unable to add production " + city.getCurrentProduction().getName());
+                    city.getCivilization().addToMessageQueue("City " + city.getName() + " is unable to add production " + production.getName());
                 }
             }
         }
@@ -63,7 +64,7 @@ public class CityController extends AbstractGameController {
         if (city == null)
             return false;
         Tile tile = city.getTile();
-        if (tile == null || tile.hasCity())
+        if (tile == null || tile.hasImprovement() || tile.hasCity())
             return false;
         tile.setCity(city);
         for (Tile territoryTile : mapController.getTilesInRange(city, city.getTerritoryRange())) {

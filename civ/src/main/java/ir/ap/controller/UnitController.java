@@ -327,28 +327,28 @@ public class UnitController extends AbstractGameController {
         return true;
     }
 
-    public boolean unitFoundCity(Civilization civilization, boolean cheat)
+    public City unitFoundCity(Civilization civilization, boolean cheat)
     {
-        if (civilization == null) return false;
+        if (civilization == null) return null;
         Unit unit = civilization.getSelectedUnit();
-        if (unit == null) return false;
+        if (unit == null) return null;
         unit.setHowManyTurnWeKeepAction(0);
         if (unit == null || (!cheat && unit.getUnitType() != UnitType.SETTLER))
-            return false;
+            return null;
 
         Tile target = unit.getTile();
         if (target == null || target.hasOwnerCity())
-            return false;
+            return null;
         City city;
         int cnt = 10;
         do {
             city = new City(cityCount++, City.getCityName(RANDOM.nextInt()), civilization, target);
         } while (!cityController.addCity(city) && cnt --> 0);
         if (cnt < 0)
-            return false;
+            return null;
         unit.setUnitAction(UnitType.UnitAction.FOUND_CITY);
         removeUnit(unit);
-        return true;
+        return city;
     }
 
     public boolean unitCancelMission(Civilization civilization)
@@ -398,7 +398,7 @@ public class UnitController extends AbstractGameController {
         if(unit == null) return false;
         unit.setHowManyTurnWeKeepAction((cheat ? 1000 : 0));
         Tile tile = unit.getTile();
-        if (tile == null || tile.hasImprovement()) return false;
+        if (tile == null || tile.hasImprovement() || tile.hasCity()) return false;
 
         if(civilization.getTechnologyReached(improvement.getTechnologyRequired()) == false && cheat == false)
             return false;

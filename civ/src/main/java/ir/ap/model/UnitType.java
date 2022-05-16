@@ -63,6 +63,7 @@ public enum UnitType implements Production {
         BUILD_CAMP, 
         BUILD_PLANTATION, 
         BUILD_QUARRY, 
+        BUILD_FACTORY,
         REMOVE_JUNGLE,
         REMOVE_FOREST,
         REMOVE_MARSH,

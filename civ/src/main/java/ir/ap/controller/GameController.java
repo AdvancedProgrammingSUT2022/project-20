@@ -686,9 +686,10 @@ public class GameController extends AbstractGameController implements JsonRespon
         Civilization civilization = civController.getCivilizationByUsername(username);
         if (civilization == null)
             return messageToJsonObj("invalid civUsername", false);
-        if (unitController.unitFoundCity(civilization, cheat) == false)
+        City city = unitController.unitFoundCity(civilization, cheat);
+        if (city == null)
             return messageToJsonObj("something is invalid", false);
-        civilization.addToMessageQueue("one unit from civilization " + civilization.getName() + " founded city on tile " + civilization.getSelectedUnit().getTile().getIndex());
+        civilization.addToMessageQueue("one unit from civilization " + civilization.getName() + " founded city on tile " + city.getName());
         return messageToJsonObj("unit found city", true);
     }
 
