@@ -871,7 +871,7 @@ public class GameMenuView extends AbstractMenuView {
                     Color ownerCivColor = getCivColorById(ownerCivId);
                     plain[upLeftX + 1][centerY] = getColoredStr(ownerCivStr, ownerCivColor, true);
                     if (tile.get("cityInTile") != null) {
-                        plain[upLeftX + 1][centerY + 1] = getColoredStr("*", ownerCivColor, true);
+                        plain[upLeftX + 1][centerY + 1] = getColoredStr((tile.get("cityInTile").getAsJsonObject().get("dead").getAsBoolean() ? "x" : "*"), ownerCivColor, true);
                     }
                 }
 

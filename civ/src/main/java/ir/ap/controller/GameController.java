@@ -142,7 +142,9 @@ public class GameController extends AbstractGameController implements JsonRespon
                 tileJsonObj.addProperty("ownerCivId", tile.getOwnerCity().getCivilization().getIndex());
             }
             if (tile.getCity() != null) {
-                tileJsonObj.addProperty("cityInTile", tile.getCity().getName());
+                tileJsonObj.add("cityInTile", new JsonObject());
+                tileJsonObj.get("cityInTile").getAsJsonObject().addProperty("name", tile.getCity().getName());
+                tileJsonObj.get("cityInTile").getAsJsonObject().addProperty("dead", tile.getCity().isDead());
             }
         }
         return tileJsonObj;
@@ -168,7 +170,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             cityObj.addProperty("goldYield", city.getGoldYield());
             cityObj.addProperty("productionYield", city.getProductionYield());
             if (city.getCurrentProduction() != null)
-                cityObj.add("currentProduction", serializeProduction(city.getCurrentProduction()));
+                cityObj.add("currentProduction", serializeProduction(city.getCurrentProduction(), city));
             cityObj.addProperty("turnsNeededToReachProduction", city.getTurnsLeftForProductionConstruction());
         }
         return cityObj;
@@ -207,6 +209,15 @@ public class GameController extends AbstractGameController implements JsonRespon
         productionObj.addProperty("name", production.getName() );
         productionObj.addProperty("id", production.getId());
         productionObj.addProperty("cost", production.getCost());
+        return productionObj;
+    }
+
+    public JsonObject serializeProduction(Production production, City city){
+        JsonObject productionObj = new JsonObject();
+        productionObj.addProperty("name", production.getName() );
+        productionObj.addProperty("id", production.getId());
+        productionObj.addProperty("cost", production.getCost());
+        productionObj.addProperty("turnsForConstruction", city.getTurnsLeftForProductionConstruction(production));
         return productionObj;
     }
 
@@ -391,23 +402,23 @@ public class GameController extends AbstractGameController implements JsonRespon
             }
             else if( obj instanceof Resource ){
                 jsonObject2.addProperty("name" , obj.toString());
-                ((JsonArray) improvementObject.get("resources")).add(jsonObject2);
+                ((JsonArray) resourceObject.get("resources")).add(jsonObject2);
             }
             else if( obj instanceof UnitType ){
                 jsonObject2.addProperty("name" , obj.toString());
-                ((JsonArray) improvementObject.get("unitTypes")).add(jsonObject2);
+                ((JsonArray) unitTypeObject.get("unitTypes")).add(jsonObject2);
             }
             else if( obj instanceof BuildingType ){
                 jsonObject2.addProperty("name" , obj.toString());
-                ((JsonArray) improvementObject.get("buildingTypes")).add(jsonObject2);
+                ((JsonArray) buildingTypeObject.get("buildingTypes")).add(jsonObject2);
             }
             else if( obj instanceof UnitAction ){
                 jsonObject2.addProperty("name" , obj.toString());
-                ((JsonArray) improvementObject.get("unitActions")).add(jsonObject2);
+                ((JsonArray) unitActionObject.get("unitActions")).add(jsonObject2);
             }
             else if( obj instanceof Technology ){
                 jsonObject2.addProperty("name" , obj.toString());
-                ((JsonArray) improvementObject.get("technologies")).add(jsonObject2);
+                ((JsonArray) technologyObject.get("technologies")).add(jsonObject2);
             }
         }
         ((JsonArray) jsonObject.get("objectsUnlocksSeparated")).add(improvementObject);
@@ -698,7 +709,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         civilization.addToMessageQueue("one unit from civilization " + civilization.getName() + " attacked to tile " + tile.getIndex());
         JsonObject response = new JsonObject();
         response.addProperty("msg", "Unit Attacked");
-        if (tile.getCity() != null && tile.getCity().isDead() && civilization.getSelectedUnit().isMelee()) {
+        if (tile.getCity() != null && tile.getCity().isDead() && civilization.getSelectedUnit() != null && civilization.getSelectedUnit().isMelee()) {
             response.addProperty("cityDead", tile.getCity().getId());
         }
         return setOk(response, true);
@@ -1173,7 +1184,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         if( production == null )
             return messageToJsonObj("there is no production", false);
         JsonObject jsonObject = new JsonObject();
-        jsonObject.add("production", serializeProduction(production));
+        jsonObject.add("production", serializeProduction(production, city));
         jsonObject.addProperty("ok", true);        
         return jsonObject;
     }
@@ -1246,7 +1257,7 @@ public class GameController extends AbstractGameController implements JsonRespon
                 // TODO: PHASE2 
                 // buildingsJsonArray.add(serializeProduction(production)); 
             } else { 
-                unitsJsonArray.add(serializeProduction(production)); 
+                unitsJsonArray.add(serializeProduction(production, city)); 
             } 
         } 
         jsonObject.addProperty("ok", true);     

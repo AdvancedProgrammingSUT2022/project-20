@@ -197,22 +197,20 @@ public class UnitController extends AbstractGameController {
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
         unit.setHowManyTurnWeKeepAction(0);
-
+        unit.addToMp(-UnitType.MAX_MOVEMENT);
         unit.setUnitAction(UnitType.UnitAction.SETUP_RANGED);
         return true;
     }
     public boolean unitAttack(Civilization civilization, Tile target, boolean cheat)
     {
         if (civilization == null || target == null) return false;
+        if (!target.civilizationIsVisiting(civilization)) return false;
         Unit unit = civilization.getSelectedUnit();
-        if (unit == null || (!cheat && !unit.canMove())) return false;
+        if (unit == null || (!cheat && !unit.canAttack())) return false;
         Tile curTile = unit.getTile();
         Unit enemyUnit = target.getCombatUnit();
         City enemyCity = target.getCity();
         if (enemyUnit == null || enemyUnit.getCivilization() == civilization) enemyUnit = target.getNonCombatUnit();
-        if(enemyUnit == null && enemyCity == null) return false;
-        Civilization otherCiv = (enemyUnit == null ? (enemyCity == null ? null : enemyCity.getCivilization()) : enemyUnit.getCivilization());
-        if (otherCiv == null) return false;
 
         int dist = mapController.getDistanceInTiles(curTile, target);
         unit.setHowManyTurnWeKeepAction(0);
@@ -237,6 +235,7 @@ public class UnitController extends AbstractGameController {
                 if (unit.isDead()) {
                     removeUnit(unit);
                 }
+                unit.setHasAttacked(true);
                 return true;
                 // in this type of attack we will kill worker
             }
@@ -246,6 +245,7 @@ public class UnitController extends AbstractGameController {
                 if (enemyUnit.getUnitType().getCombatType() == UnitType.CombatType.CIVILIAN) {
                     if (enemyCity == null) {
                         changeUnitOwner(enemyUnit, civilization);
+                        unit.setHasAttacked(true);
                         return true;
                     }
                 } else {
@@ -264,6 +264,7 @@ public class UnitController extends AbstractGameController {
                     if (unit.getHp() <= 0) {
                         removeUnit(unit);
                     }
+                    unit.setHasAttacked(true);
                     return true;
                 }
                 // in this type of attack we got worker if it is not city
@@ -285,6 +286,7 @@ public class UnitController extends AbstractGameController {
                 if (unit.getHp() <= 0) {
                     removeUnit(unit);
                 }
+                unit.setHasAttacked(true);
                 return true;
             }
 
@@ -309,6 +311,7 @@ public class UnitController extends AbstractGameController {
                 if (unit.getHp() <= 0) {
                     civilization.removeUnit(unit);
                 }
+                unit.setHasAttacked(true);
                 return true;
             }
         }
@@ -316,13 +319,14 @@ public class UnitController extends AbstractGameController {
             unit.setMp(0);
         else
             unit.setMp(unit.getMp() - dist);
-        if(unit.getTile() == target) {
-            if(target.hasImprovement() && target.getOwnerCity().getCivilization() != civilization){
+        if(unit.isCivilian() && dist <= 1 || dist <= unit.getRange()) {
+            if(target.hasImprovement()){
                 Improvement improvement = target.getImprovement();
                 improvement.setIsDead(true);
                 target.setImprovement(improvement);
             }
         }
+        unit.setHasAttacked(true);
         return true;
     }
 
@@ -399,49 +403,41 @@ public class UnitController extends AbstractGameController {
         Tile tile = unit.getTile();
         if (tile == null || tile.hasImprovement() || tile.hasCity()) return false;
 
-        if(civilization.getTechnologyReached(improvement.getTechnologyRequired()) == false && cheat == false)
-            return false;
         if(tile.getTerrainFeature() == TerrainFeature.FOREST) return false;
         if(tile.getTerrainFeature() == TerrainFeature.JUNGLE) return false;
         if(tile.getTerrainFeature() == TerrainFeature.MARSH) return false;
 
+        if (!cheat && !tile.civCanBuildImprovement(civilization, improvement))
+            return false;
         if(improvement == Improvement.FARM) {
-            if(tile.getTerrainFeature() == TerrainFeature.ICE) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_FARM);
             civilization.addToMessageQueue("Started building FARM on tile " + tile.getIndex());
         }
         if(improvement == Improvement.MINE){
-            if(tile.getTerrainType() != TerrainType.HILL) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_MINE);
             civilization.addToMessageQueue("Started building MINE on tile " + tile.getIndex());
         }
         if(improvement == Improvement.TRADING_POST) {
-            if(civilization.getTechnologyReached(Technology.TRAPPING) == false && cheat == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_TRADINGPOST);
             civilization.addToMessageQueue("Started building TRADING_POST on tile " + tile.getIndex());
         }
         if(improvement == Improvement.LUMBER_MILL) {
-            if(civilization.getTechnologyReached(Technology.CONSTRUCTION) == false && cheat == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_LUMBERMILL);
             civilization.addToMessageQueue("Started building LUMBER_MILL on tile " + tile.getIndex());
         }
         if(improvement == Improvement.PASTURE) {
-            if(civilization.getTechnologyReached(Technology.ANIMAL_HUSBANDRY) == false && cheat == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_PASTURE);
             civilization.addToMessageQueue("Started building PASTURE on tile " + tile.getIndex());
         }
         if(improvement == Improvement.CAMP) {
-            if(civilization.getTechnologyReached(Technology.TRAPPING) == false && cheat == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_CAMP);
             civilization.addToMessageQueue("Started building CAMP on tile " + tile.getIndex());
         }
         if(improvement == Improvement.PLANTATION) {
-            if(civilization.getTechnologyReached(Technology.CALENDAR) == false && cheat == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_PLANTATION);
             civilization.addToMessageQueue("Started building PLANTATION on tile " + tile.getIndex());
         }
         if(improvement == Improvement.QUARRY) {
-            if(civilization.getTechnologyReached(Technology.ENGINEERING) == false && cheat == false) return false;
             unit.setUnitAction(UnitType.UnitAction.BUILD_QUARRY);
             civilization.addToMessageQueue("Started building QUARRY on tile " + tile.getIndex());
         }

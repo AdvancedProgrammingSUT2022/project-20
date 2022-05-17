@@ -319,6 +319,18 @@ public class Tile {
         return getImprovement() != null;
     }
 
+    public boolean civCanBuildImprovement(Civilization civ, Improvement impr) {
+        City ownerCity = getOwnerCity();
+        if (ownerCity == null)
+            return false;
+        Civilization ownerCiv = ownerCity.getCivilization();
+        if (ownerCiv != civ || !ownerCiv.getTechnologyReached(impr.getTechnologyRequired()))
+            return false;
+        if (!impr.getCanBeFoundOn().contains(getTerrainType()) && !impr.getCanBeFoundOn().contains(getTerrainFeature()))
+            return false;
+        return true;
+    }
+
     public void setBuilding(Building building) {
         this.building = building;
     }
@@ -445,7 +457,7 @@ public class Tile {
     }
 
     public boolean resourceIsImproved(Resource resource) {
-        return this.improvement == resource.getImprovementRequired();
+        return getImprovement() != null && !getImprovement().getIsDead() && getImprovement() == resource.getImprovementRequired();
     }
 
     public boolean hasRiverInBetween(Tile neighbor) {
