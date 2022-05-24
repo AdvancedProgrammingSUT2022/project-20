@@ -2,6 +2,7 @@ package ir.ap.model;
 
 public abstract interface Production {
 
+    // TODO production ids in purchase
     public static Production[] getAllProductions() {
         Production[] buildings = BuildingType.values();
         Production[] units = UnitType.values();

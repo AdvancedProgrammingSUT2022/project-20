@@ -260,6 +260,7 @@ public class City {
     }
 
     public int getCombatStrength() {
+        // TODO hills
         return getPopulation() * 3 + (getCombatUnit() != null ? getCombatUnit().getCombatStrength() / 3 : 0);
     }
 
