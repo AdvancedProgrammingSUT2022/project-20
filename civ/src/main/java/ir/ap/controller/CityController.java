@@ -28,6 +28,7 @@ public class CityController extends AbstractGameController {
 
     public void nextTurn(City city) {
         if (city == null) return;
+        city.setActionThisTurn(false);
         city.addToHp(1);
         city.addToFood(city.getExtraFood());
         city.addToPopulation(city.getPopulationGrowth());
@@ -112,6 +113,7 @@ public class CityController extends AbstractGameController {
     public boolean changeCityOwner(City city, Civilization newCiv) {
         removeCity(city);
         city.setCivilization(newCiv);
+        city.resetHp();
         city.getCivilization().addToMessageQueue("owner of city " + city.getName() + " has been changed to Civilization " + city.getCivilization().getName());
         return addCity(city);
     }
@@ -160,7 +162,7 @@ public class CityController extends AbstractGameController {
     }
 
     public boolean cityAttack(City city, Tile target, boolean cheat) {
-        if (city == null || (!cheat && city.didActionThisTurn())) return false;
+        if (city == null || (!cheat && !city.canAttack())) return false;
         Civilization civilization = city.getCivilization();
         Tile curTile = city.getTile();
         Unit enemyUnit = target.getCombatUnit();
@@ -190,7 +192,8 @@ public class CityController extends AbstractGameController {
             return false;
         if (city.getWorkingTiles().size() >= city.getPopulation())
             return false;
-        if (tile.getOwnerCity() != city || gameArea.getDistanceInTiles(city.getTile(), tile) > 2)
+        int dist = gameArea.getDistanceInTiles(city.getTile(), tile);
+        if (tile.getOwnerCity() != city || dist < 1 || dist > 2)
             return false;
         return city.addToWorkingTiles(tile);
     }
@@ -211,15 +214,15 @@ public class CityController extends AbstractGameController {
         if (city == null) return false;
         if (!cheat && !city.getCivilization().getTechnologyReached(production.getTechnologyRequired()))
             return false;
-        if (!city.setCurrentProduction(production)) {
+        if (!city.setCurrentProduction(production, !cheat)) {
             return false;
         }
         city.setProductionSpent(0);
+        Civilization civ = city.getCivilization();
+        civ.addToMessageQueue("production city " + city.getName() + " has been changed to " + production.getName());
         if( cheat == true ){
             cityConstructProduction(city);
         }
-        Civilization civ = city.getCivilization();
-        civ.addToMessageQueue("production city " + city.getName() + " has been changed to " + production.getName());
         return true;
     }
 
@@ -231,8 +234,7 @@ public class CityController extends AbstractGameController {
             return false;
         if (production instanceof UnitType) {
             boolean res = unitController.addUnit(city.getCivilization(), city.getTile(), (UnitType) production);
-            if (!res)
-            return false;
+            if (!res)return false;
         } else if (production instanceof BuildingType) {
             // TODO: PHASE2
         }

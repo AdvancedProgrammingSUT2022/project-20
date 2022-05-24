@@ -19,7 +19,8 @@ public class Civilization {
     private Unit selectedUnit;
 
     private Technology currentResearch;
-    private int scienceSpentForResearch;
+    private Technology latestResearch;
+    private int[] scienceSpentForResearch;
 
     private int gold;
     private int science;
@@ -58,7 +59,8 @@ public class Civilization {
         selectedUnit = null;
 
         currentResearch = null;
-        scienceSpentForResearch = 0;
+        latestResearch = null;
+        scienceSpentForResearch = new int[50];
 
         gold = 0;
         science = 0;
@@ -84,7 +86,8 @@ public class Civilization {
         selectedUnit = null;
 
         currentResearch = null;
-        scienceSpentForResearch = 0;
+        latestResearch = null;
+        scienceSpentForResearch = new int[50];
 
         gold = 0;
         science = 0;
@@ -115,6 +118,8 @@ public class Civilization {
     }
 
     public void addCity(City city) {
+        if (cities.size() == 0)
+            setCapital(city);
         cities.add(city);
     }
 
@@ -162,26 +167,37 @@ public class Civilization {
         return this.currentResearch;
     }
 
+    public Technology getLatestResearch() {
+        return this.latestResearch;
+    }
+
     public void setCurrentResearch(Technology currentResearch) {
         this.currentResearch = currentResearch;
+        latestResearch = currentResearch;
         this.addToMessageQueue("Civilization " + this.getName() + " started research about Technology " + currentResearch);
     }
 
     public int getScienceSpentForCurrentResearch() {
-        return this.scienceSpentForResearch;
+        if (getCurrentResearch() == null)
+            return 0;
+        return this.scienceSpentForResearch[getCurrentResearch().getId()];
     }
 
     public void setScienceSpentForCurrentResearch(int value) {
-        this.scienceSpentForResearch = value;
+        if (getCurrentResearch() == null)
+            return;
+        this.scienceSpentForResearch[getCurrentResearch().getId()] = value;
     }
 
     public void addToScienceSpentForCurrentResearch(int delta) {
-        this.scienceSpentForResearch += delta;
+        if (getCurrentResearch() == null)
+            return;
+        this.scienceSpentForResearch[getCurrentResearch().getId()] += delta;
     }
 
     public int getScienceLeftForResearchFinish() {
         if (currentResearch == null) return 0;
-        return Math.max(0, currentResearch.getCost() - scienceSpentForResearch);
+        return Math.max(0, currentResearch.getCost() - getScienceSpentForCurrentResearch());
     }
 
     public int getTurnsLeftForResearchFinish() {
@@ -231,6 +247,15 @@ public class Civilization {
     public boolean getTechnologyReached(Technology tech) {
         if (tech == null) return true;
         return this.technologyReached[tech.getId()];
+    }
+
+    public boolean technologyIsReachable(Technology tech) {
+        if (getCapital() == null)
+            return false;
+        for (Technology requiredTech : tech.getTechnologiesRequired())
+            if (!getTechnologyReached(requiredTech))
+                return false;
+        return true;
     }
 
     public void setTechnologyReached(Technology tech, boolean value) {
@@ -328,9 +353,8 @@ public class Civilization {
 
     public void finishResearch() {
         if (currentResearch == null) return;
-        // this.addToMessageQueue("Civilization " + this.getName() + " reached to research " + currentResearch);
         setTechnologyReached(currentResearch, true);
-        scienceSpentForResearch = 0;
+        setScienceSpentForCurrentResearch(0);
         science = 0;
         currentResearch = null;
     }

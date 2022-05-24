@@ -17,6 +17,7 @@ public class Unit {
     private Tile target;
     private int howManyTurnWeKeepAction;
     private boolean isSleep;
+    private boolean hasAttacked;
 
     public Unit(int id, UnitType unitType, Civilization civilization, Tile tile) {
         this.id = id;
@@ -28,6 +29,7 @@ public class Unit {
         this.tile = tile;
         this.target = null;
         this.isSleep = false;
+        this.hasAttacked = false;
     }
 
     public static int getMaxHp() {
@@ -80,6 +82,10 @@ public class Unit {
 
     public boolean canMove() {
         return mp > 0;
+    }
+
+    public boolean canAttack() {
+        return canMove() && !getHasAttacked();
     }
 
     public int getHp() {
@@ -161,7 +167,7 @@ public class Unit {
     }
 
     public int getVisitingRange() {
-        return DEFAULT_VISITING_RANGE;
+        return Math.max(DEFAULT_VISITING_RANGE, getRange());
     }
 
     public int getMovement() {
@@ -186,5 +192,13 @@ public class Unit {
 
     public boolean isMelee(){
         return !(getCombatType() == UnitType.CombatType.ARCHERY || getCombatType() == UnitType.CombatType.SIEGE);
+    }
+
+    public void setHasAttacked(boolean value) {
+        hasAttacked = value;
+    }
+
+    public boolean getHasAttacked() {
+        return hasAttacked;
     }
 }

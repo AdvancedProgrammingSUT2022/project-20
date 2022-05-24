@@ -199,20 +199,24 @@ public class City {
                 !(production == UnitType.SETTLER && (civilization.isUnhappy() || getPopulation() < 2));
     }
 
-    public boolean setCurrentProduction(Production production) {
+    public boolean setCurrentProduction(Production production, boolean checkReachable) {
         if (production == null) {
             this.currentProduction = null;
             return true;
         }
-        if (!canProduce(production)) {
+        if (checkReachable && !canProduce(production)) {
             if (production != null)
                 getCivilization().addToMessageQueue("Unable to set production " + production.getName() + " for city "
                     + getName() + " with population " + getPopulation());
             return false;
         }
         this.currentProduction = production;
-        getCivilization().addToMessageQueue("Production " + production.getName() + " set for " + getName());
+        // getCivilization().addToMessageQueue("Production " + production.getName() + " set for " + getName());
         return true;
+    }
+
+    public boolean setCurrentProduction(Production production) {
+        return setCurrentProduction(production, true);
     }
 
     public int getProductionSpent() {
@@ -241,8 +245,18 @@ public class City {
         return Math.max(0, getCurrentProduction().getCost() - getProductionSpent());
     }
 
+    public int getCostLeftForProductionConstruction(Production production) {
+        return production == null ? 0 : production.getCost();
+    }
+
     public int getTurnsLeftForProductionConstruction() {
         return (int) Math.ceil(1.0 * getCostLeftForProductionConstruction() / getProductionYield());
+    }
+
+    public int getTurnsLeftForProductionConstruction(Production production) {
+        if (production == getCurrentProduction())
+            return getTurnsLeftForProductionConstruction();
+        return (int) Math.ceil(1.0 * getCostLeftForProductionConstruction(production) / getProductionYield());
     }
 
     public int getCombatStrength() {
@@ -267,6 +281,10 @@ public class City {
 
     public boolean isDead() {
         return this.hp <= 0;
+    }
+
+    public boolean canAttack() {
+        return !didActionThisTurn() && !isDead();
     }
 
     public int getPopulation() {
