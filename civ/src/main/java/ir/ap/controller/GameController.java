@@ -1217,9 +1217,16 @@ public class GameController extends AbstractGameController implements JsonRespon
         if ( city == null )
             return messageToJsonObj("no city selected", false);        
         Production[] allProductions = Production.getAllProductions();
-        if ( prodId >= allProductions.length || prodId < 0 )
-            return messageToJsonObj("proId is invalid", false);
-        Production production = allProductions[ prodId ];
+        Production production = null;
+        for (Production availableProd : allProductions) {
+            if (availableProd.getId() == prodId) {
+                production = availableProd;
+                break;
+            }
+        }
+        // TODO: production bayad kharidari beshe na inke change current production!!
+        if (production == null)
+            return messageToJsonObj("invalid prodId", false);
         if ( cheat == true ){ 
             if ( cityController.cityChangeCurrentProduction(city, production, true) == false )
                 return messageToJsonObj("something is invalid", false);        
@@ -1227,7 +1234,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         else{
             if ( production.getCost() > civilization.getGold() )
                 return messageToJsonObj("not enough gold", false);
-            if ( cityController.cityChangeCurrentProduction(city, production, true) == false )
+            if ( cityController.cityChangeCurrentProduction(city, production, false) == false )
                 return messageToJsonObj("something is invalid", false);
             int last_gold = civilization.getGold();
             civilization.setGold(last_gold-production.getCost());        
