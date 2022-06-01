@@ -260,8 +260,7 @@ public class City {
     }
 
     public int getCombatStrength() {
-        // TODO hills
-        return getPopulation() * 3 + (getCombatUnit() != null ? getCombatUnit().getCombatStrength() / 3 : 0);
+        return getPopulation() * 3 + (getCombatUnit() != null ? getCombatUnit().getCombatStrength() / 3 : 0) + (getTile().getTerrainType() == TerrainType.HILL ? 3 : 0);
     }
 
     public int getHp() {

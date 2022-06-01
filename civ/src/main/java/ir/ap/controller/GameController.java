@@ -1224,21 +1224,16 @@ public class GameController extends AbstractGameController implements JsonRespon
                 break;
             }
         }
-        // TODO: production bayad kharidari beshe na inke change current production!!
         if (production == null)
             return messageToJsonObj("invalid prodId", false);
-        if ( cheat == true ){ 
-            if ( cityController.cityChangeCurrentProduction(city, production, true) == false )
-                return messageToJsonObj("something is invalid", false);        
-        }
-        else{
-            if ( production.getCost() > civilization.getGold() )
+        if (!cheat) {
+            if (production.getCost() > civilization.getGold())
                 return messageToJsonObj("not enough gold", false);
-            if ( cityController.cityChangeCurrentProduction(city, production, false) == false )
-                return messageToJsonObj("something is invalid", false);
-            int last_gold = civilization.getGold();
-            civilization.setGold(last_gold-production.getCost());        
         }
+        if (!cityController.cityConstructProduction(city, production, cheat))
+            return messageToJsonObj(Message.INVALID_REQUEST, false);
+        if (!cheat)
+            civilization.addToGold(-production.getCost());
         civilization.addToMessageQueue("civilization " + civilization.getName() + " bought production " + production.getName());
         return messageToJsonObj("production successfully bought", true);
     }

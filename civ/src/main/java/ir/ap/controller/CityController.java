@@ -226,11 +226,8 @@ public class CityController extends AbstractGameController {
         return true;
     }
 
-    public boolean cityConstructProduction(City city) {
-        if (city == null || city.getCurrentProduction() == null)
-            return false;
-        Production production = city.getCurrentProduction();
-        if (city.getCostLeftForProductionConstruction() > 0)
+    public boolean cityConstructProduction(City city, Production production, boolean cheat) {
+        if (city == null || (!cheat && !city.getCivilization().getTechnologyReached(production.getTechnologyRequired())))
             return false;
         if (production instanceof UnitType) {
             boolean res = unitController.addUnit(city.getCivilization(), city.getTile(), (UnitType) production);
@@ -238,9 +235,21 @@ public class CityController extends AbstractGameController {
         } else if (production instanceof BuildingType) {
             // TODO: PHASE2
         }
-        city.setProductionSpent(0);
-        city.setCurrentProduction(null);
         return true;
+    }
+
+    public boolean cityConstructProduction(City city) {
+        if (city == null || city.getCurrentProduction() == null)
+            return false;
+        Production production = city.getCurrentProduction();
+        if (city.getCostLeftForProductionConstruction() > 0)
+            return false;
+        boolean res = cityConstructProduction(city, production, false);
+        if (res) {
+            city.setProductionSpent(0);
+            city.setCurrentProduction(null);
+        }
+        return res;
     }
 
     public boolean cityDestroy(City city, Civilization civ) {
