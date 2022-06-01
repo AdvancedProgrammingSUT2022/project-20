@@ -1,10 +1,9 @@
 package ir.ap;
 
-import ir.ap.view.AbstractMenuView;
+import ir.ap.client.App;
 
 public class Main {
     public static void main(String[] args) {
-        AbstractMenuView.run();
-        AbstractMenuView.close();
+        App.main(args);
     }
 }
