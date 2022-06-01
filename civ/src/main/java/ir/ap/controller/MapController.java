@@ -7,14 +7,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 
-import ir.ap.model.City;
-import ir.ap.model.Civilization;
-import ir.ap.model.GameArea;
-import ir.ap.model.Improvement;
-import ir.ap.model.TerrainType;
-import ir.ap.model.Tile;
-import ir.ap.model.Unit;
-import ir.ap.model.UnitType;
+import ir.ap.model.*;
 import ir.ap.model.TerrainType.TerrainFeature;
 import ir.ap.model.Tile.TileKnowledge;
 

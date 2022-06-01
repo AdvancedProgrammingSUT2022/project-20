@@ -339,7 +339,7 @@ public class Civilization {
             happiness += (getAccessibleResourceCount(luxuryRsc) != 0 ? 4 : 0);
         }
         for (City city : cities) {
-            for (BuildingType building : city.getBuildingTypesInCity()) {
+            for (Building building : city.getBuildingsInCity()) {
                 happiness += building.getHappinessYield();
             }
         }

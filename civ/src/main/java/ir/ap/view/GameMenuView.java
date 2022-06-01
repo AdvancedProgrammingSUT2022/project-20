@@ -552,6 +552,13 @@ public class GameMenuView extends AbstractMenuView {
             outputJson.addProperty("City name", cityName);
             printResponse(outputJson);
         }
+        if (response.has("buildings")) {
+            JsonObject buildingsObj = response.deepCopy();
+            buildingsObj.remove("ok");
+            buildingsObj.addProperty("title", "CITY BUILDINGS");
+            buildingsObj.addProperty("City name", cityName);
+            printResponse(buildingsObj);
+        }
         String msg = getField(response, "msg", String.class);
         return responseAndGo(msg, Menu.GAME);
     }

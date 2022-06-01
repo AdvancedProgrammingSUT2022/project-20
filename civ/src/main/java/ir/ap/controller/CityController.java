@@ -1,6 +1,6 @@
 package ir.ap.controller;
 
-import ir.ap.model.BuildingType;
+import ir.ap.model.Building;
 import ir.ap.model.City;
 import ir.ap.model.Civilization;
 import ir.ap.model.GameArea;
@@ -31,7 +31,14 @@ public class CityController extends AbstractGameController {
         city.setActionThisTurn(false);
         city.addToHp(1);
         city.addToFood(city.getExtraFood());
+        int population = city.getPopulation();
         city.addToPopulation(city.getPopulationGrowth());
+        int nxtPop = city.getPopulation();
+        if (nxtPop > population) {
+            city.getCivilization().addToMessageQueue("City " + city.getName() + " has grown to " + nxtPop + " citizens");
+        } else if (nxtPop < population) {
+            city.getCivilization().addToMessageQueue("City " + city.getName() + " has population decreased to " + nxtPop + " citizens");
+        }
         if (city.getCurrentProduction() != null) {
             Production production = city.getCurrentProduction();
             city.addToProductionSpent(city.getProductionYield());
@@ -210,6 +217,17 @@ public class CityController extends AbstractGameController {
         return addTileToTerritoryOfCity(city, tile);
     }
 
+    public boolean cityAddBuilding(City city, Building building, boolean cheat) {
+        if (city == null || building == null || (!cheat && !city.getCivilization().getTechnologyReached(building.getTechnologyRequired())))
+            return false;
+        if (!cheat && building.getBuildingTypeRequired() != null &&
+                !city.hasBuilding(building.getBuildingTypeRequired()))
+            return false;
+        city.addBuilding(building);
+        city.getCivilization().addToMessageQueue("Building " + building.getName() + " constructed in city " + city.getName());
+        return true;
+    }
+
     public boolean cityChangeCurrentProduction(City city, Production production, boolean cheat) {
         if (city == null) return false;
         if (!cheat && !city.getCivilization().getTechnologyReached(production.getTechnologyRequired()))
@@ -221,7 +239,7 @@ public class CityController extends AbstractGameController {
         Civilization civ = city.getCivilization();
         civ.addToMessageQueue("production city " + city.getName() + " has been changed to " + production.getName());
         if( cheat == true ){
-            cityConstructProduction(city);
+            cityConstructProduction(city, cheat);
         }
         return true;
     }
@@ -232,24 +250,29 @@ public class CityController extends AbstractGameController {
         if (production instanceof UnitType) {
             boolean res = unitController.addUnit(city.getCivilization(), city.getTile(), (UnitType) production);
             if (!res)return false;
-        } else if (production instanceof BuildingType) {
-            // TODO: PHASE2
+        } else if (production instanceof Building) {
+            boolean res = cityAddBuilding(city, (Building) production, cheat);
+            if (!res)return false;
         }
         return true;
     }
 
-    public boolean cityConstructProduction(City city) {
+    public boolean cityConstructProduction(City city, boolean cheat) {
         if (city == null || city.getCurrentProduction() == null)
             return false;
         Production production = city.getCurrentProduction();
         if (city.getCostLeftForProductionConstruction() > 0)
             return false;
-        boolean res = cityConstructProduction(city, production, false);
+        boolean res = cityConstructProduction(city, production, cheat);
         if (res) {
             city.setProductionSpent(0);
             city.setCurrentProduction(null);
         }
         return res;
+    }
+
+    public boolean cityConstructProduction(City city) {
+        return cityConstructProduction(city, false);
     }
 
     public boolean cityDestroy(City city, Civilization civ) {

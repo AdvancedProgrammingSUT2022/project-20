@@ -1,8 +1,6 @@
 package ir.ap.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 
 public class City {
     private static ArrayList<City> cities = new ArrayList<>();
@@ -22,6 +20,7 @@ public class City {
     private int territoryRange;
     private ArrayList<Tile> territory;
     private ArrayList<Tile> workingTiles;
+    private ArrayList<Building> buildings;
 
     private Production currentProduction;
     private int productionSpent;
@@ -42,6 +41,7 @@ public class City {
         territoryRange = DEFAULT_TERRITORY_RANGE;
         territory = new ArrayList<>();
         workingTiles = new ArrayList<>();
+        buildings = new ArrayList<>();
 
         currentProduction = null;
         productionSpent = 0;
@@ -63,6 +63,7 @@ public class City {
         territoryRange = DEFAULT_TERRITORY_RANGE;
         territory = new ArrayList<>();
         workingTiles = new ArrayList<>();
+        buildings = new ArrayList<>();
 
         currentProduction = null;
         productionSpent = 0;
@@ -194,9 +195,10 @@ public class City {
     }
 
     public boolean canProduce(Production production) {
-        return production != null && 
+        return production != null &&
             getCivilization().getTechnologyReached(production.getTechnologyRequired()) &&
-                !(production == UnitType.SETTLER && (civilization.isUnhappy() || getPopulation() < 2));
+                !(production == UnitType.SETTLER && (civilization.isUnhappy() || getPopulation() < 2)) &&
+                (!(production instanceof Building) || hasBuilding(((Building) production).getBuildingTypeRequired()));
     }
 
     public boolean setCurrentProduction(Production production, boolean checkReachable) {
@@ -260,7 +262,13 @@ public class City {
     }
 
     public int getCombatStrength() {
-        return getPopulation() * 3 + (getCombatUnit() != null ? getCombatUnit().getCombatStrength() / 3 : 0) + (getTile().getTerrainType() == TerrainType.HILL ? 3 : 0);
+        ArrayList<Building> buildingTypes = getBuildingsInCity();
+        return getPopulation() * 3 +
+                (getCombatUnit() != null ? getCombatUnit().getCombatStrength() / 3 : 0) +
+                (getTile().getTerrainType() == TerrainType.HILL ? 3 : 0) +
+                (buildingTypes.contains(Building.WALLS) ? 5 : 0) +
+                (buildingTypes.contains(Building.CASTLE) ? 7 : 0) +
+                (buildingTypes.contains(Building.MILITARY_BASE) ? 12 : 0);
     }
 
     public int getHp() {
@@ -316,7 +324,8 @@ public class City {
     }
 
     public int getTurnsLeftForNextCitizen() {
-        return (int) Math.ceil(1.0 / getPopulationGrowth());
+        int res = (int) Math.ceil(1.0 / getPopulationGrowth());
+        return Math.min(GameArea.MAX_TURN, res);
     }
 
     public int getRealPopulation() {
@@ -328,6 +337,9 @@ public class City {
         for (Tile tile : territory) {
             if (getWorkingTiles().contains(tile))
                 foodYield += tile.getFoodYield();
+        }
+        for (Building building : getBuildingsInCity()) {
+            foodYield += building.getFoodYield();
         }
         if (civilization.isUnhappy())
             foodYield /= 3;
@@ -361,6 +373,9 @@ public class City {
         for (Tile tile : territory) {
             goldYield += tile.getGoldYield();
         }
+        for (Building building : getBuildingsInCity()) {
+            goldYield += building.getGoldYield() - building.getMaintenanceCost();
+        }
         return goldYield;
     }
 
@@ -369,11 +384,23 @@ public class City {
         for (Tile tile : territory) {
             productionYield += tile.getProductionYield();
         }
+        for (Building building : getBuildingsInCity()) {
+            productionYield += building.getProductionYield();
+        }
         return productionYield;
     }
 
     public int getScienceYield() {
-        return getPopulation();
+        int scienceYield = getPopulation();
+        for (Building buildingType : getBuildingsInCity()) {
+            if (buildingType == Building.LIBRARY) {
+                scienceYield += getPopulation() / 2;
+            }
+            if (buildingType == Building.UNIVERSITY) {
+                scienceYield += getPopulation() / 2;
+            }
+        }
+        return scienceYield;
     }
 
     public int getResourceCount(Resource rsc) {
@@ -408,15 +435,19 @@ public class City {
         return improvedRscs;
     }
 
-    public ArrayList<BuildingType> getBuildingTypesInCity() {
-        HashSet<BuildingType> buildingsInTerritory = new HashSet<>();
-        for (Tile tile : territory) {
-            Building building = tile.getBuilding();
-            if (building != null) {
-                buildingsInTerritory.add(tile.getBuilding().getType());
-            }
-        }
-        return new ArrayList<>(Arrays.asList(buildingsInTerritory.toArray(new BuildingType[0])));
+    public ArrayList<Building> getBuildingsInCity() {
+        return buildings;
+    }
+
+    public boolean hasBuilding(Building building) {
+        if (building == null)
+            return true;
+        return buildings.contains(building);
+    }
+
+    public void addBuilding(Building building) {
+        if (!hasBuilding(building))
+            buildings.add(building);
     }
 
     @Override

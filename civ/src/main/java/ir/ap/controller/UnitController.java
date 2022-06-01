@@ -260,6 +260,10 @@ public class UnitController extends AbstractGameController {
                     if (enemyUnit.getHp() <= 0) {
                         removeUnit(enemyUnit);
                         unitMoveTo(civilization, target, cheat);
+                        Unit nonCombatTarget = unit.getTile().getNonCombatUnit();
+                        if (nonCombatTarget != null && !nonCombatTarget.getCivilization().equals(civilization)) {
+                            changeUnitOwner(nonCombatTarget, civilization);
+                        }
                     }
                     if (unit.getHp() <= 0) {
                         removeUnit(unit);
@@ -501,10 +505,8 @@ public class UnitController extends AbstractGameController {
         Unit unit = civilization.getSelectedUnit();
         if(unit == null) return false;
         Tile tile = unit.getTile();
-        if (tile == null || (!tile.hasCity() && !tile.hasBuilding() && !tile.hasImprovement())) return false;
+        if (tile == null || (!tile.hasCity() && !tile.hasImprovement())) return false;
         unit.setHowManyTurnWeKeepAction((cheat ? 1000 : 0));
-
-        // TODO: repair building PHASE2
 
         unit.setUnitAction(UnitType.UnitAction.REPAIR);
         civilization.addToMessageQueue("Started repairing on tile " + tile.getIndex());

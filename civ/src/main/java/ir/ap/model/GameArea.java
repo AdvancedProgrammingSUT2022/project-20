@@ -5,9 +5,9 @@ import java.util.HashMap;
 import ir.ap.model.Tile.TileKnowledge;
 
 public class GameArea {
-    private static final int MAX_TURN = 100;
-    private static final int MAX_USERS = 10;
-    private static final int MAX_LAND_TILES = 1000;
+    public static final int MAX_TURN = 100;
+    public static final int MAX_USERS = 10;
+    public static final int MAX_LAND_TILES = 1000;
 
     private Map map;
     private HashMap<User,Civilization> user2civ;
