@@ -23,7 +23,6 @@ public class App extends Application {
 
     private static Parent loadFXML(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml));
-        System.out.println(App.class.getResource("fxml/login-view.fxml").toExternalForm());
         return fxmlLoader.load();
     }
 

@@ -12,15 +12,5 @@ public class LoginView extends View {
     AnchorPane rootPane;
 
     public void initialize() {
-        //setBackground();
-    }
-
-    private void setBackground() {
-        Image bgImage = new Image(LoginView.class.getResource("png/ARX/Background_A.png").toExternalForm());
-        System.out.println(bgImage);
-        Background background = new Background(
-                new BackgroundImage(bgImage, null, null, null, null)
-        );
-        rootPane.setBackground(background);
     }
 }
