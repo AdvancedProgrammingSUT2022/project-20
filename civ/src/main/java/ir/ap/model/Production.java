@@ -3,7 +3,7 @@ package ir.ap.model;
 public abstract interface Production {
 
     public static Production[] getAllProductions() {
-        Production[] buildings = BuildingType.values();
+        Production[] buildings = Building.values();
         Production[] units = UnitType.values();
         int blen = buildings.length, ulen = units.length;
         Production[] productions = new Production[blen + ulen];

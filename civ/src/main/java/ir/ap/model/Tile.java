@@ -46,7 +46,6 @@ public class Tile {
     private City ownerCity;
     private HashSet<Unit> visitingUnits;
     private Improvement improvement;
-    private Building building;
 
     private Unit combatUnit;
     private Unit nonCombatUnit;
@@ -72,7 +71,6 @@ public class Tile {
         ownerCity = null;
         visitingUnits = new HashSet<>();
         improvement = null;
-        building = null;
 
         combatUnit = null;
         nonCombatUnit = null;
@@ -331,18 +329,6 @@ public class Tile {
         return true;
     }
 
-    public void setBuilding(Building building) {
-        this.building = building;
-    }
-
-    public Building getBuilding() {
-        return building;
-    }
-
-    public boolean hasBuilding() {
-        return getBuilding() != null;
-    }
-
     public void setCombatUnit(Unit combatUnit) {
         this.combatUnit = combatUnit;
     }
@@ -386,8 +372,7 @@ public class Tile {
     public int getFoodYield() {
         int foodYield = (terrainType != null ? terrainType.getFoodYield() : 0) +
                 (terrainFeature != null ? terrainFeature.getFoodYield() : 0) +
-                (improvement != null ? improvement.getFoodYield() : 0) +
-                (building != null ? building.getFoodYield() : 0);
+                (improvement != null ? improvement.getFoodYield() : 0);
         for (int dirId = 0; dirId < 6; dirId++) {
             Direction dir = Direction.getDirectionById(dirId);
             if (getHasRiverOnSide(dir)) {
@@ -403,8 +388,7 @@ public class Tile {
     public int getGoldYield() {
         int goldYield = (terrainType != null ? terrainType.getGoldYield() : 0) +
                 (terrainFeature != null ? terrainFeature.getGoldYield() : 0) +
-                (improvement != null ? improvement.getGoldYield() : 0) +
-                (building != null ? building.getGoldYield() : 0);
+                (improvement != null ? improvement.getGoldYield() : 0);
         for (int dirId = 0; dirId < 6; dirId++) {
             Direction dir = Direction.getDirectionById(dirId);
             if (getHasRiverOnSide(dir)) {
@@ -423,8 +407,7 @@ public class Tile {
     public int getProductionYield() {
         int productionYield = (terrainType != null ? terrainType.getProductionYield() : 0) +
                 (terrainFeature != null ? terrainFeature.getProductionYield() : 0) +
-                (improvement != null ? improvement.getProductionYield() : 0) +
-                (building != null ? building.getProductionYield() : 0);
+                (improvement != null ? improvement.getProductionYield() : 0);
         for (int dirId = 0; dirId < 6; dirId++) {
             Direction dir = Direction.getDirectionById(dirId);
             if (getHasRiverOnSide(dir)) {

@@ -13,8 +13,8 @@ public class AbstractControllerTest {
     protected static final UserController USER_CONTROLLER = new UserController(true);
     protected static final GameController GAME_CONTROLLER = new GameController(true);
 
-    protected static final User player1 = new User("user1", "nick1", "pass1");
-    protected static final User player2 = new User("user2", "nick2", "pass2");
+    protected static final User player1 = new User("user11111", "nick11111", "pass1");
+    protected static final User player2 = new User("user22222", "nick22222", "pass2");
     protected static Civilization civ1;
     protected static Civilization civ2;
     protected static Unit civ1CombatUnit, civ1NonCombatUnit;

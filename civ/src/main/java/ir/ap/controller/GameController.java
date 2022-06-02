@@ -64,7 +64,7 @@ public class GameController extends AbstractGameController implements JsonRespon
     }
 
     public void initAll() {
-        BuildingType.initAll();
+        Building.initAll();
         Improvement.initAll();
         Resource.initAll();
         Technology.initAll();
@@ -169,6 +169,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             cityObj.addProperty("scienceYield", city.getScienceYield());
             cityObj.addProperty("goldYield", city.getGoldYield());
             cityObj.addProperty("productionYield", city.getProductionYield());
+            cityObj.add("buildings", GSON.fromJson(GSON.toJson(city.getBuildingsInCity()), JsonArray.class));
             if (city.getCurrentProduction() != null)
                 cityObj.add("currentProduction", serializeProduction(city.getCurrentProduction(), city));
             cityObj.addProperty("turnsNeededToReachProduction", city.getTurnsLeftForProductionConstruction());
@@ -408,7 +409,7 @@ public class GameController extends AbstractGameController implements JsonRespon
                 jsonObject2.addProperty("name" , obj.toString());
                 ((JsonArray) unitTypeObject.get("unitTypes")).add(jsonObject2);
             }
-            else if( obj instanceof BuildingType ){
+            else if( obj instanceof Building){
                 jsonObject2.addProperty("name" , obj.toString());
                 ((JsonArray) buildingTypeObject.get("buildingTypes")).add(jsonObject2);
             }
@@ -1116,7 +1117,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         jsonObject.addProperty("goldYield", city.getGoldYield());
         jsonObject.addProperty("scienceYield", city.getScienceYield());
         int constantCityTurn = City.TURN_NEEDED_TO_EXTEND_TILES;
-        jsonObject.addProperty("turnsNeededToExtendCityTerritory", (constantCityTurn-(gameArea.getTurn()%constantCityTurn))%constantCityTurn );
+        jsonObject.addProperty("turnsNeededToExtendCityTerritory", (constantCityTurn-(gameArea.getTurn()%constantCityTurn))%constantCityTurn +1);
         jsonObject.addProperty("turnsNeededToExtendCityPopulation", city.getTurnsLeftForNextCitizen());
         JsonObject response = new JsonObject();
         response.add("output", jsonObject);
@@ -1144,9 +1145,10 @@ public class GameController extends AbstractGameController implements JsonRespon
             return messageToJsonObj("invalid civUsername", false);
         City city = civilization.getSelectedCity();
         if ( city == null )
-            return messageToJsonObj("no city selected", false);        
-        // TODO PHASE2
-        return JSON_FALSE;
+            return messageToJsonObj("no city selected", false);
+        JsonObject response = new JsonObject();
+        response.add("buildings", GSON.fromJson(GSON.toJson(city.getBuildingsInCity()), JsonArray.class));
+        return setOk(response, true);
     } 
  
     public JsonObject cityPurchaseTile(String username, int tileId, boolean cheat) { 
@@ -1217,21 +1219,23 @@ public class GameController extends AbstractGameController implements JsonRespon
         if ( city == null )
             return messageToJsonObj("no city selected", false);        
         Production[] allProductions = Production.getAllProductions();
-        if ( prodId >= allProductions.length || prodId < 0 )
-            return messageToJsonObj("proId is invalid", false);
-        Production production = allProductions[ prodId ];
-        if ( cheat == true ){ 
-            if ( cityController.cityChangeCurrentProduction(city, production, true) == false )
-                return messageToJsonObj("something is invalid", false);        
+        Production production = null;
+        for (Production availableProd : allProductions) {
+            if (availableProd.getId() == prodId) {
+                production = availableProd;
+                break;
+            }
         }
-        else{
-            if ( production.getCost() > civilization.getGold() )
+        if (production == null)
+            return messageToJsonObj("invalid prodId", false);
+        if (!cheat) {
+            if (production.getCost() > civilization.getGold())
                 return messageToJsonObj("not enough gold", false);
-            if ( cityController.cityChangeCurrentProduction(city, production, true) == false )
-                return messageToJsonObj("something is invalid", false);
-            int last_gold = civilization.getGold();
-            civilization.setGold(last_gold-production.getCost());        
         }
+        if (!cityController.cityConstructProduction(city, production, cheat))
+            return messageToJsonObj(Message.INVALID_REQUEST, false);
+        if (!cheat)
+            civilization.addToGold(-production.getCost());
         civilization.addToMessageQueue("civilization " + civilization.getName() + " bought production " + production.getName());
         return messageToJsonObj("production successfully bought", true);
     }
@@ -1247,15 +1251,14 @@ public class GameController extends AbstractGameController implements JsonRespon
         JsonObject productionsJson = new JsonObject();
         productionsJson.add("buildings", new JsonArray());
         productionsJson.add("units", new JsonArray());
-        // JsonArray buildingsJsonArray = productionsJson.get("buildings").getAsJsonArray();
+        JsonArray buildingsJsonArray = productionsJson.get("buildings").getAsJsonArray();
         JsonArray unitsJsonArray = productionsJson.get("units").getAsJsonArray();
         jsonObject.add("productions", productionsJson);
         for (Production production : Production.getAllProductions()){
             if (!cheat && !city.canProduce(production))
                 continue;
-            if (production instanceof BuildingType) {
-                // TODO: PHASE2 
-                // buildingsJsonArray.add(serializeProduction(production)); 
+            if (production instanceof Building) {
+                buildingsJsonArray.add(serializeProduction(production));
             } else { 
                 unitsJsonArray.add(serializeProduction(production, city)); 
             } 
