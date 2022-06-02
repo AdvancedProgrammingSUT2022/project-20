@@ -12,8 +12,8 @@ import java.io.IOException;
 
 public class App extends Application {
 
-    public static final double SCREEN_WIDTH = 1280;
-    public static final double SCREEN_HEIGHT = 720;
+    public static final double SCREEN_WIDTH = 1024;
+    public static final double SCREEN_HEIGHT = 576;
 
     private static Scene scene;
 
@@ -23,6 +23,7 @@ public class App extends Application {
 
     private static Parent loadFXML(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml));
+        System.out.println(App.class.getResource("fxml/login-view.fxml").toExternalForm());
         return fxmlLoader.load();
     }
 
