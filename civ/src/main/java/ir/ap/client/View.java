@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import ir.ap.controller.GameController;
 import ir.ap.controller.UserController;
+import javafx.application.Platform;
 
 public abstract class View {
     protected static final UserController USER_CONTROLLER = new UserController(true);
@@ -41,5 +42,33 @@ public abstract class View {
 
     protected static boolean isLogin() {
         return currentUsername != null;
+    }
+
+    public void exit() {
+        App.exit();
+    }
+
+    public void logout() {
+
+    }
+
+    public void enterSettings() {
+
+    }
+
+    public void enterProfile() {
+        try {
+            App.setRoot("fxml/profile-view.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void enterMain() {
+        try {
+            App.setRoot("fxml/main-view.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

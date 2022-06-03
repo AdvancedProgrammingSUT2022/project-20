@@ -1,0 +1,8 @@
+.root {
+    -fx-background-image: url(../png/ARX/Background_A.png);
+    -fx-background-size: 1024 576;
+}
+
+.label {
+    -fx-text-fill: #ffffff;
+}

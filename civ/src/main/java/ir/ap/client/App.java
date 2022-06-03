@@ -44,7 +44,7 @@ public class App extends Application {
         scene = new Scene(loadFXML("fxml/login-view.fxml"), SCREEN_WIDTH, SCREEN_HEIGHT);
         stage.setScene(scene);
         stage.setResizable(false);
-        stage.setTitle("CIV");
+        stage.setTitle("Civ");
         stage.show();
     }
 }
