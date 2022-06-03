@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="576.0" prefWidth="1024.0" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ir.ap.client.ProfileView">
+   <top>
+      <HBox prefHeight="54.0" prefWidth="1024.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <children>
+            <HBox prefHeight="21.0" prefWidth="598.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#enterMain" text="Back" />
+               </children>
+               <padding>
+                  <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+               </padding>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" prefHeight="88.0" prefWidth="1025.0" spacing="8.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#enterSettings" text="Settings" />
+                  <Separator orientation="VERTICAL" prefHeight="24.0" prefWidth="0.0" />
+                  <Button mnemonicParsing="false" onAction="#logout" text="Log out" />
+                  <Button mnemonicParsing="false" onAction="#exit" text="Exit" />
+               </children>
+               <padding>
+                  <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+               </padding>
+            </HBox>
+         </children>
+      </HBox>
+   </top>
+   <bottom>
+      <HBox alignment="CENTER_RIGHT" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="usernameLabel" alignment="CENTER" prefWidth="150.0" style="-fx-background-color: #d6dbdf; -fx-background-radius: 5; -fx-border-color: gray; -fx-border-radius: 5;" text="Unknown" textFill="#363535">
+               <font>
+                  <Font size="16.0" />
+               </font>
+               <padding>
+                  <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+               </padding>
+            </Label>
+         </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <padding>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </padding>
+      </HBox>
+   </bottom>
+   <center>
+      <GridPane maxHeight="400.0" maxWidth="600.0" prefHeight="300.0" BorderPane.alignment="CENTER">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="291.0" minWidth="10.0" prefWidth="132.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="507.0" minWidth="10.0" prefWidth="268.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="115.0" minHeight="10.0" prefHeight="82.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="118.0" minHeight="10.0" prefHeight="80.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="162.0" minHeight="10.0" prefHeight="162.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <children>
+            <VBox alignment="CENTER_RIGHT">
+               <GridPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </GridPane.margin>
+               <children>
+                  <Label alignment="CENTER_RIGHT" prefHeight="16.0" text="Avatar" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER_RIGHT" GridPane.rowIndex="1">
+               <children>
+                  <Label alignment="CENTER_RIGHT" prefHeight="18.0" text="Username" textFill="WHITE">
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label alignment="CENTER_RIGHT" prefHeight="16.0" text="Password" textFill="WHITE">
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <ImageView fx:id="avatar" fitHeight="92.0" fitWidth="248.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
+               <GridPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </GridPane.margin>
+            </ImageView>
+            <VBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <children>
+                  <TextField fx:id="usernameField" maxWidth="300.0" />
+                  <PasswordField fx:id="passwordField" maxWidth="300.0" />
+               </children>
+               <GridPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </GridPane.margin>
+            </VBox>
+            <VBox alignment="TOP_CENTER" spacing="20.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </GridPane.margin>
+               <children>
+                  <HBox spacing="8.0">
+                     <children>
+                        <Button defaultButton="true" minWidth="-Infinity" mnemonicParsing="false" prefWidth="80.0" text="Save">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                        <Button minWidth="-Infinity" mnemonicParsing="false" prefWidth="80.0" style="-fx-background-color: #c0392b; -fx-background-radius: 4;" text="Delete" textFill="#f5f0f0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                        <VBox alignment="TOP_RIGHT" prefHeight="28.0" prefWidth="125.0">
+                           <children>
+                              <Label onMouseClicked="#resetForm" prefHeight="28.0" text="Reset" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Label>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <Label fx:id="message" maxHeight="150.0" prefHeight="79.0" wrapText="true">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+         </children>
+      </GridPane>
+   </center>
+</BorderPane>

@@ -59,7 +59,11 @@ public abstract class View {
     }
 
     public void enterProfile() {
-
+        try {
+            App.setRoot("fxml/profile-view.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void enterMain() {

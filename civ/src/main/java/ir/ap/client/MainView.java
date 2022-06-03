@@ -9,7 +9,7 @@ import java.io.IOException;
 public class MainView extends View {
 
     @FXML
-    Label usernameLabel;
+    private Label usernameLabel;
 
     public void initialize() {
         if (currentUsername != null) {

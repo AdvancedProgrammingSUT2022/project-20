@@ -41,10 +41,10 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        scene = new Scene(loadFXML("fxml/main-view.fxml"), SCREEN_WIDTH, SCREEN_HEIGHT);
+        scene = new Scene(loadFXML("fxml/profile-view.fxml"), SCREEN_WIDTH, SCREEN_HEIGHT);
         stage.setScene(scene);
         stage.setResizable(false);
-        stage.setTitle("CIV");
+        stage.setTitle("Civ");
         stage.show();
     }
 }
