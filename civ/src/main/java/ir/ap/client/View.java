@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import ir.ap.controller.GameController;
 import ir.ap.controller.UserController;
+import javafx.application.Platform;
 
 import java.io.IOException;
 
@@ -43,5 +44,29 @@ public abstract class View {
 
     protected static boolean isLogin() {
         return currentUsername != null;
+    }
+
+    public void exit() {
+        App.exit();
+    }
+
+    public void logout() {
+
+    }
+
+    public void enterSettings() {
+
+    }
+
+    public void enterProfile() {
+
+    }
+
+    public void enterMain() {
+        try {
+            App.setRoot("fxml/main-view.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
