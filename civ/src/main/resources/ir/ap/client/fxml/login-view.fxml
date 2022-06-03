@@ -11,9 +11,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="576.0" prefWidth="1024.0" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ir.ap.client.LoginView">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="576.0" prefWidth="1024.0" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ir.ap.client.LoginView">
    <center>
-      <VBox alignment="CENTER_LEFT" maxWidth="500.0" prefHeight="200.0" prefWidth="100.0" spacing="5.0" BorderPane.alignment="CENTER">
+      <VBox alignment="CENTER_LEFT" maxWidth="659.0" prefHeight="494.0" prefWidth="570.0" spacing="5.0" BorderPane.alignment="CENTER">
          <children>
             <Label text="Username">
                <font>
@@ -25,14 +25,25 @@
                   <Insets />
                </VBox.margin>
             </TextField>
-            <Label text="Password" textFill="WHITE">
+            <Label prefHeight="17.0" prefWidth="83.0" text="Nickname">
                <font>
                   <Font name="System Bold" size="16.0" />
                </font>
             </Label>
-            <PasswordField fx:id="password" />
             <HBox alignment="CENTER_LEFT" spacing="8.0">
+               <VBox.margin>
+                  <Insets top="8.0" />
+               </VBox.margin>
+            </HBox>
+            <TextField fx:id="nickname" />
+            <VBox alignment="CENTER_LEFT" prefWidth="300.0">
                <children>
+                  <Label text="Password" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Label>
+                  <PasswordField fx:id="password" />
                   <Button defaultButton="true" minWidth="-Infinity" mnemonicParsing="false" onAction="#login" prefWidth="80.0" text="Login">
                      <font>
                         <Font size="14.0" />
@@ -43,25 +54,14 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <VBox alignment="CENTER_RIGHT" prefHeight="28.0" prefWidth="125.0">
-                     <children>
-                        <Label prefHeight="28.0" text="Enter as guest" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </Label>
-                     </children>
-                  </VBox>
-               </children>
-               <VBox.margin>
-                  <Insets top="8.0" />
-               </VBox.margin>
-            </HBox>
-            <VBox alignment="CENTER" prefWidth="300.0">
-               <children>
+                  <Label prefHeight="28.0" text="Enter as guest" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Label>
                   <Label fx:id="message" alignment="CENTER" textAlignment="CENTER" wrapText="true">
                      <font>
                         <Font name="System Bold" size="16.0" />
@@ -84,6 +84,11 @@
    <top>
       <HBox alignment="CENTER_RIGHT" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
+            <Label fx:id="error" alignment="CENTER" contentDisplay="CENTER" prefHeight="75.0" prefWidth="958.0" textFill="RED">
+               <font>
+                  <Font name="Bold Italic" size="20.0" />
+               </font>
+            </Label>
             <Button mnemonicParsing="false" onAction="#exit" text="Exit" />
          </children>
          <BorderPane.margin>
