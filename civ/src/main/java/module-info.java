@@ -7,5 +7,7 @@ module civ {
 
     opens ir.ap.model to com.google.gson;
     opens ir.ap.client to javafx.fxml;
+    opens ir.ap.client.components.menu to javafx.fxml;
     exports ir.ap.client;
+    opens ir.ap.client.components to javafx.fxml;
 }
