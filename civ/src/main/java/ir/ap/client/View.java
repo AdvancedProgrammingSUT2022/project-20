@@ -51,7 +51,16 @@ public abstract class View {
     }
 
     public void logout() {
+        currentUsername = null;
+        enterLogin();
+    }
 
+    private void enterLogin() {
+        try {
+            App.setRoot("fxml/login-view.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void enterSettings() {

@@ -4,43 +4,77 @@ import com.google.gson.JsonObject;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 
 public class LoginView extends View {
 
     @FXML
-    TextField username;
+    private TextField loginUsername;
     @FXML
-    TextField password;
+    private TextField loginPassword;
     @FXML
-    TextField nickname;
+    private TextField signupUsername;
     @FXML
-    Label error;
+    private TextField signupNickname;
+    @FXML
+    private TextField signupPassword;
+
+    @FXML
+    private Label signupMsgLabel;
+    @FXML
+    private Label loginMsgLabel;
+
     public void login() {
-        error.setText("");
-        String Username = username.getText();
-        String Password = password.getText();
-        if(Username.equals("")) {error.setText("username field is empty"); return;}
-        if(Password.equals("")) {error.setText("password field is empty"); return;}
-        JsonObject respone = USER_CONTROLLER.login(Username,Password);
-
-        String[] args = respone.toString().split("\"");
-        String message = args[3];
-
-        if(message != null) error.setText(message);
+        String username = loginUsername.getText();
+        String password = loginPassword.getText();
+        if(username.equals("")) {
+            error(loginMsgLabel, "username field is empty");
+            return;
+        }
+        if(password.equals("")) {
+            error(loginMsgLabel, "password field is empty");
+            return;
+        }
+        JsonObject response = USER_CONTROLLER.login(username,password);
+        String msg = getField(response, "msg", String.class);
+        if(msg != null) {
+            if (responseOk(response)) {
+                success(loginMsgLabel, msg);
+                enterMain();
+            } else
+                error(loginMsgLabel, msg);
+        }
     }
 
     public void signup() {
-        error.setText("");
-        String Username = username.getText();
-        String Password = password.getText();
-        String Nickname = nickname.getText();
-        if(Username.equals("")) error.setText("username field is empty");
-        if(Password.equals("")) error.setText("password field is empty");
-        JsonObject respone = USER_CONTROLLER.register(Username,Nickname,Password);
+        String username = signupUsername.getText();
+        String password = signupPassword.getText();
+        String nickname = signupNickname.getText();
+        if(username.equals("")) {
+            error(signupMsgLabel, "username field is empty");
+            return;
+        }
+        if(password.equals("")) {
+            error(signupMsgLabel, "password field is empty");
+            return;
+        }
+        JsonObject response = USER_CONTROLLER.register(username,nickname,password);
+        String msg = getField(response, "msg", String.class);
+        if(msg != null) {
+            if (responseOk(response))
+                success(signupMsgLabel, msg);
+            else
+                error(signupMsgLabel, msg);
+        }
+    }
 
-        String[] args = respone.toString().split("\"");
-        String message = args[3];
+    public void error(Label label, String msg) {
+        label.setText(msg);
+        label.setTextFill(Color.RED);
+    }
 
-        if(message != null) error.setText(message);
+    public void success(Label label, String msg) {
+        label.setText(msg);
+        label.setTextFill(Color.GREEN);
     }
 }
