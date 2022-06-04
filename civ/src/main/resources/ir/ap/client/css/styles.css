@@ -3,6 +3,6 @@
     -fx-background-size: 1024 576;
 }
 
-.label {
-    -fx-text-fill: #ffffff;
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-opacity: 0;
 }
