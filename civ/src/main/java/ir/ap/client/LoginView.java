@@ -40,6 +40,7 @@ public class LoginView extends View {
         if(msg != null) {
             if (responseOk(response)) {
                 success(loginMsgLabel, msg);
+                currentUsername = username;
                 enterMain();
             } else
                 error(loginMsgLabel, msg);

@@ -164,4 +164,14 @@ public class UserController implements JsonResponsor, AutoCloseable {
         user.setPassword(newPassword);
         return messageToJsonObj(Message.PASSWORD_CHANGED, true);
     }
+
+    public JsonObject inviteUser(String username, String toInvite) {
+        User user = User.getUser(username);
+        if (user == null || !user.isLogin())
+            return messageToJsonObj(Message.USER_NOT_LOGGED_IN, false);
+        User toInviteUser = User.getUser(toInvite);
+        if (toInviteUser == null)
+            return messageToJsonObj(Message.USER_NOT_LOGGED_IN, false);
+        return messageToJsonObj("Invitation successful", true);
+    }
 }
