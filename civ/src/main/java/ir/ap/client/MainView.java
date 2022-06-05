@@ -16,8 +16,12 @@ public class MainView extends View {
         }
     }
 
-    public void newGame() {
-
+    public void enterGame() {
+        try {
+            App.setRoot("fxml/launch-game-view.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void enterScoreboard() {

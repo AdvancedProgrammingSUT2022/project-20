@@ -6,3 +6,7 @@
 .tab-pane .tab-header-area .tab-header-background {
     -fx-opacity: 0;
 }
+
+#launcher-root {
+    -fx-background-image: url(../png/Backgrounds/18.png)
+}
