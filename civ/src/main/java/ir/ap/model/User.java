@@ -8,6 +8,9 @@ public class User {
     private String nickname ; 
     private String password ;
     private int score ;
+    private int LastWin_s;
+    private int LastWin_m;
+    private int LastWin_h;
     private boolean isLogin ;
     private int id ;
     
@@ -62,7 +65,31 @@ public class User {
     public void setScore(int score) {
         this.score = score;
     }
-    
+
+    public int getLastWin_s() {
+        return LastWin_s;
+    }
+
+    public void setLastWin_s(int lastWin_s) {
+        LastWin_s = lastWin_s;
+    }
+
+    public int getLastWin_m() {
+        return LastWin_m;
+    }
+
+    public void setLastWin_m(int lastWin_m) {
+        LastWin_m = lastWin_m;
+    }
+
+    public int getLastWin_h() {
+        return LastWin_h;
+    }
+
+    public void setLastWin_h(int lastWin_h) {
+        LastWin_h = lastWin_h;
+    }
+
     public boolean isLogin() {
         return isLogin;
     }
