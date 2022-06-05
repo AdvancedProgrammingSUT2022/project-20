@@ -22,7 +22,7 @@
    <top>
       <HBox alignment="CENTER_RIGHT" prefWidth="600.0" spacing="8.0" BorderPane.alignment="CENTER">
          <children>
-            <Button mnemonicParsing="false" text="Chatroom" />
+            <Button mnemonicParsing="false" onAction="#enterChat" text="Chatroom" />
             <Button mnemonicParsing="false" onAction="#enterProfile" text="Profile" />
             <Button mnemonicParsing="false" onAction="#enterSettings" text="Settings" />
             <Separator orientation="VERTICAL" prefHeight="24.0" prefWidth="0.0" />

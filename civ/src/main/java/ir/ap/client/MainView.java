@@ -1,5 +1,6 @@
 package ir.ap.client;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
@@ -27,6 +28,14 @@ public class MainView extends View {
     public void enterScoreboard() {
         try {
             App.setRoot("fxml/scoreboard-view.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void enterChat() {
+        try {
+            App.setRoot("fxml/chat-view.fxml");
         } catch (IOException e) {
             e.printStackTrace();
         }
