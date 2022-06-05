@@ -36,6 +36,7 @@ public class LoginView extends View {
             return;
         }
         JsonObject response = USER_CONTROLLER.login(username,password);
+        currentUsername = username;
         String msg = getField(response, "msg", String.class);
         if(msg != null) {
             if (responseOk(response)) {

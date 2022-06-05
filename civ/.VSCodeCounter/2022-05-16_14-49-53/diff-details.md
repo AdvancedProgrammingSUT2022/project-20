@@ -1,0 +1,15 @@
+# Diff Details
+
+Date : 2022-05-16 14:49:53
+
+Directory /home/amirmohammad/amirmohammad/projects/Project_AP/project-group-20/civ/src
+
+Total : 0 files,  0 codes, 0 comments, 0 blanks, all 0 lines
+
+[Summary](results.md) / [Details](details.md) / [Diff Summary](diff.md) / Diff Details
+
+## Files
+| filename | language | code | comment | blank | total |
+| :--- | :--- | ---: | ---: | ---: | ---: |
+
+[Summary](results.md) / [Details](details.md) / [Diff Summary](diff.md) / Diff Details
