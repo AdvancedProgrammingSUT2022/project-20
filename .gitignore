@@ -1,6 +1,7 @@
 .idea/
 .idea_modules/
 .vscode/
+.VSCodeCounter/
 
 out/
 bin/

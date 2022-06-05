@@ -10,3 +10,13 @@
 #launcher-root {
     -fx-background-image: url(../png/Backgrounds/18.png)
 }
+
+.table-column{
+    -fx-alignment: center;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+}
+
+.table-row-cell {
+    -fx-cell-size: 40px;
+}

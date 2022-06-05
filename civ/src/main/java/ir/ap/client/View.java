@@ -7,6 +7,8 @@ import ir.ap.controller.GameController;
 import ir.ap.controller.UserController;
 import javafx.application.Platform;
 
+import java.io.IOException;
+
 public abstract class View {
     protected static final UserController USER_CONTROLLER = new UserController(true);
     protected static final GameController GAME_CONTROLLER = new GameController(true);

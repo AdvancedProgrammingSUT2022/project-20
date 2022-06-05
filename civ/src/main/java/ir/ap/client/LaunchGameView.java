@@ -20,7 +20,7 @@ public class LaunchGameView extends View {
     public void initialize() throws IOException {
         initializeInvitationMenu("fxml/components/menu/invite-players.fxml");
         currentMenu = inviteMenuFXML;
-        invitePlayersView.addInvitedUser(currentUsername);
+        invitePlayersView.addInvitedUser(currentUsername, false);
         root.setCenter(currentMenu);
     }
 
