@@ -19,11 +19,24 @@
       </Label>
       <TextField fx:id="invitePlayer" prefHeight="33.0" prefWidth="460.0" promptText="Enter username" />
       <Button mnemonicParsing="false" onAction="#invite" prefHeight="40.0" prefWidth="460.0" text="Send invitation" />
-      <Label fx:id="messageLabel">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Label>
+      <HBox>
+         <children>
+            <HBox prefHeight="24.0" prefWidth="652.0">
+               <children>
+                  <Label fx:id="messageLabel">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" prefHeight="19.0" prefWidth="476.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#removeSelectedPlayers" text="Remove Selected" />
+               </children>
+            </HBox>
+         </children>
+      </HBox>
       <TableView fx:id="invitedPlayersTable" maxHeight="300.0" prefWidth="460.0">
         <columns>
           <TableColumn prefWidth="323.0" text="Players invited" />
