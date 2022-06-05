@@ -1,10 +1,11 @@
 package ir.ap.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class Map {
+public class Map implements Serializable {
     public static final int MAX_H = 30, MAX_W = 30;
     private int mapH = MAX_H;
     private int mapW = MAX_W;

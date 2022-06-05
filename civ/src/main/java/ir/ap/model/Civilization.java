@@ -1,8 +1,9 @@
 package ir.ap.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Civilization {
+public class Civilization implements Serializable {
     private static final int DEFAULT_STARTING_HAPPINESS = 7;
 
     private int index;

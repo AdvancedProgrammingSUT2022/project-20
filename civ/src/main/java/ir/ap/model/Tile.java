@@ -1,29 +1,13 @@
 package ir.ap.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 import ir.ap.model.TerrainType.TerrainFeature;
 
-public class Tile {
-
-    public class Coordinate {
-        double x, y;
-
-        public Coordinate(double x, double y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public double getX() {
-            return x;
-        }
-
-        public double getY() {
-            return y;
-        }
-    }
+public class Tile implements Serializable {
 
     public enum TileKnowledge {
         VISIBLE,
