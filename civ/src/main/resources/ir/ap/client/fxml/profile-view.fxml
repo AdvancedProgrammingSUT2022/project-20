@@ -95,7 +95,7 @@
                               <Font name="System Bold" size="18.0" />
                            </font>
                         </Label>
-                        <Button fx:id="onSaveNickname" layoutX="443.0" layoutY="195.0" mnemonicParsing="false" text="save" textFill="WHITE">
+                        <Button layoutX="443.0" layoutY="195.0" mnemonicParsing="false" text="save" textFill="WHITE" onAction="#onSaveNickname">
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>
