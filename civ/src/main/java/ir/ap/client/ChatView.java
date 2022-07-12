@@ -1,5 +1,5 @@
 package ir.ap.client;
 
-public class ChatView {
+public class ChatView extends View {
     
 }

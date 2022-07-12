@@ -1,8 +1,9 @@
 package ir.ap.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class City {
+public class City implements Serializable {
     private static ArrayList<City> cities = new ArrayList<>();
     private static ArrayList<String> cityNames = new ArrayList<>();
     public static final int GOLD_NEEDED_TO_PURCHASE_TILE = 50;

@@ -3,7 +3,9 @@ package ir.ap.model;
 import ir.ap.model.UnitType.CombatType;
 import ir.ap.model.UnitType.UnitAction;
 
-public class Unit {
+import java.io.Serializable;
+
+public class Unit implements Serializable {
     private static final int MAX_HP = 10;
     private static final int DEFAULT_VISITING_RANGE = 2;
 

@@ -85,7 +85,6 @@ public class UserController implements JsonResponsor, AutoCloseable {
             usersReader.close();
             return true;
         } catch (Exception ex) {
-            ex.printStackTrace();
             return false;
         }
     }

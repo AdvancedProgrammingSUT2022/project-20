@@ -1,10 +1,11 @@
 package ir.ap.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import ir.ap.model.Tile.TileKnowledge;
 
-public class GameArea {
+public class GameArea implements Serializable {
     public static final int MAX_TURN = 100;
     public static final int MAX_USERS = 10;
     public static final int MAX_LAND_TILES = 1000;

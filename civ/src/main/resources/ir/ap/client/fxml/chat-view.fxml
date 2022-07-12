@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="576.0" prefWidth="1024.0" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="576.0" prefWidth="1024.0" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ir.ap.client.ChatView">
    <bottom>
       <HBox prefHeight="44.0" prefWidth="1024.0" BorderPane.alignment="CENTER" />
    </bottom>
@@ -67,7 +67,7 @@
                                     <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="1">
                                        <children>
                                           <TextField prefHeight="35.0" prefWidth="615.0" promptText="Text" />
-                                          <Button mnemonicParsing="false" onAction="#exit" prefHeight="24.0" prefWidth="54.0" text="Send" textAlignment="CENTER" />
+                                          <Button mnemonicParsing="false" prefHeight="24.0" prefWidth="54.0" text="Send" textAlignment="CENTER" />
                                        </children>
                                     </HBox>
                                  </children>
