@@ -1,6 +1,10 @@
 package ir.ap.client;
 
+import com.google.gson.JsonObject;
+import ir.ap.client.components.UserSerializer;
 import ir.ap.client.components.menu.InvitePlayersView;
+import ir.ap.controller.GameController;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,6 +14,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class LaunchGameView extends View {
 
@@ -34,7 +39,7 @@ public class LaunchGameView extends View {
     private InvitePlayersView invitePlayersView;
 
     public void initialize() throws IOException {
-        initializeInvitationMenu("fxml/components/menu/invite-players.fxml");
+        initializeInvitationMenu();
         currentMenu = inviteMenuFXML;
         invitePlayersView.addInvitedUser(currentUsername, false);
         menuPane.setContent(currentMenu);
@@ -43,10 +48,22 @@ public class LaunchGameView extends View {
         selectMapButtons.setVisible(false);
     }
 
-    private void initializeInvitationMenu(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(LaunchGameView.class.getResource(fxml));
+    private void initializeInvitationMenu() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(LaunchGameView.class.getResource("fxml/components/menu/invite-players.fxml"));
         inviteMenuFXML = fxmlLoader.load();
         invitePlayersView = fxmlLoader.getController();
     }
 
+    public void nextMenu() {
+        if (currentMenu.equals(inviteMenuFXML)) {
+            ArrayList<UserSerializer> users = invitePlayersView.getInvitedUsers();
+            String[] playersInGame = new String[users.size()];
+            for (int i = 0; i < users.size(); i++) {
+                playersInGame[i] = users.get(i).getUsername();
+            }
+            JsonObject res = GAME_CONTROLLER.newGame(playersInGame);
+            if (responseOk(res))
+                enterGame();
+        }
+    }
 }

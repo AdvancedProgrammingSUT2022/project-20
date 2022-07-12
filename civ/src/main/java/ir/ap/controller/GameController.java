@@ -150,7 +150,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         return tileJsonObj;
     }
 
-    public JsonObject serializeCity(City city, Civilization civ, boolean fullDeatails) {
+    public JsonObject serializeCity(City city, Civilization civ, boolean fullDetails) {
         if (!mapController.civCanSee(civ, city))
             return null;
         JsonObject cityObj = new JsonObject();
@@ -162,7 +162,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         // for (Tile tile : city.getTerritory()) {
         //     ((JsonArray) cityObj.get("territory")).add(tile.getIndex());
         // }
-        if( fullDeatails == true ){
+        if( fullDetails == true ){
             cityObj.addProperty("population", city.getPopulation());
             cityObj.addProperty("defencePower", city.getCombatStrength());
             cityObj.addProperty("foodYield", city.getFoodYield());
@@ -1021,7 +1021,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         return setOk(response, true);
     }
 
-    public JsonObject mapShow(String username, int tileId) {
+    public JsonObject mapShow(String username, int tileId, int height, int width) {
         Civilization civ = civController.getCivilizationByUsername(username);
         if (civ == null)
             return messageToJsonObj(Message.USER_NOT_ON_GAME, false);
@@ -1029,7 +1029,8 @@ public class GameController extends AbstractGameController implements JsonRespon
         if (tile == null)
             return messageToJsonObj(Message.INVALID_REQUEST, false);
         JsonObject response = new JsonObject();
-        int height = 7, width = 9;
+        height = Math.min(height, gameArea.getMap().getMapH());
+        width = Math.min(width, gameArea.getMap().getMapW());
         response.addProperty("height", height);
         response.addProperty("width", width);
         response.add("map", new JsonArray());
@@ -1049,6 +1050,10 @@ public class GameController extends AbstractGameController implements JsonRespon
             ((JsonArray) response.get("map")).add(row);
         }
         return setOk(response, true);
+    }
+
+    public JsonObject mapShow(String username, int tileId) {
+        return mapShow(username, tileId, 7, 9);
     }
 
     public JsonObject mapShow(String username, String cityName) {

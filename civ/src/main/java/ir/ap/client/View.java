@@ -82,4 +82,12 @@ public abstract class View {
             e.printStackTrace();
         }
     }
+
+    public void enterGame() {
+        try {
+            App.setRoot("fxml/game-view.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
