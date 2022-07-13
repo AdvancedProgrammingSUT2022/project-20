@@ -30,10 +30,14 @@ public class MapView extends View {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 Hexagon tile = getHexagonByTile(tiles[i][j]);
-                root.getChildren().add(tile);
-                root.getChildren().add(tile.getImages());
+                addHexagon(tile);
             }
         }
+    }
+
+    private void addHexagon(Hexagon tile) {
+        root.getChildren().add(tile);
+        root.getChildren().add(tile.getImages());
     }
 
     private Hexagon getHexagonByTile(TileSerializer tile) {
