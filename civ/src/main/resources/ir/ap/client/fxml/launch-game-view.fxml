@@ -39,7 +39,7 @@
             <ScrollPane fx:id="menuPane" prefHeight="400.0" prefWidth="200.0" />
             <HBox fx:id="inviteButtons" alignment="CENTER_RIGHT" maxWidth="460.0" prefHeight="37.0" prefWidth="460.0">
                <children>
-                  <Button fx:id="nextBtn" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Next" />
+                  <Button fx:id="nextBtn" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Next" onAction="#nextMenu" />
                </children>
             </HBox>
             <HBox fx:id="selectMapButtons" maxWidth="460.0" prefHeight="39.0" prefWidth="460.0">
