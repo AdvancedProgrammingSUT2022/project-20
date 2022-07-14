@@ -1,6 +1,5 @@
 package ir.ap.client.components.map;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import ir.ap.client.View;
 import ir.ap.client.components.Hexagon;
@@ -22,7 +21,7 @@ public class MapView extends View {
     }
 
     private void showCurrentMap() {
-        JsonObject mapJson = GAME_CONTROLLER.mapShow(currentUsername, 0, 1000, 1000);
+        JsonObject mapJson = send("mapShow", currentUsername, 0, 1000, 1000);
         MapSerializer map = GSON.fromJson(mapJson, MapSerializer.class);
         int height = map.getHeight();
         int width = map.getWidth();

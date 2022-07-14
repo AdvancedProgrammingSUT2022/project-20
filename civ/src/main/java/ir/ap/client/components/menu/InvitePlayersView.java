@@ -3,14 +3,10 @@ package ir.ap.client.components.menu;
 import com.google.gson.JsonObject;
 import ir.ap.client.View;
 import ir.ap.client.components.UserSerializer;
-import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
-import javafx.util.Callback;
 
 import java.util.*;
 

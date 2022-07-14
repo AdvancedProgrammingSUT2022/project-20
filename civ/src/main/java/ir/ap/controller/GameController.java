@@ -310,7 +310,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         return setOk(response, true);
     }
 
-    public JsonObject newGame(String[] players) {
+    public JsonObject newGame(String... players) {
         gameArea = new GameArea(System.currentTimeMillis());
         int cnt = 0;
         for (String username : players) {

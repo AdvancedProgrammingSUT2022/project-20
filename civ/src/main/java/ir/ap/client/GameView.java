@@ -1,11 +1,9 @@
 package ir.ap.client;
 
-import com.google.gson.JsonObject;
 import ir.ap.client.components.map.MapView;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 
@@ -37,7 +35,7 @@ public class GameView extends View {
 
     private void fake() {
         currentUsername = "amirali";
-        GAME_CONTROLLER.newGame(new String[] {"amirali", "me"});
+        send("newGame", new String[] {"amirali", "me"});
     }
 
     private void initializeMap() throws IOException {
