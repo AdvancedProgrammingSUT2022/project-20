@@ -1,5 +1,6 @@
 package ir.ap.client;
 
+import com.google.gson.JsonObject;
 import ir.ap.client.components.map.MapView;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -20,7 +21,6 @@ public class GameView extends View {
     private MapView mapView;
 
     public void initialize() throws IOException {
-        fake();
         initializeMap();
         scrollMap = new ScrollPane(map);
         scrollMap.setMaxWidth(App.SCREEN_WIDTH);
@@ -31,11 +31,6 @@ public class GameView extends View {
             scrollMap.requestFocus();
         });
         root.getChildren().add(scrollMap);
-    }
-
-    private void fake() {
-        currentUsername = "amirali";
-        send("newGame", new String[] {"amirali", "me"});
     }
 
     private void initializeMap() throws IOException {

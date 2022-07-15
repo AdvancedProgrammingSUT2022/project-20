@@ -14,7 +14,7 @@
       <VBox alignment="CENTER" prefHeight="200.0" spacing="16.0" BorderPane.alignment="CENTER">
          <children>
             <Button defaultButton="true" minWidth="-Infinity" mnemonicParsing="false" onAction="#enterGame" prefHeight="30.0" prefWidth="300.0" text="Game Area" />
-            <Button disable="true" mnemonicParsing="false" prefHeight="30.0" prefWidth="300.0" text="Continue Game" />
+            <Button mnemonicParsing="false" onAction="#continueGame" prefHeight="30.0" prefWidth="300.0" text="Continue Game" />
             <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#enterScoreboard" prefHeight="30.0" prefWidth="300.0" text="Scoreboard" />
          </children>
       </VBox>
@@ -38,8 +38,12 @@
       </HBox>
    </top>
    <bottom>
-      <HBox alignment="CENTER_RIGHT" prefWidth="600.0" BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER_RIGHT" prefWidth="600.0" spacing="20.0" BorderPane.alignment="CENTER">
          <children>
+            <Label fx:id="message">
+               <font>
+                  <Font size="18.0" />
+               </font></Label>
             <Label fx:id="usernameLabel" alignment="CENTER" prefHeight="32.0" prefWidth="150.0" style="-fx-background-color: #d6dbdf; -fx-background-radius: 5; -fx-border-color: gray; -fx-border-radius: 5;" text="Unknown" textFill="#363535">
                <font>
                   <Font size="16.0" />

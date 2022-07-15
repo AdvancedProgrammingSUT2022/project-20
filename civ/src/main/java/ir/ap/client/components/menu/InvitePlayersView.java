@@ -41,7 +41,7 @@ public class InvitePlayersView extends View {
 
     public void invite() {
         String username = invitePlayer.getText();
-        JsonObject response = USER_CONTROLLER.inviteUser(currentUsername, username);
+        JsonObject response = send("inviteUser", currentUsername, username);
         if (responseOk(response)) {
             success(messageLabel, getField(response, "msg", String.class));
             addInvitedUser(username);
@@ -100,13 +100,21 @@ public class InvitePlayersView extends View {
         success(messageLabel, "Selected Users removed successfully");
     }
 
-    private void error(Label messageLabel, String msg) {
+    public void error(Label messageLabel, String msg) {
         messageLabel.setText(msg);
         messageLabel.setTextFill(Color.RED);
     }
 
-    private void success(Label messageLabel, String msg) {
+    public void error(String msg) {
+        error(messageLabel, msg);
+    }
+
+    public void success(Label messageLabel, String msg) {
         messageLabel.setText(msg);
         messageLabel.setTextFill(Color.GREEN);
+    }
+
+    public void success(String msg) {
+        success(messageLabel, msg);
     }
 }

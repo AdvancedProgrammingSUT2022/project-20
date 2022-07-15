@@ -22,13 +22,18 @@ public class MapView extends View {
 
     private void showCurrentMap() {
         JsonObject mapJson = send("mapShow", currentUsername, 0, 1000, 1000);
+        if (!responseOk(mapJson)) {
+            System.out.println(getField(mapJson, "msg", String.class));
+            enterMain();
+            return;
+        }
         MapSerializer map = GSON.fromJson(mapJson, MapSerializer.class);
         int height = map.getHeight();
         int width = map.getWidth();
         TileSerializer[][] tiles = map.getMap();
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                Hexagon tile = getHexagonByTile(tiles[i][j]);
+                Hexagon tile = getHexagonByTile(tiles[i][j]); // TODO: mishe har dafe new nakard!
                 addHexagon(tile);
             }
         }

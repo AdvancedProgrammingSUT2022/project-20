@@ -29,6 +29,10 @@ public interface JsonResponsor {
         return jsonObj;
     }
 
+    default boolean isOk(JsonObject jsonObj) {
+        return jsonObj != null && jsonObj.has("ok") && jsonObj.get("ok").getAsBoolean();
+    }
+
     default JsonObject messageToJsonObj(Object msg, boolean ok) {
         JsonObject jsonObj = new JsonObject();
         if (msg != null)

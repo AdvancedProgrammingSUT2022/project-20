@@ -1,5 +1,7 @@
 package ir.ap.model;
 
+import ir.ap.network.SocketHandler;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -11,6 +13,8 @@ public class User implements Serializable {
     private int score ;
     private boolean isLogin ;
     private int id ;
+
+    private transient SocketHandler socketHandler;
     
     public User(String username, String nickname, String password) {
         this.username = username;
@@ -34,6 +38,16 @@ public class User implements Serializable {
     
     public static ArrayList<User> getUsers() {
         return users;
+    }
+
+    public static User getUserBySocketHandler(SocketHandler socketHandler) {
+        if (socketHandler == null)
+            return null;
+        for (User user : users) {
+            if (socketHandler.equals(user.getSocketHandler()))
+                return user;
+        }
+        return null;
     }
     
     public String getUsername() {
@@ -78,6 +92,14 @@ public class User implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setSocketHandler(SocketHandler socketHandler) {
+        this.socketHandler = socketHandler;
+    }
+
+    public SocketHandler getSocketHandler() {
+        return socketHandler;
     }
 
     @Override

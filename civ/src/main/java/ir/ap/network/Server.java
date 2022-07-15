@@ -21,10 +21,11 @@ public class Server {
         new SocketHandler(socket).start();
     }
 
-    public void run() throws IOException {
+    public void start() throws IOException {
         if (serverSocket != null && !serverSocket.isClosed())
             serverSocket.close();
         serverSocket = new ServerSocket(port);
+        System.out.println("Server listening on port " + port);
         while (!terminateFlag) {
             accept();
         }

@@ -62,6 +62,8 @@ public class LaunchGameView extends View {
             JsonObject res = send("newGame", playersInGame);
             if (responseOk(res))
                 enterGame();
+            else
+                invitePlayersView.error(getField(res, "msg", String.class));
         }
     }
 }

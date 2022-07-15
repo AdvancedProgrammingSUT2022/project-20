@@ -10,8 +10,8 @@ import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotNull;
 
 public class AbstractControllerTest {
-    protected static final UserController USER_CONTROLLER = new UserController(true);
-    protected static final GameController GAME_CONTROLLER = new GameController(true);
+    protected static final UserController USER_CONTROLLER = new UserController();
+    protected static final GameController GAME_CONTROLLER = new GameController();
 
     protected static final User player1 = new User("user11111", "nick11111", "pass1");
     protected static final User player2 = new User("user22222", "nick22222", "pass2");
@@ -83,7 +83,7 @@ public class AbstractControllerTest {
 
     protected static boolean login(User user) {
         USER_CONTROLLER.register(user.getUsername(), user.getNickname(), user.getPassword());
-        JsonObject response = USER_CONTROLLER.login(user.getUsername(), user.getPassword());
+        JsonObject response = USER_CONTROLLER.login(user.getUsername(), user.getPassword(), null);
         boolean result = response.get("ok").getAsBoolean();
         return result;
     }
