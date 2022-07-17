@@ -12,7 +12,7 @@ import ir.ap.model.TerrainType.TerrainFeature;
 import ir.ap.model.Tile.TileKnowledge;
 import ir.ap.model.UnitType.UnitAction;
 
-public class GameController extends AbstractGameController implements JsonResponsor, AutoCloseable {
+public class GameController extends AbstractGameController implements JsonResponsor {
     public enum Validator {
         ;
 
@@ -52,18 +52,9 @@ public class GameController extends AbstractGameController implements JsonRespon
 
     public GameController() {
         super();
-        initAll();
     }
 
-    public GameController(boolean readData) {
-        super();
-        if (readData) {
-            readCityNames();
-        }
-        initAll();
-    }
-
-    public void initAll() {
+    public static void initAll() {
         Building.initAll();
         Improvement.initAll();
         Resource.initAll();
@@ -74,21 +65,14 @@ public class GameController extends AbstractGameController implements JsonRespon
         UnitAction.initAll();
     }
 
-    @Override
-    public void close() {
-    }
-
-    public boolean readCityNames() {
-        try {
-            Reader namesReader = new FileReader(CITY_NAMES_FILE);
+    public static void readCityNames() {
+        try (Reader namesReader = new FileReader(CITY_NAMES_FILE)) {
             String[] curNames = GSON.fromJson(namesReader, String[].class);
             for (String name : curNames) {
                 City.addCityName(name);
             }
-            namesReader.close();
-            return true;
         } catch (Exception ex) {
-            return false;
+            System.out.println("Unable to read city names");
         }
     }
 
@@ -256,6 +240,13 @@ public class GameController extends AbstractGameController implements JsonRespon
         return unitObject;
     }
 
+    public JsonObject getAllUsersInGame() {
+        JsonArray users = GSON.fromJson(GSON.toJson(gameArea.getCiv2user().values()), JsonArray.class);
+        JsonObject result = new JsonObject();
+        result.add("users", users);
+        return setOk(result, true);
+    }
+
     public JsonObject getCivilizationByUsername(String username) {
         Civilization civ = civController.getCivilizationByUsername(username);
         if (civ == null)
@@ -310,7 +301,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         return setOk(response, true);
     }
 
-    public JsonObject newGame(String[] players) {
+    public JsonObject newGame(String... players) {
         gameArea = new GameArea(System.currentTimeMillis());
         int cnt = 0;
         for (String username : players) {
@@ -322,7 +313,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             Civilization curCiv = new Civilization(cnt++, curUser.getNickname() + ".civ", null);;
             gameArea.addUser(curUser, curCiv);
         }
-        if (gameArea.getUserCount() < 2 || gameArea.getUserCount() > 8)
+        if (/*gameArea.getUserCount() < 2 || */gameArea.getUserCount() > 8)
             return messageToJsonObj("at least 2 players and at most 8 should be in game", false);
         civController = new CivilizationController(gameArea);
         mapController = new MapController(gameArea);

@@ -3,8 +3,6 @@ package ir.ap.client;
 import com.google.gson.JsonObject;
 import ir.ap.client.components.UserSerializer;
 import ir.ap.client.components.menu.InvitePlayersView;
-import ir.ap.controller.GameController;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -61,9 +59,11 @@ public class LaunchGameView extends View {
             for (int i = 0; i < users.size(); i++) {
                 playersInGame[i] = users.get(i).getUsername();
             }
-            JsonObject res = GAME_CONTROLLER.newGame(playersInGame);
+            JsonObject res = send("newGame", playersInGame);
             if (responseOk(res))
                 enterGame();
+            else
+                invitePlayersView.error(getField(res, "msg", String.class));
         }
     }
 }

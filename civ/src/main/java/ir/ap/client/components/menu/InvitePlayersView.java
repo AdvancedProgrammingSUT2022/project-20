@@ -3,14 +3,10 @@ package ir.ap.client.components.menu;
 import com.google.gson.JsonObject;
 import ir.ap.client.View;
 import ir.ap.client.components.UserSerializer;
-import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
-import javafx.util.Callback;
 
 import java.util.*;
 
@@ -45,7 +41,7 @@ public class InvitePlayersView extends View {
 
     public void invite() {
         String username = invitePlayer.getText();
-        JsonObject response = USER_CONTROLLER.inviteUser(currentUsername, username);
+        JsonObject response = send("inviteUser", currentUsername, username);
         if (responseOk(response)) {
             success(messageLabel, getField(response, "msg", String.class));
             addInvitedUser(username);
@@ -104,13 +100,21 @@ public class InvitePlayersView extends View {
         success(messageLabel, "Selected Users removed successfully");
     }
 
-    private void error(Label messageLabel, String msg) {
+    public void error(Label messageLabel, String msg) {
         messageLabel.setText(msg);
         messageLabel.setTextFill(Color.RED);
     }
 
-    private void success(Label messageLabel, String msg) {
+    public void error(String msg) {
+        error(messageLabel, msg);
+    }
+
+    public void success(Label messageLabel, String msg) {
         messageLabel.setText(msg);
         messageLabel.setTextFill(Color.GREEN);
+    }
+
+    public void success(String msg) {
+        success(messageLabel, msg);
     }
 }

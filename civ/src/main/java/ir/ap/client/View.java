@@ -3,18 +3,44 @@ package ir.ap.client;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import ir.ap.client.App;
+import ir.ap.client.network.Request;
+import ir.ap.client.network.RequestHandler;
 import ir.ap.controller.GameController;
 import ir.ap.controller.UserController;
 import javafx.application.Platform;
 
 import java.io.IOException;
+import java.net.Socket;
 
 public abstract class View {
-    protected static final UserController USER_CONTROLLER = new UserController(true);
-    protected static final GameController GAME_CONTROLLER = new GameController(true);
-    protected static final Gson GSON = new Gson();
+    protected static Socket socket;
+    protected static RequestHandler requestHandler;
+
+    protected static final Gson GSON;
 
     protected static String currentUsername = null;
+
+    static {
+        GSON = new Gson();
+        try {
+            socket = new Socket("localhost", App.SERVER_PORT);
+            requestHandler = new RequestHandler(socket);
+        } catch (IOException e) {
+            System.out.println("Unable to connect to the server");
+        }
+    }
+
+    protected static JsonObject send(String methodName, Object... params) {
+        Request request = new Request(methodName, params);
+        JsonObject response = null;
+        try {
+            response = requestHandler.send(request);
+        } catch (Exception e) {
+            System.out.println("Connection lost with server");
+        }
+        return response;
+    }
 
     protected static boolean responseOk(String response) {
         return response != null && GSON.fromJson(response, JsonObject.class)

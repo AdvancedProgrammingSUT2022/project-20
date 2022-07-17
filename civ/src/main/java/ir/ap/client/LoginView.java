@@ -35,7 +35,7 @@ public class LoginView extends View {
             error(loginMsgLabel, "password field is empty");
             return;
         }
-        JsonObject response = USER_CONTROLLER.login(username,password);
+        JsonObject response = send("login", username,password);
         currentUsername = username;
         String msg = getField(response, "msg", String.class);
         if(msg != null) {
@@ -60,7 +60,7 @@ public class LoginView extends View {
             error(signupMsgLabel, "password field is empty");
             return;
         }
-        JsonObject response = USER_CONTROLLER.register(username,nickname,password);
+        JsonObject response = send("register", username,nickname,password);
         String msg = getField(response, "msg", String.class);
         if(msg != null) {
             if (responseOk(response))

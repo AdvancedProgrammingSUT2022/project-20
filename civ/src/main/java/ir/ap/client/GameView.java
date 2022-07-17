@@ -5,7 +5,6 @@ import ir.ap.client.components.map.MapView;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 
@@ -22,7 +21,6 @@ public class GameView extends View {
     private MapView mapView;
 
     public void initialize() throws IOException {
-        fake();
         initializeMap();
         scrollMap = new ScrollPane(map);
         scrollMap.setMaxWidth(App.SCREEN_WIDTH);
@@ -35,11 +33,6 @@ public class GameView extends View {
             scrollMap.requestFocus();
         });
         root.getChildren().add(scrollMap);
-    }
-
-    private void fake() {
-        currentUsername = "amirali";
-        GAME_CONTROLLER.newGame(new String[] {"amirali", "me"});
     }
 
     private void initializeMap() throws IOException {

@@ -1,6 +1,5 @@
 package ir.ap.client.components.map;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import ir.ap.client.View;
 import ir.ap.client.components.Hexagon;
@@ -22,18 +21,27 @@ public class MapView extends View {
     }
 
     private void showCurrentMap() {
-        JsonObject mapJson = GAME_CONTROLLER.mapShow(currentUsername, 0, 1000, 1000);
+        JsonObject mapJson = send("mapShow", currentUsername, 0, 1000, 1000);
+        if (!responseOk(mapJson)) {
+            System.out.println(getField(mapJson, "msg", String.class));
+            enterMain();
+            return;
+        }
         MapSerializer map = GSON.fromJson(mapJson, MapSerializer.class);
         int height = map.getHeight();
         int width = map.getWidth();
         TileSerializer[][] tiles = map.getMap();
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                Hexagon tile = getHexagonByTile(tiles[i][j]);
-                root.getChildren().add(tile);
-                root.getChildren().add(tile.getImages());
+                Hexagon tile = getHexagonByTile(tiles[i][j]); // TODO: mishe har dafe new nakard!
+                addHexagon(tile);
             }
         }
+    }
+
+    private void addHexagon(Hexagon tile) {
+        root.getChildren().add(tile);
+        root.getChildren().add(tile.getImages());
     }
 
     private Hexagon getHexagonByTile(TileSerializer tile) {

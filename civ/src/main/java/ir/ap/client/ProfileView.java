@@ -28,7 +28,7 @@ public class ProfileView extends View {
         String OldPassword = oldPassword.getText();
         String NewPassword = newPassword.getText();
 
-        JsonObject response = USER_CONTROLLER.changePassword(currentUsername,OldPassword,NewPassword);
+        JsonObject response = send("changePassword", currentUsername,OldPassword,NewPassword);
         String Message = getField(response, "msg", String.class);
         if(Message != null) {
             if(responseOk(response))
@@ -40,7 +40,7 @@ public class ProfileView extends View {
     public void onSaveNickname()
     {
         String Nickname = nickname.getText();
-        JsonObject response = USER_CONTROLLER.changeNickname(currentUsername,Nickname);
+        JsonObject response = send("changeNickname", currentUsername,Nickname);
         String Message = getField(response, "msg", String.class);
         if(Message != null) {
             if(responseOk(response))

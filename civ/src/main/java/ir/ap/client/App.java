@@ -12,6 +12,8 @@ import java.io.IOException;
 
 public class App extends Application {
 
+    public static final int SERVER_PORT = 8000;
+
     public static final double SCREEN_WIDTH = 1024;
     public static final double SCREEN_HEIGHT = 576;
 
@@ -41,7 +43,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        scene = new Scene(loadFXML("fxml/game-view.fxml"), SCREEN_WIDTH, SCREEN_HEIGHT);
+        scene = new Scene(loadFXML("fxml/login-view.fxml"), SCREEN_WIDTH, SCREEN_HEIGHT);
         stage.setScene(scene);
         stage.setResizable(false);
         stage.setTitle("Civ");
