@@ -27,6 +27,8 @@ public class GameView extends View {
         scrollMap = new ScrollPane(map);
         scrollMap.setMaxWidth(App.SCREEN_WIDTH);
         scrollMap.setMaxHeight(App.SCREEN_HEIGHT);
+        // scrollMap.setLayoutX(value);
+        // scrollMap.setLayoutY(value);
         scrollMap.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollMap.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         Platform.runLater(() -> {
