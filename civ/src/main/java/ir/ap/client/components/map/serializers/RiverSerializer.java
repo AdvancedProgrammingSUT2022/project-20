@@ -31,4 +31,5 @@ public class RiverSerializer {
     public boolean getUpLeft() {
         return upLeft;
     }
+   
 }

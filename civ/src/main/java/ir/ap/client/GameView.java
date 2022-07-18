@@ -1,19 +1,22 @@
 package ir.ap.client;
 
-import com.google.gson.JsonObject;
 import ir.ap.client.components.map.MapView;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
 
 public class GameView extends View {
 
     @FXML
-    private AnchorPane root;
+    private BorderPane root;
+
+    @FXML
+    private AnchorPane mapPart;
 
     private ScrollPane scrollMap;
 
@@ -32,7 +35,7 @@ public class GameView extends View {
         Platform.runLater(() -> {
             scrollMap.requestFocus();
         });
-        root.getChildren().add(scrollMap);
+        mapPart.getChildren().add(scrollMap);
     }
 
     private void initializeMap() throws IOException {
