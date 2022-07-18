@@ -12,6 +12,8 @@ import java.io.IOException;
 
 public class App extends Application {
 
+    public static final int SERVER_PORT = 8000;
+
     public static final double SCREEN_WIDTH = 1024;
     public static final double SCREEN_HEIGHT = 576;
 

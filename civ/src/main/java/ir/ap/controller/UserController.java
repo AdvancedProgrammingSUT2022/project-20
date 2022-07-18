@@ -8,6 +8,7 @@ import java.io.Writer;
 import com.google.gson.JsonObject;
 
 import ir.ap.model.User;
+import ir.ap.network.SocketHandler;
 
 public class UserController implements JsonResponsor, AutoCloseable {
 
@@ -63,42 +64,28 @@ public class UserController implements JsonResponsor, AutoCloseable {
         super();
     }
 
-    public UserController(boolean readData) {
-        this();
-        if (readData)
-            readUsers();
-    }
-
     @Override
     public void close() {
         writeUsers();
     }
 
-    public boolean readUsers() {
-        try {
-            Reader usersReader = new FileReader(PLAYERS_CONF_FILE);
+    public static void readUsers() {
+        try (Reader usersReader = new FileReader(PLAYERS_CONF_FILE)) {
             User[] curUsers = GSON.fromJson(usersReader, User[].class);
             for (User user : curUsers) {
                 user.setLogin(false);
                 User.addUser(user);
             }
-            usersReader.close();
-            return true;
         } catch (Exception ex) {
-            ex.printStackTrace();
-            return false;
+            System.out.println("Unable to read users");
         }
     }
 
-    public boolean writeUsers() {
-        try {
-            Writer usersWriter = new FileWriter(PLAYERS_CONF_FILE);
+    public void writeUsers() {
+        try (Writer usersWriter = new FileWriter(PLAYERS_CONF_FILE)) {
             GSON.toJson(User.getUsers(), usersWriter);
-            usersWriter.close();
-            return true;
         } catch (Exception ex) {
             ex.printStackTrace();
-            return false;
         }
     }
 
@@ -127,11 +114,13 @@ public class UserController implements JsonResponsor, AutoCloseable {
             return messageToJsonObj(Message.E500, false);
     }
 
-    public JsonObject login(String username, String password) {
+    public JsonObject login(String username, String password, SocketHandler socketHandler) {
         User user = User.getUser(username);
         if (user == null || !user.checkPassword(password))
             return messageToJsonObj(Message.INVALID_CREDENTIALS, false);
         user.setLogin(true);
+        user.setSocketHandler(socketHandler);
+        socketHandler.setUser(user);
         return messageToJsonObj(Message.USER_LOGGED_IN, true);
     }
 

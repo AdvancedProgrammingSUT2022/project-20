@@ -1,8 +1,10 @@
 package ir.ap.client;
 
+import com.google.gson.JsonObject;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
 
 import java.io.IOException;
 
@@ -10,6 +12,8 @@ public class MainView extends View {
 
     @FXML
     private Label usernameLabel;
+    @FXML
+    private Label message;
 
     public void initialize() {
         if (currentUsername != null) {
@@ -39,5 +43,19 @@ public class MainView extends View {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void continueGame() {
+        JsonObject result = send("continueGame", currentUsername);
+        if (responseOk(result)) {
+            enterGame();
+        } else {
+            error("No game in progress");
+        }
+    }
+
+    private void error(String msg) {
+        message.setText(msg);
+        message.setTextFill(Color.RED);
     }
 }

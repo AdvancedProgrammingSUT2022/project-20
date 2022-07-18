@@ -12,7 +12,7 @@ import ir.ap.model.TerrainType.TerrainFeature;
 import ir.ap.model.Tile.TileKnowledge;
 import ir.ap.model.UnitType.UnitAction;
 
-public class GameController extends AbstractGameController implements JsonResponsor, AutoCloseable {
+public class GameController extends AbstractGameController implements JsonResponsor {
     public enum Validator {
         ;
 
@@ -52,18 +52,9 @@ public class GameController extends AbstractGameController implements JsonRespon
 
     public GameController() {
         super();
-        initAll();
     }
 
-    public GameController(boolean readData) {
-        super();
-        if (readData) {
-            readCityNames();
-        }
-        initAll();
-    }
-
-    public void initAll() {
+    public static void initAll() {
         Building.initAll();
         Improvement.initAll();
         Resource.initAll();
@@ -74,21 +65,14 @@ public class GameController extends AbstractGameController implements JsonRespon
         UnitAction.initAll();
     }
 
-    @Override
-    public void close() {
-    }
-
-    public boolean readCityNames() {
-        try {
-            Reader namesReader = new FileReader(CITY_NAMES_FILE);
+    public static void readCityNames() {
+        try (Reader namesReader = new FileReader(CITY_NAMES_FILE)) {
             String[] curNames = GSON.fromJson(namesReader, String[].class);
             for (String name : curNames) {
                 City.addCityName(name);
             }
-            namesReader.close();
-            return true;
         } catch (Exception ex) {
-            return false;
+            System.out.println("Unable to read city names");
         }
     }
 
@@ -145,12 +129,13 @@ public class GameController extends AbstractGameController implements JsonRespon
                 tileJsonObj.add("cityInTile", new JsonObject());
                 tileJsonObj.get("cityInTile").getAsJsonObject().addProperty("name", tile.getCity().getName());
                 tileJsonObj.get("cityInTile").getAsJsonObject().addProperty("dead", tile.getCity().isDead());
+                tileJsonObj.get("cityInTile").getAsJsonObject().addProperty("civId", tile.getCity().getCivilization().getIndex());
             }
         }
         return tileJsonObj;
     }
 
-    public JsonObject serializeCity(City city, Civilization civ, boolean fullDeatails) {
+    public JsonObject serializeCity(City city, Civilization civ, boolean fullDetails) {
         if (!mapController.civCanSee(civ, city))
             return null;
         JsonObject cityObj = new JsonObject();
@@ -158,11 +143,12 @@ public class GameController extends AbstractGameController implements JsonRespon
         cityObj.addProperty("name", city.getName());
         cityObj.addProperty("civName", city.getCivilization().getName());
         cityObj.addProperty("tileId", city.getTile().getIndex());
+        cityObj.addProperty("dead", city.isDead());
         // cityObj.add("territory", new JsonArray());
         // for (Tile tile : city.getTerritory()) {
         //     ((JsonArray) cityObj.get("territory")).add(tile.getIndex());
         // }
-        if( fullDeatails == true ){
+        if( fullDetails == true ){
             cityObj.addProperty("population", city.getPopulation());
             cityObj.addProperty("defencePower", city.getCombatStrength());
             cityObj.addProperty("foodYield", city.getFoodYield());
@@ -256,6 +242,13 @@ public class GameController extends AbstractGameController implements JsonRespon
         return unitObject;
     }
 
+    public JsonObject getAllUsersInGame() {
+        JsonArray users = GSON.fromJson(GSON.toJson(gameArea.getCiv2user().values()), JsonArray.class);
+        JsonObject result = new JsonObject();
+        result.add("users", users);
+        return setOk(result, true);
+    }
+
     public JsonObject getCivilizationByUsername(String username) {
         Civilization civ = civController.getCivilizationByUsername(username);
         if (civ == null)
@@ -310,7 +303,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         return setOk(response, true);
     }
 
-    public JsonObject newGame(String[] players) {
+    public JsonObject newGame(String... players) {
         gameArea = new GameArea(System.currentTimeMillis());
         int cnt = 0;
         for (String username : players) {
@@ -322,7 +315,7 @@ public class GameController extends AbstractGameController implements JsonRespon
             Civilization curCiv = new Civilization(cnt++, curUser.getNickname() + ".civ", null);;
             gameArea.addUser(curUser, curCiv);
         }
-        if (gameArea.getUserCount() < 2 || gameArea.getUserCount() > 8)
+        if (/*gameArea.getUserCount() < 2 || */gameArea.getUserCount() > 8)
             return messageToJsonObj("at least 2 players and at most 8 should be in game", false);
         civController = new CivilizationController(gameArea);
         mapController = new MapController(gameArea);
@@ -1021,7 +1014,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         return setOk(response, true);
     }
 
-    public JsonObject mapShow(String username, int tileId) {
+    public JsonObject mapShow(String username, int tileId, int height, int width) {
         Civilization civ = civController.getCivilizationByUsername(username);
         if (civ == null)
             return messageToJsonObj(Message.USER_NOT_ON_GAME, false);
@@ -1029,7 +1022,8 @@ public class GameController extends AbstractGameController implements JsonRespon
         if (tile == null)
             return messageToJsonObj(Message.INVALID_REQUEST, false);
         JsonObject response = new JsonObject();
-        int height = 7, width = 9;
+        height = Math.min(height, gameArea.getMap().getMapH());
+        width = Math.min(width, gameArea.getMap().getMapW());
         response.addProperty("height", height);
         response.addProperty("width", width);
         response.add("map", new JsonArray());
@@ -1049,6 +1043,10 @@ public class GameController extends AbstractGameController implements JsonRespon
             ((JsonArray) response.get("map")).add(row);
         }
         return setOk(response, true);
+    }
+
+    public JsonObject mapShow(String username, int tileId) {
+        return mapShow(username, tileId, 7, 9);
     }
 
     public JsonObject mapShow(String username, String cityName) {

@@ -1,5 +1,7 @@
 package ir.ap.model;
 
+import ir.ap.network.SocketHandler;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -9,8 +11,13 @@ public class User implements Serializable {
     private String nickname ; 
     private String password ;
     private int score ;
+    private int LastWin_s;
+    private int LastWin_m;
+    private int LastWin_h;
     private boolean isLogin ;
     private int id ;
+
+    private transient SocketHandler socketHandler;
     
     public User(String username, String nickname, String password) {
         this.username = username;
@@ -34,6 +41,16 @@ public class User implements Serializable {
     
     public static ArrayList<User> getUsers() {
         return users;
+    }
+
+    public static User getUserBySocketHandler(SocketHandler socketHandler) {
+        if (socketHandler == null)
+            return null;
+        for (User user : users) {
+            if (socketHandler.equals(user.getSocketHandler()))
+                return user;
+        }
+        return null;
     }
     
     public String getUsername() {
@@ -63,7 +80,31 @@ public class User implements Serializable {
     public void setScore(int score) {
         this.score = score;
     }
-    
+
+    public int getLastWin_s() {
+        return LastWin_s;
+    }
+
+    public void setLastWin_s(int lastWin_s) {
+        LastWin_s = lastWin_s;
+    }
+
+    public int getLastWin_m() {
+        return LastWin_m;
+    }
+
+    public void setLastWin_m(int lastWin_m) {
+        LastWin_m = lastWin_m;
+    }
+
+    public int getLastWin_h() {
+        return LastWin_h;
+    }
+
+    public void setLastWin_h(int lastWin_h) {
+        LastWin_h = lastWin_h;
+    }
+
     public boolean isLogin() {
         return isLogin;
     }
@@ -78,6 +119,14 @@ public class User implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setSocketHandler(SocketHandler socketHandler) {
+        this.socketHandler = socketHandler;
+    }
+
+    public SocketHandler getSocketHandler() {
+        return socketHandler;
     }
 
     @Override
