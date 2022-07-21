@@ -154,13 +154,13 @@ public class Hexagon extends Polygon {
             }else{
                 cityImage = new ImageView(new Image(App.class.getResource("png/civAsset/map/Tiles/city.png").toExternalForm()));
             }
+            cityImage.setFitWidth(CITY_SIZE);
+            cityImage.setFitHeight(CITY_SIZE);
         }
         Stream.of(terrainImage, featureImage, fogImage, riverBottom, riverBottomLeft, riverBottomRight).forEach( image -> 
         image.setFitWidth(2 * RADIUS));
         Stream.of(terrainImage, featureImage, fogImage, riverBottom, riverBottomLeft, riverBottomRight).forEach( image -> 
         image.setFitHeight(2 * HEIGHT));
-        cityImage.setFitWidth(CITY_SIZE);
-        cityImage.setFitHeight(CITY_SIZE);
         setFill(Color.WHITE);
         if (terrainImage != null)
             images.getChildren().add(terrainImage);

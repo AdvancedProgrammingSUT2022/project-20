@@ -37,9 +37,10 @@ public class LaunchGameView extends View {
     private InvitePlayersView invitePlayersView;
 
     public void initialize() throws IOException {
+        // TODO: invitation in server, get it in client
         initializeInvitationMenu();
         currentMenu = inviteMenuFXML;
-        invitePlayersView.addInvitedUser(currentUsername, false);
+        invitePlayersView.addInvitedUser(currentUsername, false, true);
         menuPane.setContent(currentMenu);
         selectMapButtons.managedProperty().bind(selectMapButtons.visibleProperty());
         inviteButtons.managedProperty().bind(inviteButtons.visibleProperty());
