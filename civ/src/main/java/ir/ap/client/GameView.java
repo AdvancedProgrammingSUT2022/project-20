@@ -1,14 +1,23 @@
 package ir.ap.client;
 
+import ir.ap.client.components.map.CurrentResearchView;
 import ir.ap.client.components.map.MapView;
+import ir.ap.client.components.map.serializers.TechnologySerializer;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
+import java.util.stream.Stream;
+
+import com.google.gson.JsonObject;
 
 public class GameView extends View {
 
@@ -17,6 +26,9 @@ public class GameView extends View {
 
     @FXML
     private AnchorPane mapPart;
+
+    @FXML
+    private AnchorPane infoPanel;
 
     private ScrollPane scrollMap;
 
@@ -27,7 +39,7 @@ public class GameView extends View {
         initializeMap();
         scrollMap = new ScrollPane(map);
         scrollMap.setMaxWidth(App.SCREEN_WIDTH);
-        scrollMap.setMaxHeight(App.SCREEN_HEIGHT);
+        scrollMap.setMaxHeight(App.SCREEN_HEIGHT-infoPanel.getPrefHeight());
         // scrollMap.setLayoutX(value);
         // scrollMap.setLayoutY(value);
         scrollMap.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -36,6 +48,101 @@ public class GameView extends View {
             scrollMap.requestFocus();
         });
         mapPart.getChildren().add(scrollMap);
+        mapPart.getChildren().add(makeNextTurnButton());
+        makeCurrentResearchPanel();
+        makeInfoButtons();
+        makeNotificationsButton();
+    }
+
+    private void makeNotificationsButton(){
+        Button notificationPanel = new Button("Notifications");
+        notificationPanel.getStyleClass().add("notificationButton");
+        notificationPanel.setLayoutX(898);
+        notificationPanel.setLayoutY(14);
+        notificationPanel.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                showNotificationPanel();
+            }
+        });
+        mapPart.getChildren().add(notificationPanel);
+    }
+
+    private void makeInfoButtons(){
+        Button researchPanel = new Button("Researches");
+        Button unitsPanel = new Button("Units");
+        Button citiesPanel = new Button("Cities");
+        Button demographicsPanel = new Button("Demographics");
+        Stream.of(researchPanel, unitsPanel, citiesPanel, demographicsPanel).forEach( button -> 
+        button.getStyleClass().add("gameButton"));
+        researchPanel.setPrefWidth(130);
+        researchPanel.setLayoutX(14);
+        researchPanel.setLayoutY(186);
+        researchPanel.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                showTechnologyInfoPanel();
+            }            
+        });
+        unitsPanel.setPrefWidth(130);
+        unitsPanel.setLayoutX(14);
+        unitsPanel.setLayoutY(221);
+        unitsPanel.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                showUnitsInfoPanel();
+            }            
+        });
+        citiesPanel.setPrefWidth(130);
+        citiesPanel.setLayoutX(14);
+        citiesPanel.setLayoutY(256);
+        citiesPanel.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                showCitiesInfoPanel();
+            }            
+        });
+        demographicsPanel.setPrefWidth(130);
+        demographicsPanel.setLayoutX(14);
+        demographicsPanel.setLayoutY(291);
+        demographicsPanel.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                showDemographicsInfoPanel();
+            }            
+        });
+        mapPart.getChildren().addAll(researchPanel, unitsPanel, citiesPanel, demographicsPanel);
+    }
+
+    private void makeCurrentResearchPanel() throws IOException{
+        JsonObject currentResearch = send("civGetCurrentResearch", currentUsername);
+        if(responseOk(currentResearch)){
+            TechnologySerializer technology = GSON.fromJson(currentResearch.get("technology"), TechnologySerializer.class);
+            FXMLLoader fxmlLoader = new FXMLLoader(GameView.class.getResource("fxml/components/map/panel/currentResearch-view.fxml"));
+            AnchorPane currentResearchRoot = fxmlLoader.load();
+            CurrentResearchView currentResearchView = fxmlLoader.getController();
+            currentResearchView.setLabel(technology.getName() + "(" + technology.getTurnsLeftForFinish() + ")");
+            currentResearchView.setImage(new Image(GameView.class.getResource("png/technology/" + technology.getName().toLowerCase() + ".png").toExternalForm()));
+            currentResearchRoot.setLayoutX(14);
+            currentResearchRoot.setLayoutY(14);
+            mapPart.getChildren().add(currentResearchRoot);
+        }
+    }
+
+    private Button makeNextTurnButton(){
+        Button nextTurn = new Button("NEXT TURN");
+        nextTurn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                nextTurn();
+            }            
+        });
+        nextTurn.getStyleClass().add("nextTurnButton");
+        nextTurn.setLayoutX(811);
+        nextTurn.setLayoutY(508);
+        nextTurn.setPrefWidth(200);
+        nextTurn.setPrefHeight(24);
+        return nextTurn;    
     }
 
     private void initializeMap() throws IOException {
@@ -43,4 +150,43 @@ public class GameView extends View {
         map = fxmlLoader.load();
         mapView = fxmlLoader.getController();
     }
+
+    public String lowerCaseString(String s1){
+        String s2 = s1.toLowerCase();
+        String s3 = Character.toUpperCase(s2.charAt(0)) + s2.substring(1);
+        return s3;
+    }
+
+    private void nextTurn(){
+
+    }
+
+    private void showTechnologyInfoPanel(){
+
+    }
+
+    private void showUnitsInfoPanel(){
+
+    }
+
+    private void showCitiesInfoPanel(){
+
+    }
+
+    private void showDemographicsInfoPanel(){
+
+    }
+
+    private void showNotificationPanel(){
+
+    }
+
+    public void showSettingPanel(){
+        
+    }
+
+    public void showMenuPanel(){
+
+    }
+
 }

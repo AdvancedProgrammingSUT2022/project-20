@@ -1,0 +1,43 @@
+package ir.ap.client.components;
+
+import ir.ap.client.App;
+import ir.ap.client.components.map.serializers.UnitSerializer;
+import javafx.scene.image.Image;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
+
+public class Unit extends Circle{
+
+    public static int UNIT_SIZE = 25;
+
+    private UnitSerializer unitSerializer;
+
+    public Unit(double x, double y, double r, UnitSerializer unitSerializer){
+        super(x, y, r);
+        this.unitSerializer = unitSerializer;        
+        try{
+            setBackground("png/civAsset/units/Units/" + lowerCaseString(unitSerializer.getUnitType()) + ".png");
+        }catch(Exception ex){
+            System.out.println("salam");
+            System.out.println(lowerCaseString(unitSerializer.getUnitType()));
+        }
+    }
+
+    public String lowerCaseString(String s1){
+        String s2 = s1.toLowerCase();
+        String s3 = Character.toUpperCase(s2.charAt(0)) + s2.substring(1);
+        return s3;
+    }
+
+    public void setBackground(String path){
+        this.setFill(new ImagePattern(new Image(String.valueOf(App.class.getResource(path))))) ;
+    }
+
+    public UnitSerializer getUnitSerializer() {
+        return unitSerializer;
+    }
+
+    public void setUnitSerializer(UnitSerializer unitSerializer) {
+        this.unitSerializer = unitSerializer;
+    }
+}

@@ -141,6 +141,7 @@ public class UserController implements JsonResponsor, AutoCloseable {
                     .toString().replace("%s", newNickname), false);
         }
         user.setNickname(newNickname);
+        writeUsers();
         return messageToJsonObj(Message.NICKNAME_CHANGED, true);
     }
 
@@ -151,6 +152,7 @@ public class UserController implements JsonResponsor, AutoCloseable {
         if (!user.checkPassword(oldPassword))
             return messageToJsonObj(Message.INVALID_CREDENTIALS, false);
         user.setPassword(newPassword);
+        writeUsers();
         return messageToJsonObj(Message.PASSWORD_CHANGED, true);
     }
 

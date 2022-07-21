@@ -10,6 +10,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import ir.ap.client.components.Hexagon;
+
 public class App extends Application {
 
     public static final int SERVER_PORT = 8000;
@@ -50,6 +52,7 @@ public class App extends Application {
     public void start(Stage stage) throws Exception {
         App.stage = stage;
         scene = new Scene(loadFXML("fxml/login-view.fxml"), SCREEN_WIDTH, SCREEN_HEIGHT);
+        scene.getStylesheets().add(GameView.class.getResource("css/styles.css").toExternalForm());
         stage.setScene(scene);
         stage.setResizable(false);
         stage.setTitle("Civ");

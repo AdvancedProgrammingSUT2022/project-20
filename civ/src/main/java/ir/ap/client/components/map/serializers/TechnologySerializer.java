@@ -7,10 +7,16 @@ public class TechnologySerializer {
     private int id;
     private int cost;
     private ArrayList<Enum<?>> objectsUnlocks;
+    private int turnsLeftForFinish;
 
     public String getName() {
         return name;
     }
+
+    public void setName(String name){
+        this.name = name;
+    }
+
     public int getId() {
         return id;
     }
@@ -19,5 +25,8 @@ public class TechnologySerializer {
     }
     public ArrayList<Enum<?>> getObjectsUnlocks() {
         return objectsUnlocks;
+    }
+    public int getTurnsLeftForFinish() {
+        return turnsLeftForFinish;
     }  
 }
