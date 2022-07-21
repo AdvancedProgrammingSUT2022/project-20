@@ -1,5 +1,7 @@
 package ir.ap.client;
 
+import ir.ap.client.components.UserSerializer;
+import ir.ap.model.User;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -9,8 +11,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-
-import ir.ap.client.components.Hexagon;
 
 public class App extends Application {
 
@@ -46,7 +46,6 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         scene = new Scene(loadFXML("fxml/login-view.fxml"), SCREEN_WIDTH, SCREEN_HEIGHT);
-        scene.getStylesheets().add(GameView.class.getResource("css/styles.css").toExternalForm());
         stage.setScene(scene);
         stage.setResizable(false);
         stage.setTitle("Civ");

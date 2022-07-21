@@ -1,34 +1,78 @@
 package ir.ap.client;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import ir.ap.client.App;
 import ir.ap.client.network.Request;
 import ir.ap.client.network.RequestHandler;
-import ir.ap.controller.GameController;
-import ir.ap.controller.UserController;
 import javafx.application.Platform;
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.Socket;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public abstract class View {
     protected static Socket socket;
     protected static RequestHandler requestHandler;
 
-    protected static final Gson GSON;
+    protected static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
+                private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+                @Override
+                public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+                    return LocalDateTime.parse(json.getAsString(), formatter);
+                }
+            })
+            .registerTypeAdapter(LocalDateTime.class, new JsonSerializer<LocalDateTime>() {
+                private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+                @Override
+                public JsonElement serialize(LocalDateTime localDateTime, Type srcType, JsonSerializationContext context) {
+                    return new JsonPrimitive(formatter.format(localDateTime));
+                }
+            })
+            .create();
 
     protected static String currentUsername = null;
 
+    protected static final ArrayList<Image> avatars = new ArrayList<>();
+
     static {
-        GSON = new Gson();
         try {
             socket = new Socket("localhost", App.SERVER_PORT);
             requestHandler = new RequestHandler(socket);
         } catch (IOException e) {
             System.out.println("Unable to connect to the server");
         }
+        readAvatars();
+    }
+
+    private static void readAvatars() {
+        Image avatarImg = new Image(View.class.getResource("png/avatar.png").toExternalForm());
+        PixelReader pixelReader = avatarImg.getPixelReader();
+        int avatarImgWidth = (int) avatarImg.getWidth(), avatarImgHeight = (int) avatarImg.getHeight();
+        int colMargin = 40, rowMargin = 30, imgWidth = 875, imgHeight = 900;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                int tx = (imgWidth + colMargin) * i;
+                int ty = (imgHeight + rowMargin) * j;
+                Image curImg = new WritableImage(pixelReader, tx, ty,
+                        Math.min(avatarImgWidth - tx, imgWidth + colMargin),
+                        Math.min(avatarImgHeight - ty, imgHeight + rowMargin));
+                avatars.add(curImg);
+            }
+        }
+    }
+
+    public static Image getAvatar(int index) {
+        return avatars.get(index);
     }
 
     protected static JsonObject send(String methodName, Object... params) {

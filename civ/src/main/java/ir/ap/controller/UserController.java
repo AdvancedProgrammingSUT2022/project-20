@@ -4,11 +4,19 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import ir.ap.model.User;
 import ir.ap.network.SocketHandler;
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
 
 public class UserController implements JsonResponsor, AutoCloseable {
 
@@ -59,10 +67,8 @@ public class UserController implements JsonResponsor, AutoCloseable {
     }
 
     private static final String PLAYERS_CONF_FILE = "players.json";
-
-    public UserController() {
-        super();
-    }
+    private static final int AVATARS_CNT = 16;
+    private static final Random rnd = new Random(System.currentTimeMillis());
 
     @Override
     public void close() {
@@ -89,6 +95,33 @@ public class UserController implements JsonResponsor, AutoCloseable {
         }
     }
 
+    public static int getRandomAvatar() {
+        return rnd.nextInt(AVATARS_CNT);
+    }
+
+    public JsonObject getAllUsers() {
+        JsonObject response = new JsonObject();
+        response.add("users", GSON.fromJson(GSON.toJson(User.getUsers()), JsonArray.class));
+        return setOk(response, true);
+    }
+
+    public JsonObject getAvatar(String username) {
+        User user = User.getUser(username);
+        if (user == null)
+            return messageToJsonObj("No such user", false);
+        JsonObject response = new JsonObject();
+        response.addProperty("index", user.getAvatarIndex());
+        return setOk(response, true);
+    }
+
+    public JsonObject setAvatar(String username, int avatarIndex) {
+        User user = User.getUser(username);
+        if (user == null)
+            return messageToJsonObj("No such user", false);
+        user.setAvatarIndex(avatarIndex);
+        return messageToJsonObj("Successfully changed avatar", true);
+    }
+
     public JsonObject register(String username, String nickname, String password) {
         if (!username.matches(Validator.USERNAME.toString()))
             return messageToJsonObj(Message.USERNAME_INVALID, false);
@@ -108,6 +141,7 @@ public class UserController implements JsonResponsor, AutoCloseable {
 
         User curUser = new User(username, nickname, password);
         if (User.addUser(curUser)) {
+            curUser.setAvatarIndex(getRandomAvatar());
             writeUsers();
             return messageToJsonObj(Message.USER_CREATED, true);
         } else
@@ -119,6 +153,7 @@ public class UserController implements JsonResponsor, AutoCloseable {
         if (user == null || !user.checkPassword(password))
             return messageToJsonObj(Message.INVALID_CREDENTIALS, false);
         user.setLogin(true);
+        user.setLastLogin(LocalDateTime.now());
         user.setSocketHandler(socketHandler);
         socketHandler.setUser(user);
         return messageToJsonObj(Message.USER_LOGGED_IN, true);

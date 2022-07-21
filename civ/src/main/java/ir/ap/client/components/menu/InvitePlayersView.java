@@ -6,6 +6,8 @@ import ir.ap.client.components.UserSerializer;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
 import java.util.*;
@@ -31,8 +33,9 @@ public class InvitePlayersView extends View {
 
     private void initializeTable() {
         invitedPlayersTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        invitedPlayersTable.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("username"));
-        invitedPlayersTable.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("accepted"));
+        invitedPlayersTable.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("avatar"));
+        invitedPlayersTable.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("username"));
+        invitedPlayersTable.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("accepted"));
     }
 
     public ArrayList<UserSerializer> getInvitedUsers() {
@@ -56,6 +59,8 @@ public class InvitePlayersView extends View {
             return;
         }
         UserSerializer userSerializer = new UserSerializer(username, true);
+        JsonObject avatarJson = send("getAvatar", username);
+        userSerializer.setAvatar(View.getAvatar(avatarJson.get("index").getAsInt()));
         invitedUsers.add(userSerializer);
         invitedPlayersTable.getItems().add(userSerializer);
         if (toMsg)
