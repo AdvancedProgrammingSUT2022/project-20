@@ -8,6 +8,7 @@ public class CitySerializer {
     // private int civId;
     private String civName;
     private int tileId;
+    private boolean isCenter;
 
     public String getName() {
         return name;
@@ -27,6 +28,10 @@ public class CitySerializer {
 
     public int getTileId() {
         return tileId;
+    }
+
+    public boolean isCenter() {
+        return isCenter;
     }  
 
     // public int getCivId() {
