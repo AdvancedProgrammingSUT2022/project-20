@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="115.0" prefWidth="321.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fitHeight="115.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true" />
+      <TextField fx:id="unitName" alignment="CENTER" editable="false" layoutX="140.0" prefHeight="24.0" prefWidth="182.0" text="UnitName" />
+      <TextField fx:id="movement" alignment="CENTER" layoutX="140.0" layoutY="34.0" prefHeight="24.0" prefWidth="182.0" text="Movement  0/0" />
+      <TextField fx:id="health" alignment="CENTER" layoutX="140.0" layoutY="58.0" prefHeight="24.0" prefWidth="182.0" text="Health 0" />
+   </children>
+</AnchorPane>
