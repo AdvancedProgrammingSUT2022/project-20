@@ -32,7 +32,6 @@ public class App extends Application {
 
     public static void setRoot(String fxml) throws IOException {
         scene.setRoot(loadFXML(fxml));
-        scene.getStylesheets().add(GameView.class.getResource("css/styles.css").toExternalForm());
     }
 
     public static void main(String[] args) {
@@ -47,6 +46,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         scene = new Scene(loadFXML("fxml/login-view.fxml"), SCREEN_WIDTH, SCREEN_HEIGHT);
+        scene.getStylesheets().add(GameView.class.getResource("css/styles.css").toExternalForm());
         stage.setScene(scene);
         stage.setResizable(false);
         stage.setTitle("Civ");

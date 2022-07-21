@@ -33,6 +33,10 @@
     -fx-font-weight: bold;
 }
 
+.notificationButton {
+    -fx-font-weight: bold;
+}
+
 #gameText {
     -fx-control-inner-background: blue;
 }

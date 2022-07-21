@@ -138,15 +138,20 @@ public class Hexagon extends Polygon {
     public void loadFill() {
         ImageView terrainImage = new ImageView(getTerrainTypeImage(getTile().getTerrainTypeId()));
         ImageView featureImage = new ImageView(getTerrainFeatureImage(getTile().getTerrainFeatureId()));
+        ImageView fogImage = new ImageView(new Image(App.class.getResource("png/civAsset/map/Tiles/FogOfWar.png").toExternalForm()));
         terrainImage.setFitWidth(2 * RADIUS);
         terrainImage.setFitHeight(2 * HEIGHT);
         featureImage.setFitWidth(2 * RADIUS);
         featureImage.setFitHeight(2 * HEIGHT);
+        fogImage.setFitWidth(2 * RADIUS);
+        fogImage.setFitHeight(2 * HEIGHT);
         setFill(Color.WHITE);
         if (terrainImage != null)
             images.getChildren().add(terrainImage);
         if (featureImage != null)
             images.getChildren().add(featureImage);
+        if (getTile().getKnowledge().equals("FOG_OF_WAR"))
+            images.getChildren().add(fogImage);
     }  
 
     private Image getTerrainTypeImage(int terrainTypeId) {

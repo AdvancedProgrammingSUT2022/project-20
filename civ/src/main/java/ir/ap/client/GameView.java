@@ -51,8 +51,23 @@ public class GameView extends View {
         mapPart.getChildren().add(makeNextTurnButton());
         makeCurrentResearchPanel();
         makeInfoButtons();
+        makeNotificationsButton();
     }
-    
+
+    private void makeNotificationsButton(){
+        Button notificationPanel = new Button("Notifications");
+        notificationPanel.getStyleClass().add("notificationButton");
+        notificationPanel.setLayoutX(898);
+        notificationPanel.setLayoutY(14);
+        notificationPanel.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                showNotificationPanel();
+            }
+        });
+        mapPart.getChildren().add(notificationPanel);
+    }
+
     private void makeInfoButtons(){
         Button researchPanel = new Button("Researches");
         Button unitsPanel = new Button("Units");
@@ -122,7 +137,7 @@ public class GameView extends View {
                 nextTurn();
             }            
         });
-        nextTurn.getStyleClass().add("gameButton");
+        nextTurn.getStyleClass().add("nextTurnButton");
         nextTurn.setLayoutX(811);
         nextTurn.setLayoutY(508);
         nextTurn.setPrefWidth(200);
@@ -162,8 +177,16 @@ public class GameView extends View {
 
     }
 
-    private void showSettingPanel(){
+    private void showNotificationPanel(){
+
+    }
+
+    public void showSettingPanel(){
         
+    }
+
+    public void showMenuPanel(){
+
     }
 
 }
