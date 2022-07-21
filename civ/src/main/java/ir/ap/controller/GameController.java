@@ -102,23 +102,29 @@ public class GameController extends AbstractGameController implements JsonRespon
             if (tile.getImprovement() != null) {
                 tileJsonObj.add("improvement", new JsonObject());
                 tileJsonObj.get("improvement").getAsJsonObject().addProperty("id", tile.getImprovement().getId());
+                tileJsonObj.get("improvement").getAsJsonObject().addProperty("name", tile.getImprovement().name());
                 tileJsonObj.get("improvement").getAsJsonObject().addProperty("dead", tile.getImprovement().getIsDead());
             }
             if (tile.getResourceVisibleByCivilization(civ) != null) {
                 tileJsonObj.add("resource", new JsonObject());
                 Resource rsrc = tile.getResourceVisibleByCivilization(civ);
                 tileJsonObj.get("resource").getAsJsonObject().addProperty("id", rsrc.getId());
+                tileJsonObj.get("resource").getAsJsonObject().addProperty("name", rsrc.name());
                 tileJsonObj.get("resource").getAsJsonObject().addProperty("improved", tile.resourceIsImproved(rsrc));
             }
             if (tile.getNonCombatUnit() != null) {
                 JsonObject nonCombatUnit = new JsonObject();
                 nonCombatUnit.addProperty("unitTypeId", tile.getNonCombatUnit().getUnitType().getId());
+                nonCombatUnit.addProperty("unitType", tile.getNonCombatUnit().getUnitType().getName());
+                // System.out.println("hey");
                 nonCombatUnit.addProperty("civId", tile.getNonCombatUnit().getCivilization().getIndex());
                 tileJsonObj.add("nonCombatUnit", nonCombatUnit);
             }
             if (tile.getCombatUnit() != null) {
                 JsonObject combatUnit = new JsonObject();
                 combatUnit.addProperty("unitTypeId", tile.getCombatUnit().getUnitType().getId());
+                combatUnit.addProperty("unitType", tile.getCombatUnit().getUnitType().getName());
+                // System.out.println(tile.getCombatUnit().getUnitType().getName());
                 combatUnit.addProperty("civId", tile.getCombatUnit().getCivilization().getIndex());
                 tileJsonObj.add("combatUnit", combatUnit);
             }
@@ -233,12 +239,15 @@ public class GameController extends AbstractGameController implements JsonRespon
     public JsonObject serializeUnit(Unit unit){
         JsonObject unitObject = new JsonObject();
         unitObject.addProperty("id", unit.getId());
+        // unitObject.addProperty("unitTypeId", unit.getUnitType().getId());
         unitObject.addProperty("unitType", unit.getUnitType().name());
+        // unitObject.addProperty("civId", unit.getCivilization().getIndex());
         if (unit.getUnitAction() != null)
             unitObject.addProperty("unitAction", unit.getUnitAction().name());
         unitObject.addProperty("mp", unit.getMp());
         unitObject.addProperty("hp", unit.getHp());
         unitObject.addProperty("tileId", unit.getTile().getIndex());
+        // unitObject.addProperty("isCombat", unit.getUnitType().isCivilian());
         return unitObject;
     }
 
@@ -1340,6 +1349,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         return setOk(response, true);
     }
 
+
     public JsonObject civSetCurrentResearch(String username, int techId, boolean cheat){
         Civilization civilization = civController.getCivilizationByUsername(username);
         if (civilization == null)
@@ -1357,4 +1367,19 @@ public class GameController extends AbstractGameController implements JsonRespon
         }
         return messageToJsonObj(message, true);
     }
+
+    public JsonObject civGetCurrentResearch(String username){
+        Civilization civilization = civController.getCivilizationByUsername(username);
+        if (civilization == null)
+            return messageToJsonObj("invalid civUsername", false);
+        Technology technology = civilization.getCurrentResearch();
+        if( technology == null ){
+            return messageToJsonObj("there is no thechnology researching", false);
+        }
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("technology", serializeTechnology(technology, civilization));
+        jsonObject.addProperty("ok", true);
+        return jsonObject;
+    }
+
 }

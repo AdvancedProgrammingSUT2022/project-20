@@ -11,6 +11,32 @@
     -fx-background-image: url(../png/Backgrounds/18.png)
 }
 
+#infoTopPanel {
+    -fx-background-color: black;
+}
+
+#gameButton {
+    -fx-background-color: blue;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.gameButton {
+    -fx-background-color: blue;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.nextTurnButton {
+    -fx-background-color: red;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+#gameText {
+    -fx-control-inner-background: blue;
+}
+
 .table-column{
     -fx-alignment: center;
     -fx-font-weight: bold;

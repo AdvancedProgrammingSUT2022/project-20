@@ -58,12 +58,12 @@
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
                         <Label layoutX="416.0" layoutY="152.0" />
-                        <Label layoutX="303.0" layoutY="138.0" prefHeight="27.0" prefWidth="122.0" text="old password" textFill="WHITE">
+                        <Label layoutX="280.0" layoutY="138.0" prefHeight="27.0" prefWidth="145.0" text="old password" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>
                         </Label>
-                        <Label layoutX="303.0" layoutY="170.0" prefHeight="27.0" prefWidth="122.0" text="new password" textFill="WHITE">
+                        <Label layoutX="273.0" layoutY="170.0" prefHeight="27.0" prefWidth="152.0" text="new password" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>
@@ -71,7 +71,7 @@
                         <Label layoutX="322.0" layoutY="197.0" />
                         <TextField fx:id="oldPassword" layoutX="452.0" layoutY="139.0" />
                         <TextField fx:id="newPassword" layoutX="452.0" layoutY="171.0" />
-                        <Button layoutX="452.0" layoutY="219.0" mnemonicParsing="false" onAction="#onSavePassword" prefHeight="25.0" prefWidth="62.0" text="save" textFill="WHITE">
+                        <Button layoutX="499.0" layoutY="219.0" mnemonicParsing="false" onAction="#onSavePassword" prefHeight="33.0" prefWidth="77.0" text="save" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>
@@ -89,13 +89,13 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TextField fx:id="nickname" layoutX="443.0" layoutY="157.0" prefHeight="25.0" prefWidth="150.0" />
+                        <TextField fx:id="nickname" layoutX="479.0" layoutY="154.0" prefHeight="25.0" prefWidth="150.0" />
                         <Label layoutX="303.0" layoutY="156.0" text="new nickname" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>
                         </Label>
-                        <Button layoutX="443.0" layoutY="195.0" mnemonicParsing="false" text="save" textFill="WHITE" onAction="#onSaveNickname">
+                        <Button layoutX="444.0" layoutY="196.0" mnemonicParsing="false" onAction="#onSaveNickname" text="save" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>

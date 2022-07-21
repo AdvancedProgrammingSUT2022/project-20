@@ -12,6 +12,7 @@ public class MapView extends View {
 
     private static final double TILE_RADIUS = 70;
     private static final double TILE_HEIGHT = TILE_RADIUS / 2 * Math.sqrt(3);
+    private static Hexagon[][] hexagons = new Hexagon[1000][1000];
 
     @FXML
     private AnchorPane root;
@@ -27,14 +28,18 @@ public class MapView extends View {
             enterMain();
             return;
         }
+        // System.out.println(mapJson);
         MapSerializer map = GSON.fromJson(mapJson, MapSerializer.class);
         int height = map.getHeight();
         int width = map.getWidth();
         TileSerializer[][] tiles = map.getMap();
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                Hexagon tile = getHexagonByTile(tiles[i][j]); // TODO: mishe har dafe new nakard!
+                Hexagon tile = getHexagonByTile(tiles[i][j], i, j); // TODO: mishe har dafe new nakard!
                 addHexagon(tile);
+                if(tile.getTile().getResource() != null)tile.showResource(root);
+                if(tile.getTile().getImprovement() != null)tile.showImprovement(root);
+                tile.showUnits(root);
             }
         }
     }
@@ -44,9 +49,16 @@ public class MapView extends View {
         root.getChildren().add(tile.getImages());
     }
 
-    private Hexagon getHexagonByTile(TileSerializer tile) {
+    private Hexagon getHexagonByTile(TileSerializer tile, int i, int j) {
+        if( hexagons[ i ][ j ] != null ){
+            return hexagons[ i ][ j ];
+        }
         double mapX = (TILE_RADIUS + 3 * TILE_RADIUS / 2 * tile.getY());
         double mapY = (2 * TILE_HEIGHT * tile.getX() + (tile.getY() % 2 == 0 ? 2 * TILE_HEIGHT : TILE_HEIGHT));
         return new Hexagon(mapX, mapY, TILE_RADIUS, tile);
+    }
+
+    public static Hexagon[][] getHexagons() {
+        return hexagons;
     }
 }

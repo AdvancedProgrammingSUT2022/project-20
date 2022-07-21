@@ -10,6 +10,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import ir.ap.client.components.Hexagon;
+
 public class App extends Application {
 
     public static final int SERVER_PORT = 8000;
@@ -30,6 +32,7 @@ public class App extends Application {
 
     public static void setRoot(String fxml) throws IOException {
         scene.setRoot(loadFXML(fxml));
+        scene.getStylesheets().add(GameView.class.getResource("css/styles.css").toExternalForm());
     }
 
     public static void main(String[] args) {
