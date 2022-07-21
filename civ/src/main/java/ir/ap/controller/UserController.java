@@ -119,6 +119,7 @@ public class UserController implements JsonResponsor, AutoCloseable {
         if (user == null)
             return messageToJsonObj("No such user", false);
         user.setAvatarIndex(avatarIndex);
+        writeUsers();
         return messageToJsonObj("Successfully changed avatar", true);
     }
 
@@ -156,6 +157,7 @@ public class UserController implements JsonResponsor, AutoCloseable {
         user.setLastLogin(LocalDateTime.now());
         user.setSocketHandler(socketHandler);
         socketHandler.setUser(user);
+        writeUsers();
         return messageToJsonObj(Message.USER_LOGGED_IN, true);
     }
 
