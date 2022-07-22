@@ -180,10 +180,7 @@ public class GameView extends View {
         ArrayList<String> technologiesNames = new ArrayList<String>();
 
         JsonObject jsonObject = send("infoResearch", currentUsername);
-        if(1 == 0) {
-             //TODO: how to check false message
-            return;
-        }
+        if(responseOk(jsonObject) == false) return;
 
         for(int j = 0; j < 6; j++)
         {
@@ -205,6 +202,8 @@ public class GameView extends View {
 
     private void showUnitsInfoPanel(){
         JsonObject jsonObject = send("infoUnits", currentUsername);
+        if(responseOk(jsonObject) == false) return;
+
         ArrayList<String> unitNames = new ArrayList<String>();
         JsonArray jsonArray = jsonObject.getAsJsonArray("units");
         for(int i = 0; i < jsonArray.size(); i++)
@@ -217,6 +216,8 @@ public class GameView extends View {
 
     private void showCitiesInfoPanel(){
         JsonObject jsonObject = send("infoCities", currentUsername);
+        if(responseOk(jsonObject) == false) return;
+
         ArrayList<String> cityNames = new ArrayList<String>();
         JsonArray jsonArray = jsonObject.getAsJsonArray("cities");
         for(int i = 0; i < jsonArray.size(); i++)
@@ -229,6 +230,8 @@ public class GameView extends View {
 
     private void showDemographicsInfoPanel(){
         JsonObject jsonObject = send("infoDemographics", currentUsername);
+        if(responseOk(jsonObject) == false) return;
+
         ArrayList<String> demographicsNames = new ArrayList<String>();
         JsonArray jsonArray = jsonObject.getAsJsonArray("demographics");
         for(int i = 0; i < jsonArray.size(); i++)
@@ -242,6 +245,8 @@ public class GameView extends View {
     private void showMilitaryInfo(){
         // can go into this panel from unitsInfoPanel
         JsonObject jsonObject = send("infoMilitary", currentUsername);
+        if(responseOk(jsonObject) == false) return;
+
         ArrayList<String> militaryNames = new ArrayList<String>();
         JsonArray jsonArray = jsonObject.getAsJsonArray("military");
         for(int i = 0; i < jsonArray.size(); i++)
@@ -255,6 +260,8 @@ public class GameView extends View {
     private void showEconomicInfo(){
         // can go into this panel from citiesInfoPanel
         JsonObject jsonObject = send("infoEconomic", currentUsername);
+        if(responseOk(jsonObject) == false) return;
+
         ArrayList<String> economicNames = new ArrayList<String>();
         JsonArray jsonArray = jsonObject.getAsJsonArray("economic");
         for(int i = 0; i < jsonArray.size(); i++)
@@ -267,6 +274,8 @@ public class GameView extends View {
 
     private void showNotificationPanel(){
         JsonObject jsonObject = send("infoNotifications", currentUsername);
+        if(responseOk(jsonObject) == false) return;
+
         ArrayList<String> notificationNames = new ArrayList<String>();
         JsonArray jsonArray = jsonObject.getAsJsonArray("notifications");
         for(int i = 0; i < jsonArray.size(); i++)
