@@ -22,6 +22,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
@@ -201,12 +202,12 @@ public class GameView extends View {
         JsonObject jsonObject = send("infoUnits", currentUsername);
         if(responseOk(jsonObject) == false) return;
 
-        ArrayList<String> unitSerials = new ArrayList<String>();
+        ArrayList<Integer> unitNames = new ArrayList<Integer>();
         JsonArray jsonArray = jsonObject.getAsJsonArray("units");
         for(int i = 0; i < jsonArray.size(); i++)
         {
             JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
-            unitSerials.add(jsonObject1.getAsString());
+            unitNames.add(GSON.fromJson(jsonObject1.get("name"),Integer.class));
         }
     }
 
@@ -214,19 +215,21 @@ public class GameView extends View {
         JsonObject jsonObject = send("infoCities", currentUsername);
         if(responseOk(jsonObject) == false) return;
 
-        ArrayList<String> citySerials = new ArrayList<String>();
+        ArrayList<Integer> cityNames = new ArrayList<Integer>();
         JsonArray jsonArray = jsonObject.getAsJsonArray("cities");
         for(int i = 0; i < jsonArray.size(); i++)
         {
             JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
-            citySerials.add(jsonObject1.getAsString());
+            cityNames.add(GSON.fromJson(jsonObject1.get("name"),Integer.class));
         }
     }
 
     private void showDemographicsInfoPanel(){
         JsonObject jsonObject = send("infoDemographics", currentUsername);
         if(responseOk(jsonObject) == false) return;
-        String serialCivilization = jsonObject.get("demographics").getAsString();
+        String civilizationName ;
+        JsonObject jsonObject1 = GSON.fromJson(jsonObject.get("demographics"), JsonObject.class);
+        civilizationName = GSON.fromJson(jsonObject1.get("name"),String.class);
     }
 
     private void showMilitaryInfo(){
@@ -234,12 +237,12 @@ public class GameView extends View {
         JsonObject jsonObject = send("infoMilitary", currentUsername);
         if(responseOk(jsonObject) == false) return;
 
-        ArrayList<String> civilizationUnitSerials = new ArrayList<String>();
+        ArrayList<String> civilizationUnitNames = new ArrayList<String>();
         JsonArray jsonArray = jsonObject.getAsJsonArray("military");
         for(int i = 0; i < jsonArray.size(); i++)
         {
             JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
-            civilizationUnitSerials.add(jsonObject1.getAsString());
+            civilizationUnitNames.add(GSON.fromJson(jsonObject1.get("name"),String.class));
         }
     }
 
@@ -248,27 +251,25 @@ public class GameView extends View {
         JsonObject jsonObject = send("infoEconomic", currentUsername);
         if(responseOk(jsonObject) == false) return;
 
-        ArrayList<String> citySerials = new ArrayList<String>();
+        ArrayList<String> cityNames = new ArrayList<String>();
         JsonArray jsonArray = jsonObject.getAsJsonArray("economic");
         for(int i = 0; i < jsonArray.size(); i++)
         {
             JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
-            citySerials.add(jsonArray.getAsString());
+            cityNames.add(GSON.fromJson(jsonObject1.get("name"),String.class));
         }
         // bayad az unitsInfoPanel behesh berim
     }
-
-
     private void showNotificationPanel(){
         JsonObject jsonObject = send("infoNotifications", currentUsername);
         if(responseOk(jsonObject) == false) return;
 
-        ArrayList<String> notification = new ArrayList<String>();
+        ArrayList<String> notifications = new ArrayList<String>();
         JsonArray jsonArray = jsonObject.getAsJsonArray("notifications");
         for(int i = 0; i < jsonArray.size(); i++)
         {
-            JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
-            notification.add(jsonObject1.getAsString());
+            String notification = GSON.fromJson(jsonArray.get(i), String.class);
+            notifications.add(notification);
         }
     }
 
