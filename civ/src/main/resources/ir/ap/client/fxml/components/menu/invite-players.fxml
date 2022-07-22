@@ -39,8 +39,9 @@
       </HBox>
       <TableView fx:id="invitedPlayersTable" maxHeight="300.0" prefWidth="460.0">
         <columns>
-          <TableColumn prefWidth="323.0" text="Players invited" />
-            <TableColumn prefWidth="135.0" text="Accept" />
+          <TableColumn prefWidth="120.0" text="Avatars" />
+          <TableColumn prefWidth="200.0" text="Players invited" />
+          <TableColumn prefWidth="120.0" text="Accept" />
         </columns>
       </TableView>
    </children>

@@ -2,7 +2,7 @@ package ir.ap.client;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import ir.ap.client.components.map.CurrentResearchView;
+import ir.ap.client.components.map.panel.CurrentResearchView;
 import ir.ap.client.components.map.MapView;
 import ir.ap.client.components.map.serializers.TechnologySerializer;
 import ir.ap.client.components.map.serializers.TileSerializer;
@@ -170,8 +170,7 @@ public class GameView extends View {
 
     }
 
-    private void showTechnologyInfoPanel()
-    {
+    private void showTechnologyInfoPanel() {
         ArrayList<String> improvementsNames = new ArrayList<String>();
         ArrayList<String> resourcesNames = new ArrayList<String>();
         ArrayList<String> unitTypesNames = new ArrayList<String>();
@@ -180,22 +179,20 @@ public class GameView extends View {
         ArrayList<String> technologiesNames = new ArrayList<String>();
 
         JsonObject jsonObject = send("infoResearch", currentUsername);
-        if(responseOk(jsonObject) == false) return;
+        if (responseOk(jsonObject) == false) return;
 
-        for(int j = 0; j < 6; j++)
-        {
+        for (int j = 0; j < 6; j++) {
             JsonElement jsonElement = jsonObject.getAsJsonArray("objectsUnlocksSeparated").get(j);
             JsonArray jsonArray = GSON.fromJson(jsonElement, JsonArray.class);
-            for (int i = 0; i < jsonArray.size(); i++)
-            {
+            for (int i = 0; i < jsonArray.size(); i++) {
                 JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
                 String name = GSON.fromJson(jsonObject1.get("name"), String.class);
-                if(j == 0) improvementsNames.add(name);
-                if(j == 1) resourcesNames.add(name);
-                if(j == 2) unitTypesNames.add(name);
-                if(j == 3) buildingTypesNames.add(name);
-                if(j == 4) unitActionsNames.add(name);
-                if(j == 5) technologiesNames.add(name);
+                if (j == 0) improvementsNames.add(name);
+                if (j == 1) resourcesNames.add(name);
+                if (j == 2) unitTypesNames.add(name);
+                if (j == 3) buildingTypesNames.add(name);
+                if (j == 4) unitActionsNames.add(name);
+                if (j == 5) technologiesNames.add(name);
             }
         }
     }
@@ -270,7 +267,9 @@ public class GameView extends View {
             String name = GSON.fromJson(jsonObject1.get("name"), String.class);
             economicNames.add(name);
         }
+        // bayad az unitsInfoPanel behesh berim
     }
+
 
     private void showNotificationPanel(){
         JsonObject jsonObject = send("infoNotifications", currentUsername);
@@ -294,18 +293,18 @@ public class GameView extends View {
 
     }
 
+    public static void showCityProductConstructionPanel(){
+
+    }
+
     public static void showUnitInfoPanel(UnitSerializer unitSerializer){
         
     }
 
-    public static void showTileInfoPanel(TileSerializer tileSerializer){
-        
-    }
 
     public static String getEra(){
         JsonObject jsonObject = send("getEra");
         if(!responseOk(jsonObject))return null;
         return GSON.fromJson(jsonObject.get("era"), String.class);
     }
-
 }

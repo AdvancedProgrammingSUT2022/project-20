@@ -71,7 +71,10 @@ public class SocketHandler extends Thread implements JsonResponsor {
         }
         try {
             Object controller = controllerIsGame ? gameController : userController;
-            return (JsonObject) method.invoke(controller, params);
+            if (params.length > 0)
+                return (JsonObject) method.invoke(controller, params);
+            else
+                return (JsonObject) method.invoke(controller);
         } catch (Exception e) {
             return messageToJsonObj("Invalid parameters", false);
         }

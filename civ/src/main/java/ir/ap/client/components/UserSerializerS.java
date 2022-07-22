@@ -1,9 +1,13 @@
 package ir.ap.client.components;
 
+import javafx.scene.image.ImageView;
+
 public class UserSerializerS {
     private String username;
     private String nickname;
     private String maxScore;
+    private int avatarIndex;
+    private String lastLogin;
 
     public String getUsername() {
         return username;
@@ -23,5 +27,12 @@ public class UserSerializerS {
     public void setMaxScore(String maxScore) {
         this.maxScore = maxScore;
     }
-    
+
+    public int getAvatarIndex() {
+        return avatarIndex;
+    }
+
+    public String getLastLogin() {
+        return lastLogin;
+    }
 }

@@ -3,6 +3,7 @@ package ir.ap.model;
 import ir.ap.network.SocketHandler;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class User implements Serializable {
@@ -11,11 +12,14 @@ public class User implements Serializable {
     private String nickname ; 
     private String password ;
     private int score ;
+    private int maxScore;
     private int LastWin_s;
     private int LastWin_m;
     private int LastWin_h;
+    private LocalDateTime lastLogin;
     private boolean isLogin ;
     private int id ;
+    private int avatarIndex;
 
     private transient SocketHandler socketHandler;
     
@@ -81,6 +85,14 @@ public class User implements Serializable {
         this.score = score;
     }
 
+    public int getMaxScore() {
+        return maxScore;
+    }
+
+    public void setMaxScore(int maxScore) {
+        this.maxScore = maxScore;
+    }
+
     public int getLastWin_s() {
         return LastWin_s;
     }
@@ -112,13 +124,29 @@ public class User implements Serializable {
     public void setLogin(boolean isLogin) {
         this.isLogin = isLogin;
     }
-    
+
+    public LocalDateTime getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getAvatarIndex() {
+        return avatarIndex;
+    }
+
+    public void setAvatarIndex(int avatarIndex) {
+        this.avatarIndex = avatarIndex;
     }
 
     public void setSocketHandler(SocketHandler socketHandler) {
