@@ -13,6 +13,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.TableColumn?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="576.0" prefWidth="1024.0" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ir.ap.client.ScoreboardView">
    <top>
       <HBox BorderPane.alignment="CENTER">
@@ -74,7 +75,14 @@
                      <content>
                         <ScrollPane fitToHeight="true" fitToWidth="true">
                            <content>
-                              <TableView fx:id="easyModeTable" />
+                              <TableView fx:id="networkModeTable">
+                                 <columns>
+                                    <TableColumn prefWidth="120.0" text="AVATAR" />
+                                    <TableColumn prefWidth="200.0" text="PLAYERS" />
+                                    <TableColumn prefWidth="100.0" text="SCORE" />
+                                    <TableColumn prefWidth="180.0" text="Last Visit" />
+                                 </columns>
+                              </TableView>
                            </content>
                         </ScrollPane>
                      </content>
@@ -83,7 +91,13 @@
                      <content>
                         <ScrollPane fitToHeight="true" fitToWidth="true">
                            <content>
-                              <TableView fx:id="regularModeTable" />
+                              <TableView fx:id="offlineModeTable">
+                                 <columns>
+                                    <TableColumn prefWidth="120.0" text="AVATAR" />
+                                    <TableColumn prefWidth="300.0" text="PLAYERS" />
+                                    <TableColumn prefWidth="120.0" text="MAX SCORE" />
+                                 </columns>
+                              </TableView>
                            </content>
                         </ScrollPane>
                      </content>

@@ -1,14 +1,34 @@
 package ir.ap.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
+
+import java.lang.reflect.Type;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public interface JsonResponsor {
-    public static final Gson GSON = new Gson();
+    Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
+                private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    public static final JsonObject JSON_EMPTY = GSON.fromJson("{}", JsonObject.class);
-    public static final JsonObject JSON_FALSE = GSON.fromJson("{\"ok\":false}", JsonObject.class);
-    public static final JsonObject JSON_TRUE = GSON.fromJson("{\"ok\":true}", JsonObject.class);
+                @Override
+                public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+                    return LocalDateTime.parse(json.getAsString(), formatter);
+                }
+            })
+            .registerTypeAdapter(LocalDateTime.class, new JsonSerializer<LocalDateTime>() {
+                private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+                @Override
+                public JsonElement serialize(LocalDateTime localDateTime, Type srcType, JsonSerializationContext context) {
+                    return new JsonPrimitive(formatter.format(localDateTime));
+                }
+            })
+            .create();
+
+    JsonObject JSON_EMPTY = GSON.fromJson("{}", JsonObject.class);
+    JsonObject JSON_FALSE = GSON.fromJson("{\"ok\":false}", JsonObject.class);
+    JsonObject JSON_TRUE = GSON.fromJson("{\"ok\":true}", JsonObject.class);
 
     default String toJsonStr(JsonObject jsonObj) {
         if (jsonObj == null)

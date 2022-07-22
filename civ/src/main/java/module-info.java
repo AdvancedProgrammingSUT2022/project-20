@@ -1,6 +1,7 @@
 module civ {
     requires com.google.gson;
 
+    requires javafx.base;
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.media;

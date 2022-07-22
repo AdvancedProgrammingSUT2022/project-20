@@ -1,16 +1,28 @@
 package ir.ap.client.components;
 
+import ir.ap.client.View;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class UserSerializer implements Serializable {
     private WritableObjectProperty<String> username;
     private WritableObjectProperty<String> nickname;
     private WritableObjectProperty<Integer> maxScore;
+    private WritableObjectProperty<ImageView> avatar;
+    private WritableObjectProperty<LocalDateTime> lastLogin;
 
     private transient WritableObjectProperty<Boolean> accepted;
 
     public UserSerializer(String username) {
         this.username = new WritableObjectProperty<>(username);
+        this.avatar = new WritableObjectProperty<>();
+        this.accepted = new WritableObjectProperty<>();
+        this.nickname = new WritableObjectProperty<>();
+        this.maxScore = new WritableObjectProperty<>();
     }
 
     public UserSerializer(String username, boolean accepted) {
@@ -29,6 +41,16 @@ public class UserSerializer implements Serializable {
         this.accepted = new WritableObjectProperty<Boolean>(accepted);
     }
 
+    public UserSerializer(UserSerializerS userSerializerS) {
+        this.username = new WritableObjectProperty<>(userSerializerS.getUsername());
+        this.nickname = new WritableObjectProperty<>(userSerializerS.getNickname());
+        this.maxScore = new WritableObjectProperty<>(Integer.valueOf(userSerializerS.getMaxScore()));
+        this.accepted = new WritableObjectProperty<>(false);
+        this.avatar = new WritableObjectProperty<>();
+        setAvatar(View.getAvatar(userSerializerS.getAvatarIndex()));
+        this.lastLogin = new WritableObjectProperty<>(LocalDateTime.parse(userSerializerS.getLastLogin(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+    }
+
     public WritableObjectProperty<String> usernameProperty() {
         return username;
     }
@@ -43,6 +65,14 @@ public class UserSerializer implements Serializable {
 
     public WritableObjectProperty<Boolean> acceptedProperty() {
         return accepted;
+    }
+
+    public WritableObjectProperty<ImageView> avatarProperty() {
+        return avatar;
+    }
+
+    public WritableObjectProperty<LocalDateTime> lastLoginProperty() {
+        return lastLogin;
     }
 
     public String getUsername() {
@@ -61,4 +91,18 @@ public class UserSerializer implements Serializable {
         return accepted.get();
     }
 
+    public ImageView getAvatar() {
+        return avatar.get();
+    }
+
+    public LocalDateTime getLastLogin() {
+        return lastLogin.get();
+    }
+
+    public void setAvatar(Image img) {
+        ImageView imgView = new ImageView(img);
+        imgView.setPreserveRatio(true);
+        imgView.setFitHeight(80);
+        avatar.set(imgView);
+    }
 }

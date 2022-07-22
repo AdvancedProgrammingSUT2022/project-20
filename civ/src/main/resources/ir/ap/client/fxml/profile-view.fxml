@@ -9,10 +9,14 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="576.0" prefWidth="1024.0" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ir.ap.client.ProfileView">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="576.0" prefWidth="1024.0" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ir.ap.client.ProfileView">
    <top>
       <HBox prefHeight="54.0" prefWidth="1024.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -110,21 +114,50 @@
             </content>
           </Tab>
             <Tab text="change avatar">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <content>
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
                      <children>
-                        <Label layoutX="162.0" layoutY="56.0" prefHeight="27.0" prefWidth="562.0" text="choose one of this avatars or choose picture from your computer" textFill="WHITE">
+                        <Label text="Select Your Avatar" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>
                         </Label>
-                        <Button layoutX="162.0" layoutY="96.0" mnemonicParsing="false" prefHeight="124.0" prefWidth="160.0" />
-                        <Button layoutX="352.0" layoutY="96.0" mnemonicParsing="false" prefHeight="124.0" prefWidth="160.0" />
-                        <Button layoutX="162.0" layoutY="249.0" mnemonicParsing="false" prefHeight="124.0" prefWidth="160.0" />
-                        <Button layoutX="352.0" layoutY="249.0" mnemonicParsing="false" prefHeight="124.0" prefWidth="160.0" />
+                        <GridPane fx:id="avatarsGrid" alignment="CENTER" prefHeight="393.0" prefWidth="1024.0" style="-fx-background-color: gray;">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <padding>
+                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                           </padding>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                           <opaqueInsets>
+                              <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                           </opaqueInsets>
+                        </GridPane>
+                        <HBox alignment="CENTER" prefHeight="41.0" prefWidth="1024.0" spacing="20.0">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#saveAvatar" text="Save" />
+                              <Label fx:id="messageLabel">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
                      </children>
-                  </AnchorPane>
-              </content>
+                  </VBox>
+               </content>
             </Tab>
         </tabs>
       </TabPane>
