@@ -136,6 +136,7 @@ public class GameController extends AbstractGameController implements JsonRespon
                 tileJsonObj.get("cityInTile").getAsJsonObject().addProperty("name", tile.getCity().getName());
                 tileJsonObj.get("cityInTile").getAsJsonObject().addProperty("dead", tile.getCity().isDead());
                 tileJsonObj.get("cityInTile").getAsJsonObject().addProperty("civId", tile.getCity().getCivilization().getIndex());
+                tileJsonObj.get("cityInTile").getAsJsonObject().addProperty("isCenter", tile.isCapitalCity());
             }
         }
         return tileJsonObj;
@@ -1378,6 +1379,16 @@ public class GameController extends AbstractGameController implements JsonRespon
         }
         JsonObject jsonObject = new JsonObject();
         jsonObject.add("technology", serializeTechnology(technology, civilization));
+        jsonObject.addProperty("ok", true);
+        return jsonObject;
+    }
+
+    public JsonObject getEra(){
+        if( gameArea.getEra() == null ){
+            return messageToJsonObj("there is no era", false);
+        }
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("era", gameArea.getEra().name());
         jsonObject.addProperty("ok", true);
         return jsonObject;
     }

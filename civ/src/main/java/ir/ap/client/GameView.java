@@ -3,6 +3,8 @@ package ir.ap.client;
 import ir.ap.client.components.map.CurrentResearchView;
 import ir.ap.client.components.map.MapView;
 import ir.ap.client.components.map.serializers.TechnologySerializer;
+import ir.ap.client.components.map.serializers.TileSerializer;
+import ir.ap.client.components.map.serializers.UnitSerializer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -17,6 +19,7 @@ import javafx.scene.layout.BorderPane;
 import java.io.IOException;
 import java.util.stream.Stream;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 public class GameView extends View {
@@ -177,6 +180,14 @@ public class GameView extends View {
 
     }
 
+    private void showMilitaryInfo(){
+        // can go into this panel from unitsInfoPanel
+    }
+
+    private void showEconomicInfo(){
+        // can go into this panel from citiesInfoPanel
+    }
+
     private void showNotificationPanel(){
 
     }
@@ -187,6 +198,20 @@ public class GameView extends View {
 
     public void showMenuPanel(){
 
+    }
+
+    public static void showUnitInfoPanel(UnitSerializer unitSerializer){
+        
+    }
+
+    public static void showTileInfoPanel(TileSerializer tileSerializer){
+        
+    }
+
+    public static String getEra(){
+        JsonObject jsonObject = send("getEra");
+        if(!responseOk(jsonObject))return null;
+        return GSON.fromJson(jsonObject.get("era"), String.class);
     }
 
 }

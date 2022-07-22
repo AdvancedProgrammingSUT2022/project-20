@@ -1,6 +1,8 @@
 package ir.ap.client.components;
 
 import ir.ap.client.App;
+import ir.ap.client.GameView;
+import ir.ap.client.components.map.serializers.RiverSerializer;
 import ir.ap.client.components.map.serializers.TileSerializer;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -11,6 +13,8 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 
+import java.util.stream.Stream;
+
 public class Hexagon extends Polygon {
 
     private static double RADIUS;
@@ -18,6 +22,7 @@ public class Hexagon extends Polygon {
 
     public static double RESOURCE_SIZE = 40;
     public static double IMPROVEMENT_SIZE = 40;
+    public static double CITY_SIZE = 50;
 
     TileSerializer tile;
     Unit combatUnit;
@@ -139,17 +144,36 @@ public class Hexagon extends Polygon {
         ImageView terrainImage = new ImageView(getTerrainTypeImage(getTile().getTerrainTypeId()));
         ImageView featureImage = new ImageView(getTerrainFeatureImage(getTile().getTerrainFeatureId()));
         ImageView fogImage = new ImageView(new Image(App.class.getResource("png/civAsset/map/Tiles/FogOfWar.png").toExternalForm()));
-        terrainImage.setFitWidth(2 * RADIUS);
-        terrainImage.setFitHeight(2 * HEIGHT);
-        featureImage.setFitWidth(2 * RADIUS);
-        featureImage.setFitHeight(2 * HEIGHT);
-        fogImage.setFitWidth(2 * RADIUS);
-        fogImage.setFitHeight(2 * HEIGHT);
+        ImageView riverBottom = new ImageView(new Image(App.class.getResource("png/civAsset/map/Tiles/River-Bottom.png").toExternalForm()));
+        ImageView riverBottomRight = new ImageView(new Image(App.class.getResource("png/civAsset/map/Tiles/River-BottomRight.png").toExternalForm()));
+        ImageView riverBottomLeft = new ImageView(new Image(App.class.getResource("png/civAsset/map/Tiles/River-BottomLeft.png").toExternalForm()));
+        ImageView cityImage = null;
+        if( getTile().getCityInTile() != null ){
+            if( getTile().getCityInTile().isCenter() == true ){
+                cityImage = new ImageView(new Image(App.class.getResource("png/civAsset/map/Tiles/City center-" + lowerCaseString(GameView.getEra()) + " era.png").toExternalForm()));            
+            }else{
+                cityImage = new ImageView(new Image(App.class.getResource("png/civAsset/map/Tiles/city.png").toExternalForm()));
+            }
+        }
+        Stream.of(terrainImage, featureImage, fogImage, riverBottom, riverBottomLeft, riverBottomRight).forEach( image -> 
+        image.setFitWidth(2 * RADIUS));
+        Stream.of(terrainImage, featureImage, fogImage, riverBottom, riverBottomLeft, riverBottomRight).forEach( image -> 
+        image.setFitHeight(2 * HEIGHT));
+        cityImage.setFitWidth(CITY_SIZE);
+        cityImage.setFitHeight(CITY_SIZE);
         setFill(Color.WHITE);
         if (terrainImage != null)
             images.getChildren().add(terrainImage);
         if (featureImage != null)
             images.getChildren().add(featureImage);
+        if (getTile().getHasRiver() != null){
+            RiverSerializer riverSerializer = getTile().getHasRiver();
+            if(riverSerializer.getDown() == true)images.getChildren().add(riverBottom);
+            if(riverSerializer.getDownLeft() == true)images.getChildren().add(riverBottomLeft);
+            if(riverSerializer.getDownRight() == true)images.getChildren().add(riverBottomRight);
+        }
+        if (cityImage != null)
+            images.getChildren().add(cityImage);
         if (getTile().getKnowledge().equals("FOG_OF_WAR"))
             images.getChildren().add(fogImage);
     }  

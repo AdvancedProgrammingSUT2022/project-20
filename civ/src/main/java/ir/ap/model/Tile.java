@@ -474,4 +474,8 @@ public class Tile implements Serializable {
         return terrainType == TerrainType.MOUNTAIN || terrainType.isSourceOfWater();
     }
 
+    public boolean isCapitalCity(){
+        if( getCity() != null && getCity().equals(getOwnerCity()) )return true;
+        else return false;
+    }
 }

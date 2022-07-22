@@ -2,6 +2,8 @@ package ir.ap.client.components;
 
 import ir.ap.client.App;
 import ir.ap.client.components.map.serializers.UnitSerializer;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
@@ -21,6 +23,12 @@ public class Unit extends Circle{
             System.out.println("salam");
             System.out.println(lowerCaseString(unitSerializer.getUnitType()));
         }
+        this.setOnMouseClicked(new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                     
+            }
+        });
     }
 
     public String lowerCaseString(String s1){
