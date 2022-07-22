@@ -4,8 +4,10 @@ import ir.ap.client.App;
 import ir.ap.client.GameView;
 import ir.ap.client.components.map.serializers.RiverSerializer;
 import ir.ap.client.components.map.serializers.TileSerializer;
+import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -27,6 +29,8 @@ public class Hexagon extends Polygon {
     TileSerializer tile;
     Unit combatUnit;
     Unit nonCombatUnit;
+    ImageView improvementImage;
+    ImageView cityImage;
     double x;
     double y;
 
@@ -87,7 +91,7 @@ public class Hexagon extends Polygon {
     }
 
     public void showImprovement(AnchorPane root){
-        ImageView improvementImage = new ImageView();
+        improvementImage = new ImageView();
         try {
             improvementImage = new ImageView(new Image(App.class.getResource("png/civAsset/icons/ImprovementIcons/" + lowerCaseString(tile.getImprovement().getName()) + ".png").toExternalForm()));            
         } catch (Exception e) {
@@ -99,6 +103,12 @@ public class Hexagon extends Polygon {
         improvementImage.setLayoutY(y - (IMPROVEMENT_SIZE/2));
         if(improvementImage != null){
             root.getChildren().add(improvementImage);
+            improvementImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    //TODO: in ejbarie?
+                }
+            });
         }    
     }    
 
@@ -144,10 +154,11 @@ public class Hexagon extends Polygon {
         ImageView terrainImage = new ImageView(getTerrainTypeImage(getTile().getTerrainTypeId()));
         ImageView featureImage = new ImageView(getTerrainFeatureImage(getTile().getTerrainFeatureId()));
         ImageView fogImage = new ImageView(new Image(App.class.getResource("png/civAsset/map/Tiles/FogOfWar.png").toExternalForm()));
+        ImageView revealed = new ImageView(new Image(App.class.getResource("png/civAsset/map/Tiles/Revealed.png").toExternalForm()));
         ImageView riverBottom = new ImageView(new Image(App.class.getResource("png/civAsset/map/Tiles/River-Bottom.png").toExternalForm()));
         ImageView riverBottomRight = new ImageView(new Image(App.class.getResource("png/civAsset/map/Tiles/River-BottomRight.png").toExternalForm()));
         ImageView riverBottomLeft = new ImageView(new Image(App.class.getResource("png/civAsset/map/Tiles/River-BottomLeft.png").toExternalForm()));
-        ImageView cityImage = null;
+        cityImage = null;
         if( getTile().getCityInTile() != null ){
             if( getTile().getCityInTile().isCenter() == true ){
                 cityImage = new ImageView(new Image(App.class.getResource("png/civAsset/map/Tiles/City center-" + lowerCaseString(GameView.getEra()) + " era.png").toExternalForm()));            
@@ -157,9 +168,9 @@ public class Hexagon extends Polygon {
             cityImage.setFitWidth(CITY_SIZE);
             cityImage.setFitHeight(CITY_SIZE);
         }
-        Stream.of(terrainImage, featureImage, fogImage, riverBottom, riverBottomLeft, riverBottomRight).forEach( image -> 
+        Stream.of(terrainImage, featureImage, fogImage, revealed, riverBottom, riverBottomLeft, riverBottomRight).forEach( image -> 
         image.setFitWidth(2 * RADIUS));
-        Stream.of(terrainImage, featureImage, fogImage, riverBottom, riverBottomLeft, riverBottomRight).forEach( image -> 
+        Stream.of(terrainImage, featureImage, fogImage, revealed, riverBottom, riverBottomLeft, riverBottomRight).forEach( image -> 
         image.setFitHeight(2 * HEIGHT));
         setFill(Color.WHITE);
         if (terrainImage != null)
@@ -172,10 +183,19 @@ public class Hexagon extends Polygon {
             if(riverSerializer.getDownLeft() == true)images.getChildren().add(riverBottomLeft);
             if(riverSerializer.getDownRight() == true)images.getChildren().add(riverBottomRight);
         }
-        if (cityImage != null)
+        if (cityImage != null){
             images.getChildren().add(cityImage);
+            cityImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    GameView.showCityProductConstructionPanel();
+                }
+            });
+        }
         if (getTile().getKnowledge().equals("FOG_OF_WAR"))
             images.getChildren().add(fogImage);
+        if (getTile().getKnowledge().equals("REVEALED"))
+            images.getChildren().add(revealed);
     }  
 
     private Image getTerrainTypeImage(int terrainTypeId) {

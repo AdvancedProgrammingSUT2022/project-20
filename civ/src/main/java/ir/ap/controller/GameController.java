@@ -113,20 +113,23 @@ public class GameController extends AbstractGameController implements JsonRespon
                 tileJsonObj.get("resource").getAsJsonObject().addProperty("improved", tile.resourceIsImproved(rsrc));
             }
             if (tile.getNonCombatUnit() != null) {
-                JsonObject nonCombatUnit = new JsonObject();
-                nonCombatUnit.addProperty("unitTypeId", tile.getNonCombatUnit().getUnitType().getId());
-                nonCombatUnit.addProperty("unitType", tile.getNonCombatUnit().getUnitType().getName());
-                // System.out.println("hey");
-                nonCombatUnit.addProperty("civId", tile.getNonCombatUnit().getCivilization().getIndex());
+                JsonObject nonCombatUnit = serializeUnit(tile.getNonCombatUnit());
                 tileJsonObj.add("nonCombatUnit", nonCombatUnit);
+                // nonCombatUnit.addProperty("unitTypeId", tile.getNonCombatUnit().getUnitType().getId());
+                // nonCombatUnit.addProperty("unitType", tile.getNonCombatUnit().getUnitType().getName());
+                // // System.out.println("hey");
+                // nonCombatUnit.addProperty("civId", tile.getNonCombatUnit().getCivilization().getIndex());
+                // tileJsonObj.add("nonCombatUnit", serializeUnit(nonCombatUnit));
             }
             if (tile.getCombatUnit() != null) {
-                JsonObject combatUnit = new JsonObject();
-                combatUnit.addProperty("unitTypeId", tile.getCombatUnit().getUnitType().getId());
-                combatUnit.addProperty("unitType", tile.getCombatUnit().getUnitType().getName());
-                // System.out.println(tile.getCombatUnit().getUnitType().getName());
-                combatUnit.addProperty("civId", tile.getCombatUnit().getCivilization().getIndex());
+                JsonObject combatUnit = serializeUnit(tile.getCombatUnit());
                 tileJsonObj.add("combatUnit", combatUnit);
+                // JsonObject combatUnit = new JsonObject();
+                // combatUnit.addProperty("unitTypeId", tile.getCombatUnit().getUnitType().getId());
+                // combatUnit.addProperty("unitType", tile.getCombatUnit().getUnitType().getName());
+                // // System.out.println(tile.getCombatUnit().getUnitType().getName());
+                // combatUnit.addProperty("civId", tile.getCombatUnit().getCivilization().getIndex());
+                // tileJsonObj.add("combatUnit", combatUnit);
             }
             if (tile.getOwnerCity() != null) {
                 tileJsonObj.addProperty("ownerCivId", tile.getOwnerCity().getCivilization().getIndex());
@@ -246,6 +249,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         if (unit.getUnitAction() != null)
             unitObject.addProperty("unitAction", unit.getUnitAction().name());
         unitObject.addProperty("mp", unit.getMp());
+        unitObject.addProperty("maxMp", unit.getUnitType().getMovement());
         unitObject.addProperty("hp", unit.getHp());
         unitObject.addProperty("tileId", unit.getTile().getIndex());
         // unitObject.addProperty("isCombat", unit.getUnitType().isCivilian());

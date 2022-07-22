@@ -1,10 +1,15 @@
 package ir.ap.client;
 
-import ir.ap.client.components.map.CurrentResearchView;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import ir.ap.client.components.map.panel.CurrentResearchView;
 import ir.ap.client.components.map.MapView;
 import ir.ap.client.components.map.serializers.TechnologySerializer;
 import ir.ap.client.components.map.serializers.TileSerializer;
 import ir.ap.client.components.map.serializers.UnitSerializer;
+import ir.ap.controller.GameController;
+import ir.ap.controller.UserController;
+import ir.ap.model.Improvement;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -17,6 +22,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.stream.Stream;
 
 import com.google.gson.Gson;
@@ -164,32 +170,119 @@ public class GameView extends View {
 
     }
 
-    private void showTechnologyInfoPanel(){
+    private void showTechnologyInfoPanel() {
+        ArrayList<String> improvementsNames = new ArrayList<String>();
+        ArrayList<String> resourcesNames = new ArrayList<String>();
+        ArrayList<String> unitTypesNames = new ArrayList<String>();
+        ArrayList<String> buildingTypesNames = new ArrayList<String>();
+        ArrayList<String> unitActionsNames = new ArrayList<String>();
+        ArrayList<String> technologiesNames = new ArrayList<String>();
 
+        JsonObject jsonObject = send("infoResearch", currentUsername);
+        if (responseOk(jsonObject) == false) return;
+
+        for (int j = 0; j < 6; j++) {
+            JsonElement jsonElement = jsonObject.getAsJsonArray("objectsUnlocksSeparated").get(j);
+            JsonArray jsonArray = GSON.fromJson(jsonElement, JsonArray.class);
+            for (int i = 0; i < jsonArray.size(); i++) {
+                JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
+                String name = GSON.fromJson(jsonObject1.get("name"), String.class);
+                if (j == 0) improvementsNames.add(name);
+                if (j == 1) resourcesNames.add(name);
+                if (j == 2) unitTypesNames.add(name);
+                if (j == 3) buildingTypesNames.add(name);
+                if (j == 4) unitActionsNames.add(name);
+                if (j == 5) technologiesNames.add(name);
+            }
+        }
     }
 
     private void showUnitsInfoPanel(){
+        JsonObject jsonObject = send("infoUnits", currentUsername);
+        if(responseOk(jsonObject) == false) return;
 
+        ArrayList<String> unitNames = new ArrayList<String>();
+        JsonArray jsonArray = jsonObject.getAsJsonArray("units");
+        for(int i = 0; i < jsonArray.size(); i++)
+        {
+            JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
+            String name = GSON.fromJson(jsonObject1.get("name"), String.class);
+            unitNames.add(name);
+        }
     }
 
     private void showCitiesInfoPanel(){
+        JsonObject jsonObject = send("infoCities", currentUsername);
+        if(responseOk(jsonObject) == false) return;
 
+        ArrayList<String> cityNames = new ArrayList<String>();
+        JsonArray jsonArray = jsonObject.getAsJsonArray("cities");
+        for(int i = 0; i < jsonArray.size(); i++)
+        {
+            JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
+            String name = GSON.fromJson(jsonObject1.get("name"), String.class);
+            cityNames.add(name);
+        }
     }
 
     private void showDemographicsInfoPanel(){
+        JsonObject jsonObject = send("infoDemographics", currentUsername);
+        if(responseOk(jsonObject) == false) return;
 
+        ArrayList<String> demographicsNames = new ArrayList<String>();
+        JsonArray jsonArray = jsonObject.getAsJsonArray("demographics");
+        for(int i = 0; i < jsonArray.size(); i++)
+        {
+            JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
+            String name = GSON.fromJson(jsonObject1.get("name"), String.class);
+            demographicsNames.add(name);
+        }
     }
 
     private void showMilitaryInfo(){
         // can go into this panel from unitsInfoPanel
+        JsonObject jsonObject = send("infoMilitary", currentUsername);
+        if(responseOk(jsonObject) == false) return;
+
+        ArrayList<String> militaryNames = new ArrayList<String>();
+        JsonArray jsonArray = jsonObject.getAsJsonArray("military");
+        for(int i = 0; i < jsonArray.size(); i++)
+        {
+            JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
+            String name = GSON.fromJson(jsonObject1.get("name"), String.class);
+            militaryNames.add(name);
+        }
     }
 
     private void showEconomicInfo(){
         // can go into this panel from citiesInfoPanel
+        JsonObject jsonObject = send("infoEconomic", currentUsername);
+        if(responseOk(jsonObject) == false) return;
+
+        ArrayList<String> economicNames = new ArrayList<String>();
+        JsonArray jsonArray = jsonObject.getAsJsonArray("economic");
+        for(int i = 0; i < jsonArray.size(); i++)
+        {
+            JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
+            String name = GSON.fromJson(jsonObject1.get("name"), String.class);
+            economicNames.add(name);
+        }
+        // bayad az unitsInfoPanel behesh berim
     }
 
-    private void showNotificationPanel(){
 
+    private void showNotificationPanel(){
+        JsonObject jsonObject = send("infoNotifications", currentUsername);
+        if(responseOk(jsonObject) == false) return;
+
+        ArrayList<String> notificationNames = new ArrayList<String>();
+        JsonArray jsonArray = jsonObject.getAsJsonArray("notifications");
+        for(int i = 0; i < jsonArray.size(); i++)
+        {
+            JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
+            String name = GSON.fromJson(jsonObject1.get("name"), String.class);
+            notificationNames.add(name);
+        }
     }
 
     public void showSettingPanel(){
@@ -200,18 +293,18 @@ public class GameView extends View {
 
     }
 
+    public static void showCityProductConstructionPanel(){
+
+    }
+
     public static void showUnitInfoPanel(UnitSerializer unitSerializer){
         
     }
 
-    public static void showTileInfoPanel(TileSerializer tileSerializer){
-        
-    }
 
     public static String getEra(){
         JsonObject jsonObject = send("getEra");
         if(!responseOk(jsonObject))return null;
         return GSON.fromJson(jsonObject.get("era"), String.class);
     }
-
 }

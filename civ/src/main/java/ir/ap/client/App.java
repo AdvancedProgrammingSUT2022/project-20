@@ -8,6 +8,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -20,9 +22,17 @@ public class App extends Application {
     public static final double SCREEN_HEIGHT = 576;
 
     private static Scene scene;
+    private static Stage stage;
+
+    private static MediaPlayer menuMusic;
+    private static MediaPlayer launchGameMusic;
 
     public static Scene getScene() {
         return scene;
+    }
+
+    public static Stage getStage() {
+        return stage;
     }
 
     private static Parent loadFXML(String fxml) throws IOException {
@@ -31,6 +41,15 @@ public class App extends Application {
     }
 
     public static void setRoot(String fxml) throws IOException {
+        if( fxml.equals("fxml/launch-game-view.fxml") ){
+            menuMusic.stop();
+            launchGameMusic = new MediaPlayer(new Media(App.class.getResource("png/civAsset/Sounds/LaunchGameMusic.mp3").toExternalForm()));
+            launchGameMusic.setAutoPlay(true);
+            launchGameMusic.play();
+        }
+        else if( fxml.equals("fxml/game-view.fxml") ){
+            launchGameMusic.stop();
+        }
         scene.setRoot(loadFXML(fxml));
     }
 
@@ -45,7 +64,12 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        App.stage = stage;
         scene = new Scene(loadFXML("fxml/login-view.fxml"), SCREEN_WIDTH, SCREEN_HEIGHT);
+        scene.getStylesheets().add(GameView.class.getResource("css/styles.css").toExternalForm());
+        menuMusic = new MediaPlayer(new Media(App.class.getResource("png/civAsset/Sounds/MenuMusic.mp3").toExternalForm()));
+        menuMusic.setAutoPlay(true);
+        menuMusic.play();
         stage.setScene(scene);
         stage.setResizable(false);
         stage.setTitle("Civ");

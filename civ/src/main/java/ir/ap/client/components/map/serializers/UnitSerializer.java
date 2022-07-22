@@ -14,6 +14,7 @@ public class UnitSerializer{
     private String unitAction;
     private int hp;
     private int mp;
+    private int maxMp;
     private int tileId;
     private boolean isCombat;
 
@@ -47,5 +48,9 @@ public class UnitSerializer{
 
     public String getUnitType() {
         return unitType;
+    }
+
+    public int getMaxMp() {
+        return maxMp;
     }    
 }  
