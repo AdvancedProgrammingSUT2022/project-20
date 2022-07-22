@@ -41,6 +41,15 @@
     -fx-control-inner-background: blue;
 }
 
+.gameText {
+    -fx-control-inner-background: blue;
+    -fx-text-inner-color: white;
+}
+
+.backgroundColorB {
+    -fx-background-color: black;
+}
+
 .table-column{
     -fx-alignment: center;
     -fx-font-weight: bold;

@@ -1,6 +1,6 @@
 package ir.ap.client;
 
-import ir.ap.client.components.map.CurrentResearchView;
+import ir.ap.client.components.map.panel.CurrentResearchView;
 import ir.ap.client.components.map.MapView;
 import ir.ap.client.components.map.serializers.TechnologySerializer;
 import ir.ap.client.components.map.serializers.TileSerializer;
@@ -165,7 +165,7 @@ public class GameView extends View {
     }
 
     private void showTechnologyInfoPanel(){
-
+        JsonObject jsonObject;
     }
 
     private void showUnitsInfoPanel(){
@@ -181,11 +181,11 @@ public class GameView extends View {
     }
 
     private void showMilitaryInfo(){
-        // can go into this panel from unitsInfoPanel
+        // bayad az unitsInfoPanel behesh berim
     }
 
     private void showEconomicInfo(){
-        // can go into this panel from citiesInfoPanel
+        // bayad az citiesInfoPanel behesh berim
     }
 
     private void showNotificationPanel(){
@@ -200,12 +200,16 @@ public class GameView extends View {
 
     }
 
+    public static void showCityProductConstructionPanel(){
+
+    }
+
     public static void showUnitInfoPanel(UnitSerializer unitSerializer){
         
     }
 
     public static void showTileInfoPanel(TileSerializer tileSerializer){
-        
+
     }
 
     public static String getEra(){
@@ -213,5 +217,4 @@ public class GameView extends View {
         if(!responseOk(jsonObject))return null;
         return GSON.fromJson(jsonObject.get("era"), String.class);
     }
-
 }

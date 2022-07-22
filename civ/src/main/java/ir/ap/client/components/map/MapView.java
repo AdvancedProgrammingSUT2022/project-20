@@ -28,7 +28,7 @@ public class MapView extends View {
             enterMain();
             return;
         }
-        // System.out.println(mapJson);
+        root.getChildren().clear();
         MapSerializer map = GSON.fromJson(mapJson, MapSerializer.class);
         int height = map.getHeight();
         int width = map.getWidth();
@@ -50,12 +50,13 @@ public class MapView extends View {
     }
 
     private Hexagon getHexagonByTile(TileSerializer tile, int i, int j) {
-        if( hexagons[ i ][ j ] != null ){
-            return hexagons[ i ][ j ];
+        if( hexagons[ i ][ j ] == null ){
+            double mapX = (TILE_RADIUS + 3 * TILE_RADIUS / 2 * tile.getY());
+            double mapY = (2 * TILE_HEIGHT * tile.getX() + (tile.getY() % 2 == 0 ? 2 * TILE_HEIGHT : TILE_HEIGHT));
+            return hexagons[ i ][ j ] = new Hexagon(mapX, mapY, TILE_RADIUS, tile); 
         }
-        double mapX = (TILE_RADIUS + 3 * TILE_RADIUS / 2 * tile.getY());
-        double mapY = (2 * TILE_HEIGHT * tile.getX() + (tile.getY() % 2 == 0 ? 2 * TILE_HEIGHT : TILE_HEIGHT));
-        return new Hexagon(mapX, mapY, TILE_RADIUS, tile);
+        hexagons[ i ][ j ].setTile(tile);
+        return hexagons[ i ][ j ];
     }
 
     public static Hexagon[][] getHexagons() {
