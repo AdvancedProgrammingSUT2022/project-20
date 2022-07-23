@@ -244,15 +244,20 @@ public class GameController extends AbstractGameController implements JsonRespon
         JsonObject unitObject = new JsonObject();
         unitObject.addProperty("id", unit.getId());
         // unitObject.addProperty("unitTypeId", unit.getUnitType().getId());
+        unitObject.addProperty("combatType", unit.getUnitType().getCombatType().name());
         unitObject.addProperty("unitType", unit.getUnitType().name());
-        // unitObject.addProperty("civId", unit.getCivilization().getIndex());
+        unitObject.addProperty("civId", unit.getCivilization().getIndex());
         if (unit.getUnitAction() != null)
             unitObject.addProperty("unitAction", unit.getUnitAction().name());
         unitObject.addProperty("mp", unit.getMp());
         unitObject.addProperty("maxMp", unit.getUnitType().getMovement());
         unitObject.addProperty("hp", unit.getHp());
+        unitObject.addProperty("combatStrenght", unit.getUnitType().getCombatStrength());
         unitObject.addProperty("tileId", unit.getTile().getIndex());
-        // unitObject.addProperty("isCombat", unit.getUnitType().isCivilian());
+        boolean isCombat = unit.getUnitType().isCivilian();
+        if( isCombat )isCombat = false;
+        else isCombat = true;
+        unitObject.addProperty("isCombat", isCombat);
         return unitObject;
     }
 
@@ -268,7 +273,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         if (civ == null)
             return messageToJsonObj(Message.USER_NOT_ON_GAME, false);
         JsonObject response = new JsonObject();
-        response.addProperty("civName", civ.getName());
+        response.add("civ", serializeCiv(civ, civ));
         return setOk(response, true);
     }
 
@@ -884,6 +889,21 @@ public class GameController extends AbstractGameController implements JsonRespon
         return setOk(response, true);
     }
 
+    public JsonObject getTileById(String username, int tileId){
+        Civilization civ = civController.getCivilizationByUsername(username);
+        if( civ == null ){
+            return messageToJsonObj("invalid civUsername", false);
+        }
+        Tile tile = mapController.getTileById(tileId);
+        if( tile == null ){
+            return messageToJsonObj("tileId is invalid", false);
+        }
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("tile", serializeTile(tile, civ));
+        jsonObject.addProperty("ok", true);
+        return jsonObject;
+    }
+
     public JsonObject getTerrainTypeNameById(int id) {
         TerrainType[] terrainTypes = TerrainType.values();
         for (TerrainType terrainType : terrainTypes) {
@@ -1393,6 +1413,72 @@ public class GameController extends AbstractGameController implements JsonRespon
         }
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("era", gameArea.getEra().name());
+        jsonObject.addProperty("ok", true);
+        return jsonObject;
+    }
+
+    public JsonObject getYear(){
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("year", gameArea.getYear());
+        jsonObject.addProperty("ok", true);
+        return jsonObject;
+    }
+
+    public JsonObject getTurn(){
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("turn", gameArea.getTurn());
+        jsonObject.addProperty("ok", true);
+        return jsonObject;
+    }
+
+    public JsonObject canBuildImprovement(String username, int tileId, int impId){
+        Civilization civ = civController.getCivilizationByUsername(username);
+        if( civ == null ){
+            return messageToJsonObj("invalid civUsername", false);
+        }
+        Tile tile = mapController.getTileById(tileId);
+        if( tile == null ){
+            return messageToJsonObj("tileId is invalid", false);
+        }
+        Improvement improvement = Improvement.getImprovementById(impId);
+        if( improvement == null ){
+            return messageToJsonObj("impId is invalid", false);
+        }
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("canBuild", tile.civCanBuildImprovement(civ, improvement));
+        jsonObject.addProperty("ok", true);
+        return jsonObject;
+    }
+
+    public JsonObject hasRoadOrRailRoad(String username, int tileId){
+        Civilization civ = civController.getCivilizationByUsername(username);
+        if( civ == null ){
+            return messageToJsonObj("invalid civUsername", false);
+        }
+        Tile tile = mapController.getTileById(tileId);
+        if( tile == null ){
+            return messageToJsonObj("tileId is invalid", false);
+        }
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("hasRoad", (tile.getHasRoad() || tile.getHasRailRoad()) );
+        jsonObject.addProperty("ok", true);
+        return jsonObject;
+    }
+
+    public JsonObject getTerrainFeatureByTile(String username, int tileId){
+        Civilization civ = civController.getCivilizationByUsername(username);
+        if( civ == null ){
+            return messageToJsonObj("invalid civUsername", false);
+        }
+        Tile tile = mapController.getTileById(tileId);
+        if( tile == null ){
+            return messageToJsonObj("tileId is invalid", false);
+        }
+        if( tile.getTerrainFeature() == null ){
+            return messageToJsonObj("there is no terrain feature", false);
+        }        
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("terrainFeature", tile.getTerrainFeature().getId());
         jsonObject.addProperty("ok", true);
         return jsonObject;
     }

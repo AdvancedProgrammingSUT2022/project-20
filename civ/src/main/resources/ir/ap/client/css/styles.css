@@ -50,6 +50,10 @@
     -fx-background-color: black;
 }
 
+.backgroundColorBR {
+    -fx-background-color: rgb(113, 112, 116);
+}
+
 .table-column{
     -fx-alignment: center;
     -fx-font-weight: bold;

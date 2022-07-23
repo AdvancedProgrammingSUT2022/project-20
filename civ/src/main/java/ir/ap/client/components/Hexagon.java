@@ -11,8 +11,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 
 import java.util.stream.Stream;
@@ -57,6 +56,30 @@ public class Hexagon extends Polygon {
         images.setMaxWidth(2 * r);
         images.setMaxHeight(2 * h);
     }
+    
+    public void setCombatUnit(Unit combatUnit) {
+        this.combatUnit = combatUnit;
+    }
+
+    public void setNonCombatUnit(Unit nonCombatUnit) {
+        this.nonCombatUnit = nonCombatUnit;
+    }
+
+    public ImageView getImprovementImage() {
+        return improvementImage;
+    }
+
+    public void setImprovementImage(ImageView improvementImage) {
+        this.improvementImage = improvementImage;
+    }
+
+    public ImageView getCityImage() {
+        return cityImage;
+    }
+
+    public void setCityImage(ImageView cityImage) {
+        this.cityImage = cityImage;
+    }
 
     public Hexagon(double x, double y, double r, TileSerializer tile) {
         this(x, y, r);
@@ -66,7 +89,12 @@ public class Hexagon extends Polygon {
     public TileSerializer getTile() {
         return tile;
     }
-    
+
+    public boolean hasCollision(double x, double y){
+        Circle point = new Circle(x, y, 1);
+        return this.getBoundsInParent().intersects(point.getBoundsInParent());
+    }
+
     public void showUnits(AnchorPane root){
         if(tile.getCombatUnit() != null){
             showCombatUnit(x + (RADIUS/4), y + (HEIGHT/2), tile);
@@ -137,6 +165,7 @@ public class Hexagon extends Polygon {
 
     public void setTile(TileSerializer tile) {
         this.tile = tile;
+        this.images.getChildren().clear();
         loadFill();
     }
 
@@ -196,7 +225,14 @@ public class Hexagon extends Polygon {
             images.getChildren().add(fogImage);
         if (getTile().getKnowledge().equals("REVEALED"))
             images.getChildren().add(revealed);
-    }  
+    }
+    
+    public boolean cityHasCollision(double x, double y){
+        if( cityImage == null )return false;
+        Circle point = new Circle(x, y, 1);
+        return cityImage.getBoundsInParent().intersects(point.getBoundsInParent());
+    }
+
 
     private Image getTerrainTypeImage(int terrainTypeId) {
         String addr = "png/civAsset/map/Tiles/";

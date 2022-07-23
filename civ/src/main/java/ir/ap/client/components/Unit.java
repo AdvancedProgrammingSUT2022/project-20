@@ -1,5 +1,7 @@
 package ir.ap.client.components;
 
+import java.io.IOException;
+
 import ir.ap.client.App;
 import ir.ap.client.GameView;
 import ir.ap.client.components.map.serializers.UnitSerializer;
@@ -28,13 +30,18 @@ public class Unit extends Circle{
         this.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override 
             public void handle(MouseEvent mouseEvent) {
-                GameView.showUnitInfoPanel(unitSerializer);
+                try {
+                    GameView.showUnitInfoPanel(unitSerializer);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
-
-    public boolean hasCollisionMouse(){
-        return false;
+    
+    public boolean hasCollision(double x, double y){
+        Circle point = new Circle(x, y, 1);
+        return this.getBoundsInParent().intersects(point.getBoundsInParent());
     }
 
     public String lowerCaseString(String s1){

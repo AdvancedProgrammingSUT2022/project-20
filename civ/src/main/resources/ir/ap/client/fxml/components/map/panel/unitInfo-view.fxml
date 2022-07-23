@@ -53,5 +53,20 @@
          <font>
             <Font name="System Bold" size="13.0" />
          </font></TextField>
+      <TextField fx:id="combatStrenght" alignment="CENTER" layoutX="144.0" layoutY="84.0" prefHeight="24.0" prefWidth="176.0" text="Combat Strenght 0">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font>
+         <effect>
+            <Lighting>
+               <bumpInput>
+                  <Shadow />
+               </bumpInput>
+               <light>
+                  <Light.Distant />
+               </light>
+            </Lighting>
+         </effect>
+      </TextField>
    </children>
 </AnchorPane>
