@@ -1,6 +1,7 @@
 package ir.ap.client;
 
 import com.google.gson.*;
+import ir.ap.client.components.UserSerializer;
 import ir.ap.client.network.Request;
 import ir.ap.client.network.RequestHandler;
 import javafx.application.Platform;
@@ -22,6 +23,8 @@ public abstract class View {
     protected static Socket socket;
     protected static RequestHandler requestHandler;
     protected static RequestHandler inviteHandler;
+
+    protected static String authToken;
 
     protected static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
@@ -86,6 +89,15 @@ public abstract class View {
                         currentView.enterMain();
                     } else if (type.equals("enterGame")) {
                         currentView.enterGame();
+                    } else if (type.equals("online") || type.equals("offline")) {
+                        if (currentView instanceof ScoreboardView) {
+                            for (UserSerializer user : ((ScoreboardView) currentView).networkModeTable.getItems()) {
+                                if (user.getUsername().equals(sender)) {
+                                    user.setIsLogin(type.equals("online"));
+                                    break;
+                                }
+                            }
+                        }
                     }
                 } catch (Exception e) {
                     System.out.println("Connection lost for invite handler on socket " + socket);
@@ -119,7 +131,7 @@ public abstract class View {
     }
 
     protected static JsonObject send(String methodName, Object... params) {
-        Request request = new Request(methodName, params);
+        Request request = new Request(methodName, authToken, params);
         JsonObject response = null;
         try {
             response = requestHandler.send(request);
@@ -167,6 +179,7 @@ public abstract class View {
     public void logout() {
         send("logout", currentUsername);
         currentUsername = null;
+        authToken = null;
         try {
             inviteHandler.close();
         } catch (Exception e) {

@@ -14,6 +14,7 @@ public class UserSerializer implements Serializable {
     private WritableObjectProperty<Integer> maxScore;
     private WritableObjectProperty<ImageView> avatar;
     private WritableObjectProperty<LocalDateTime> lastLogin;
+    private WritableObjectProperty<Boolean> isLogin;
 
     private transient WritableObjectProperty<Boolean> accepted;
 
@@ -23,6 +24,7 @@ public class UserSerializer implements Serializable {
         this.accepted = new WritableObjectProperty<>(false);
         this.nickname = new WritableObjectProperty<>();
         this.maxScore = new WritableObjectProperty<>();
+        this.isLogin = new WritableObjectProperty<>(false);
     }
 
     public UserSerializer(String username, boolean accepted) {
@@ -49,6 +51,7 @@ public class UserSerializer implements Serializable {
         this.avatar = new WritableObjectProperty<>();
         setAvatar(View.getAvatar(userSerializerS.getAvatarIndex()));
         this.lastLogin = new WritableObjectProperty<>(LocalDateTime.parse(userSerializerS.getLastLogin(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+        this.isLogin = new WritableObjectProperty<>(userSerializerS.isLogin());
     }
 
     public WritableObjectProperty<String> usernameProperty() {
@@ -73,6 +76,10 @@ public class UserSerializer implements Serializable {
 
     public WritableObjectProperty<LocalDateTime> lastLoginProperty() {
         return lastLogin;
+    }
+
+    public WritableObjectProperty<Boolean> isLoginProperty() {
+        return isLogin;
     }
 
     public String getUsername() {
@@ -108,5 +115,13 @@ public class UserSerializer implements Serializable {
         imgView.setPreserveRatio(true);
         imgView.setFitHeight(80);
         avatar.set(imgView);
+    }
+
+    public Boolean getIsLogin() {
+        return isLogin.get();
+    }
+
+    public void setIsLogin(Boolean isLogin) {
+        this.isLogin.set(isLogin);
     }
 }

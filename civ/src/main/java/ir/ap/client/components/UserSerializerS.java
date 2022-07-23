@@ -8,6 +8,7 @@ public class UserSerializerS {
     private String maxScore;
     private int avatarIndex;
     private String lastLogin;
+    private boolean isLogin;
 
     public String getUsername() {
         return username;
@@ -34,5 +35,9 @@ public class UserSerializerS {
 
     public String getLastLogin() {
         return lastLogin;
+    }
+
+    public boolean isLogin() {
+        return isLogin;
     }
 }

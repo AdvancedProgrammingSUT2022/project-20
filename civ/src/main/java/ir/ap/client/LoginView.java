@@ -8,7 +8,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 
-import java.io.IOException;
 import java.net.Socket;
 
 public class LoginView extends View {
@@ -41,26 +40,28 @@ public class LoginView extends View {
             return;
         }
         JsonObject response = send("login", username,password);
-        currentUsername = username;
         String msg = getField(response, "msg", String.class);
+        if (!responseOk(response)) {
+            error(loginMsgLabel, msg);
+            return;
+        }
+        currentUsername = username;
+        authToken = response.get("authToken").getAsString();
         if(msg != null) {
-            if (responseOk(response)) {
-                success(loginMsgLabel, msg);
-                currentUsername = username;
-                try {
-                    inviteHandler = new RequestHandler(new Socket("localhost", App.SERVER_PORT));
-                    JsonObject inviteResponse = inviteHandler.send(new Request("setInviteHandler", currentUsername));
-                    if (!responseOk(inviteResponse)) {
-                        System.out.println("Unable to set invite handler");
-                    } else {
-                        View.initializeInviteHandler();
-                    }
-                } catch (Exception e) {
+            success(loginMsgLabel, msg);
+            currentUsername = username;
+            try {
+                inviteHandler = new RequestHandler(new Socket("localhost", App.SERVER_PORT));
+                JsonObject inviteResponse = inviteHandler.send(new Request("setInviteHandler", authToken, currentUsername));
+                if (!responseOk(inviteResponse)) {
                     System.out.println("Unable to set invite handler");
+                } else {
+                    View.initializeInviteHandler();
                 }
-                enterMain();
-            } else
-                error(loginMsgLabel, msg);
+            } catch (Exception e) {
+                System.out.println("Unable to set invite handler");
+            }
+            enterMain();
         }
     }
 

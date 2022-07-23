@@ -32,6 +32,9 @@ public class SocketHandler extends Thread implements JsonResponsor {
     }
 
     private JsonObject process(Request request) {
+        if (user != null && user.getAuthToken() != null && !user.getAuthToken().equals(request.getAuthToken())) {
+            return messageToJsonObj("Invalid credentials", false);
+        }
         if ("newGame".equals(request.getMethodName())) {
             return newGame(request.getParams().toArray(new String[0]));
         } else if ("login".equals(request.getMethodName())) {
@@ -170,7 +173,9 @@ public class SocketHandler extends Thread implements JsonResponsor {
                 String response = GSON.toJson(responseJson);
                 outputStream.writeUTF(response);
             } catch (Exception e) {
-//                e.printStackTrace();
+                if (user != null) {
+                    userController.logout(user.getUsername());
+                }
                 System.out.println("Connection closed on socket " + socket);
                 try {
                     terminate();
