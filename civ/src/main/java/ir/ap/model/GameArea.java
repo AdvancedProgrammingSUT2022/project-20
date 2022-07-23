@@ -3,6 +3,7 @@ package ir.ap.model;
 import java.io.Serializable;
 import java.util.HashMap;
 
+import ir.ap.controller.GameController;
 import ir.ap.model.Tile.TileKnowledge;
 
 public class GameArea implements Serializable {
@@ -16,6 +17,9 @@ public class GameArea implements Serializable {
     private TileKnowledge[][] tilesKnowledges = new TileKnowledge[ MAX_USERS ][ MAX_LAND_TILES ] ;
 
     private int turn;
+    private HashMap<User, Boolean> moved;
+    private int numberOfMovedUsers;
+
     private int year;
     private Era era;
     private final long seed;
@@ -56,10 +60,12 @@ public class GameArea implements Serializable {
     public void nextTurn() {
         ++turn;
         year += 50;
+        numberOfMovedUsers = 0;
+        moved.clear();
     }
 
     public boolean end() {
-        return (turn >= MAX_TURN * getUserCount());
+        return (turn >= MAX_TURN);
     }
 
     public int getYear() {
@@ -138,5 +144,24 @@ public class GameArea implements Serializable {
 
     public int getWeightedDistance(Tile tile1, Tile tile2){
         return map.getWeightedDistance(tile1, tile2);
+    }
+
+    public void move(Civilization civilization) {
+        if (moved.get(civilization)) {
+            return;
+        }
+        moved.put(getUserByCivilization(civilization), true);
+        ++numberOfMovedUsers;
+        if (numberOfMovedUsers == user2civ.size()) {
+            nextTurn();
+        }
+    }
+
+    public boolean hasMoved(Civilization civ) {
+        return moved.get(getUserByCivilization(civ));
+    }
+
+    public boolean hasMoved(User user) {
+        return moved.get(user);
     }
 }
