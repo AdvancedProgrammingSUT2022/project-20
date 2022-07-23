@@ -415,8 +415,9 @@ public class GameController extends AbstractGameController implements JsonRespon
         boolean end = civController.nextTurn(civilization);
         JsonObject response = new JsonObject();
         response.addProperty("end", end);
-        if (end)
+        if (end) {
             response.addProperty("msg", getGameEndStr());
+        }
         setOk(response, true);
         return response;
     }
