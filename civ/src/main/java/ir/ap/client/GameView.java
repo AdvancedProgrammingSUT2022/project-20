@@ -5,11 +5,7 @@ import com.google.gson.JsonElement;
 import ir.ap.client.components.map.panel.CurrentResearchView;
 import ir.ap.client.components.map.MapView;
 import ir.ap.client.components.map.serializers.TechnologySerializer;
-import ir.ap.client.components.map.serializers.TileSerializer;
 import ir.ap.client.components.map.serializers.UnitSerializer;
-import ir.ap.controller.GameController;
-import ir.ap.controller.UserController;
-import ir.ap.model.Improvement;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -22,11 +18,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 public class GameView extends View {

@@ -1,7 +1,6 @@
 package ir.ap.network;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Request {
     private final String methodName;

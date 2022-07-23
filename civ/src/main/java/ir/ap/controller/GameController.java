@@ -13,21 +13,6 @@ import ir.ap.model.Tile.TileKnowledge;
 import ir.ap.model.UnitType.UnitAction;
 
 public class GameController extends AbstractGameController implements JsonResponsor {
-    public enum Validator {
-        ;
-
-        private final String regex;
-
-        Validator(String regex) {
-            this.regex = regex;
-        }
-
-        @Override
-        public String toString() {
-            return regex;
-        }
-    }
-
     public enum Message {
         GAME_STARTED("game started successfully"),
         USER_NOT_LOGGED_IN("user is not logged in"),
@@ -49,6 +34,9 @@ public class GameController extends AbstractGameController implements JsonRespon
     }
 
     private static final String CITY_NAMES_FILE = "citynames.json";
+
+    private ArrayList<String> invitedUsers = new ArrayList<>();
+    private String creator;
 
     public GameController() {
         super();
@@ -74,6 +62,47 @@ public class GameController extends AbstractGameController implements JsonRespon
         } catch (Exception ex) {
             System.out.println("Unable to read city names");
         }
+    }
+
+    public void setCreator(String username) {
+        creator = username;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void addInvitedUser(String username) {
+        invitedUsers.add(username);
+    }
+
+    public JsonObject removeInvitedUser(String remover, String username) {
+        if (remover.equals(creator)) {
+            invitedUsers.remove(username);
+            User user = User.getUser(username);
+            JsonObject response = new JsonObject();
+            response.addProperty("type", "removed");
+            response.addProperty("username", remover);
+            try {
+                user.setGameController(null);
+                user.getInviteHandler().send(response);
+            } catch (Exception e) {
+                return messageToJsonObj("Could not remove player", false);
+            }
+            return messageToJsonObj("Player removed", true);
+        } else {
+            return messageToJsonObj("Only creator could remove players", false);
+        }
+    }
+
+    public ArrayList<String> getArrayOfInvitedUsers() {
+        return invitedUsers;
+    }
+
+    public JsonObject getInvitedUsers() {
+        JsonObject result = new JsonObject();
+        result.add("users", GSON.fromJson(GSON.toJson(invitedUsers), JsonArray.class));
+        return setOk(result, true);
     }
 
     public JsonObject serializeTile(Tile tile, Civilization civ) {
@@ -324,10 +353,18 @@ public class GameController extends AbstractGameController implements JsonRespon
             if (gameArea.getUserByUsername(username) != null)
                 return messageToJsonObj("duplicate users", false);
             User curUser = User.getUser(username);
-            if (curUser == null) // TODO login in server PHASE3
+            if (curUser == null || !curUser.isLogin() || curUser.getGameController() != this)
                 return messageToJsonObj(Message.USER_NOT_LOGGED_IN, false);
             Civilization curCiv = new Civilization(cnt++, curUser.getNickname() + ".civ", null);;
             gameArea.addUser(curUser, curCiv);
+            try {
+                JsonObject enterGameJson = new JsonObject();
+                enterGameJson.addProperty("username", creator);
+                enterGameJson.addProperty("type", "enterGame");
+                curUser.getInviteHandler().send(enterGameJson);
+            } catch (Exception e) {
+                System.out.println("Player " + username + " could not start the game :(");
+            }
         }
         if (/*gameArea.getUserCount() < 2 || */gameArea.getUserCount() > 8)
             return messageToJsonObj("at least 2 players and at most 8 should be in game", false);

@@ -1,4 +1,4 @@
-package ir.ap.client.network;
+package ir.ap.network;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -22,10 +22,9 @@ public class RequestHandler {
         this.outputStream = new DataOutputStream(socket.getOutputStream());
     }
 
-    public JsonObject send(Request request) throws IOException {
-        String requestJsonStr = gson.toJson(request);
-        outputStream.writeUTF(requestJsonStr);
-        return read();
+    public void send(JsonObject response) throws IOException {
+        String responseJsonStr = gson.toJson(response);
+        outputStream.writeUTF(responseJsonStr);
     }
 
     public JsonObject read() throws IOException {
@@ -33,9 +32,12 @@ public class RequestHandler {
         return gson.fromJson(responseJsonStr, JsonObject.class);
     }
 
-    public void close() throws IOException {
-        if (socket != null && !socket.isClosed()) {
+    public void close() {
+        System.out.println("Connection closed on socket " + socket);
+        try {
             socket.close();
+        } catch (Exception e) {
+            System.out.println("Unable to terminate socket " + socket);
         }
     }
 }
