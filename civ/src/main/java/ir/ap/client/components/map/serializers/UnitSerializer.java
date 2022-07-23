@@ -56,5 +56,6 @@ public class UnitSerializer{
 
     public int getCombatStrenght() {
         return combatStrenght;
-    }    
+    }
+
 }  
