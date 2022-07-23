@@ -202,7 +202,7 @@ public class UserController implements JsonResponsor, AutoCloseable {
         user.setLogin(false);
         user.setAuthToken(null);
         user.getSocketHandler().setUser(null);
-            user.setInviteHandler(null);
+        user.setInviteHandler(null);
         JsonObject onlineJson = new JsonObject();
         onlineJson.addProperty("type", "offline");
         onlineJson.addProperty("username", user.getUsername());
