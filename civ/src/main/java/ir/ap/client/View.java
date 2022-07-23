@@ -2,9 +2,12 @@ package ir.ap.client;
 
 import com.google.gson.*;
 import ir.ap.client.App;
+import ir.ap.client.components.UserSerializer;
 import ir.ap.client.network.Request;
 import ir.ap.client.network.RequestHandler;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
@@ -16,10 +19,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Optional;
 
 public abstract class View {
     protected static Socket socket;
     protected static RequestHandler requestHandler;
+    protected static RequestHandler inviteHandler;
 
     protected static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
@@ -48,10 +53,44 @@ public abstract class View {
         try {
             socket = new Socket("localhost", App.SERVER_PORT);
             requestHandler = new RequestHandler(socket);
+            inviteHandler = new RequestHandler(new Socket("localhost", App.SERVER_PORT));
         } catch (IOException e) {
             System.out.println("Unable to connect to the server");
         }
+        initializeInviteHandler();
         readAvatars();
+    }
+
+    private static void initializeInviteHandler() {
+        Thread inviteHandlerThread = new Thread(() -> {
+            while (true) {
+                try {
+                    JsonObject inviteJson = inviteHandler.read();
+                    String sender = inviteJson.get("username").getAsString();
+                    if (inviteJson.get("type").getAsString().equals("request")) {
+                        Platform.runLater(() -> {
+                            Alert enterGameAlert = new Alert(Alert.AlertType.CONFIRMATION, "Would you accept the invitation?", ButtonType.NO, ButtonType.YES);
+                            enterGameAlert.setTitle("Invitation to game");
+                            enterGameAlert.setHeaderText("You have a new invitation");
+                            enterGameAlert.setContentText(sender + " has invited you to start a new game. Would you like to proceed to the game?");
+                            Optional<ButtonType> response = enterGameAlert.showAndWait();
+                            boolean accepted = response.isPresent() && response.get() == ButtonType.YES;
+                            try {
+                                inviteHandler.send(new Request("respondInvitation", currentUsername, sender, accepted));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    }
+                    // TODO: response, inviteMenu, ...
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return;
+                }
+            }
+        });
+        inviteHandlerThread.setDaemon(true);
+        inviteHandlerThread.start();
     }
 
     private static void readAvatars() {

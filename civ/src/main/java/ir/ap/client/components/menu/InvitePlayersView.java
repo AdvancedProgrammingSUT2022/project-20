@@ -1,15 +1,19 @@
 package ir.ap.client.components.menu;
 
 import com.google.gson.JsonObject;
+
+import ir.ap.client.App;
 import ir.ap.client.View;
 import ir.ap.client.components.UserSerializer;
+import ir.ap.client.network.RequestHandler;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.util.*;
 
 public class InvitePlayersView extends View {

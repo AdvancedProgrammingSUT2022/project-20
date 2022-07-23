@@ -25,6 +25,10 @@ public class RequestHandler {
     public JsonObject send(Request request) throws IOException {
         String requestJsonStr = gson.toJson(request);
         outputStream.writeUTF(requestJsonStr);
+        return read();
+    }
+
+    public JsonObject read() throws IOException {
         String responseJsonStr = inputStream.readUTF();
         return gson.fromJson(responseJsonStr, JsonObject.class);
     }

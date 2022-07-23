@@ -30,53 +30,19 @@ public class ProfileView extends View {
     @FXML
     private TextField nickname;
     @FXML
-    GridPane imagesGrid;
-    @FXML
-    ImageView selectedImage;
-    @FXML
-    GridPane avatarsGrid; //TODO: im not sure about this. i just remove conflict
-
-   /* public void initialize() {
-        images[0][0] = new Image(ProfileView.class.getResource("png/Backgrounds/14.png").toExternalForm());
-        images[0][1] = new Image(ProfileView.class.getResource("png/Backgrounds/16.png").toExternalForm());
-        images[1][0] = new Image(ProfileView.class.getResource("png/Backgrounds/18.png").toExternalForm());
-        images[1][1] = new Image(ProfileView.class.getResource("png/Backgrounds/DioBackground.png").toExternalForm());
-        for(int i = 0; i < 2; i++)
-            for(int j = 0; j < 2; j++)
-            {
-                ImageView imageView = new ImageView(images[i][j]);
-                imageView.setFitHeight(50);
-                imageView.setFitWidth(50);
-                imageView.setOnMouseClicked(this::onImageAction);
-                imagesGrid.add(imageView, i,j);
-            }
-    }*/
-
-    private void onImageAction(MouseEvent mouseEvent) {
-        ImageView imageView = (ImageView)mouseEvent.getSource();
-        String imageUrl = imageView.getImage().getUrl();
-        //TODO: server
-    }
-
-    public void chooseImage() {
-        FileChooser fileChooser = new FileChooser();
-        File file = fileChooser.showOpenDialog(App.getStage());
-        Image image = new Image(file.getAbsolutePath());
-        selectedImage.setImage(image);
-        //TODO: server
-    }
+    private GridPane avatarsGrid;
     @FXML
     private Label messageLabel;
 
-    private String cssBorderingDarkBlue = "-fx-border-color: darkblue ; \n" //#090a0c
+    private String cssBorderingDarkBlue = "-fx-border-color: darkblue ; \n"
             + "-fx-border-insets:5;\n"
             + "-fx-border-radius:10;\n"
             + "-fx-border-width:3.0";
-    private String cssBorderingGreen = "-fx-border-color: green ; \n" //#090a0c
+    private String cssBorderingGreen = "-fx-border-color: green ; \n"
             + "-fx-border-insets:5;\n"
             + "-fx-border-radius:10;\n"
             + "-fx-border-width:3.0";
-    private String cssBorderingYellow = "-fx-border-color: yellow ; \n" //#090a0c
+    private String cssBorderingYellow = "-fx-border-color: yellow ; \n"
             + "-fx-border-insets:5;\n"
             + "-fx-border-radius:10;\n"
             + "-fx-border-width:3.0";
