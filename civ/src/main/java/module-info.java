@@ -15,4 +15,5 @@ module civ {
     exports ir.ap.client;
     opens ir.ap.client.components.map to javafx.fxml, com.google.gson;
     opens ir.ap.client.components.map.serializers to javafx.fxml, com.google.gson;
+    opens ir.ap.client.components.map.panel to javafx.fxml;
 }

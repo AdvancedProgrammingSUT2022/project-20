@@ -20,6 +20,9 @@ public class UnitInfoView {
     private TextField unitName;
 
     @FXML
+    private TextField combatStrenght;
+
+    @FXML
     private TextField movement;
 
     @FXML
@@ -32,6 +35,7 @@ public class UnitInfoView {
         unitName.getStyleClass().add("gameText");
         movement.getStyleClass().add("gameText");
         health.getStyleClass().add("gameText");
+        combatStrenght.getStyleClass().add("gameText");
     }
 
     public UnitSerializer getUnitSerializer() {
@@ -43,6 +47,7 @@ public class UnitInfoView {
         this.unitName.setText(unitSerializer.getUnitType());
         this.movement.setText("Movement " + unitSerializer.getMp() + "/" + unitSerializer.getMaxMp());
         this.health.setText("Health " + unitSerializer.getHp());
+        this.combatStrenght.setText("Combat Strenght " + unitSerializer.getCombatStrenght());
         this.unitImageView.setImage(new Image(App.class.getResource("png/civAsset/units/Units/" + lowerCaseString(unitSerializer.getUnitType()) + ".png").toExternalForm()));
     }
 
