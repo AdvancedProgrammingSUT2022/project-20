@@ -60,13 +60,10 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         scene = new Scene(loadFXML("fxml/login-view.fxml"), SCREEN_WIDTH, SCREEN_HEIGHT);
-<<<<<<< HEAD
         scene.getStylesheets().add(GameView.class.getResource("css/styles.css").toExternalForm());
         menuMusic = new MediaPlayer(new Media(App.class.getResource("png/civAsset/Sounds/MenuMusic.mp3").toExternalForm()));
         menuMusic.setAutoPlay(true);
         menuMusic.play();
-=======
->>>>>>> 4009d0c80c1d102fbac16689f3b4166283c06cb8
         stage.setScene(scene);
         stage.setResizable(false);
         stage.setTitle("Civ");

@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.stream.Stream;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class GameView extends View {
@@ -160,6 +162,10 @@ public class GameView extends View {
         return s3;
     }
 
+    public static void updateGame(){
+        
+    }
+
     private void nextTurn(){
 
     }
@@ -201,7 +207,10 @@ public class GameView extends View {
     }
 
     public static void showCityProductConstructionPanel(){
-
+        JsonArray jsonArray = new JsonArray();
+        for(int i = 0 ; i < jsonArray.size(); i ++){
+            
+        }
     }
 
     public static void showUnitInfoPanel(UnitSerializer unitSerializer){
@@ -216,5 +225,35 @@ public class GameView extends View {
         JsonObject jsonObject = send("getEra");
         if(!responseOk(jsonObject))return null;
         return GSON.fromJson(jsonObject.get("era"), String.class);
+    }
+
+    public static boolean tileHasRoadOrRailRoad(int tileId){
+        JsonObject jsonObject = send("hasRoadOrRailRoad", currentUsername, tileId);
+        if( !responseOk(jsonObject) ){
+            return false;
+        }
+        return GSON.fromJson(jsonObject.get("hasRoad"), boolean.class);
+    }
+
+    public static boolean tileCanBuildImprovement(int tileId, int impId){
+        JsonObject jsonObject = send("canBuildImprovement", currentUsername, tileId, impId);
+        if( !responseOk(jsonObject) ){
+            return false;
+        }
+        return GSON.fromJson(jsonObject.get("canBuild"), boolean.class);
+    }
+
+    public static int getTerrainFeature(int tileId){
+        JsonObject jsonObject = send("getTerrainFeatureByTile", currentUsername, tileId);
+        if( !responseOk(jsonObject) ){
+            return -1;
+        }
+        return GSON.fromJson(jsonObject.get("terrainFeature"), int.class);
+    }
+
+    public static TileSerializer getTileById(int tileId){
+        JsonObject jsonObject = send("getTileById", currentUsername, tileId);
+        if( !responseOk(jsonObject) )return null;
+        return GSON.fromJson(jsonObject.get("tile"), TileSerializer.class);
     }
 }

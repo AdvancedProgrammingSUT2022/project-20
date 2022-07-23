@@ -10,6 +10,7 @@ public class UnitSerializer{
 
     private int unitTypeId;
     private String unitType;
+    private String combatType;
     private int civId;
     private String unitAction;
     private int hp;
@@ -52,5 +53,9 @@ public class UnitSerializer{
 
     public int getMaxMp() {
         return maxMp;
+    }
+
+    public String getCombatType() {
+        return combatType;
     }    
 }  
