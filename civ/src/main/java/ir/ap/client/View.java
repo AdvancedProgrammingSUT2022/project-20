@@ -98,6 +98,11 @@ public abstract class View {
                                 }
                             }
                         }
+                    } else if (type.equals("nextTurn")) {
+                        if (currentView instanceof GameView) {
+                            GameView gameView = (GameView) currentView;
+                            gameView.nextTurn();
+                        }
                     }
                 } catch (Exception e) {
                     System.out.println("Connection lost for invite handler on socket " + socket);

@@ -3,6 +3,8 @@ package ir.ap.model;
 import java.io.Serializable;
 import java.util.HashMap;
 
+import com.google.gson.JsonObject;
+
 import ir.ap.model.Tile.TileKnowledge;
 
 public class GameArea implements Serializable {
@@ -27,6 +29,7 @@ public class GameArea implements Serializable {
         map = new Map( seed );
         user2civ = new HashMap<>();
         civ2user = new HashMap<>();
+        moved = new HashMap<>();
         for (int i = 0; i < MAX_USERS; i++)
             for (int j = 0; j < MAX_LAND_TILES; j++)
                 tilesKnowledges[i][j] = TileKnowledge.FOG_OF_WAR;
@@ -60,6 +63,20 @@ public class GameArea implements Serializable {
         ++turn;
         numberOfMovedUsers = 0;
         moved.clear();
+        notifyAllUsersToNextTurn();
+    }
+
+    public void notifyAllUsersToNextTurn() {
+        for (User user : user2civ.keySet()) {
+            JsonObject nextTurnJson = new JsonObject();
+            nextTurnJson.addProperty("type", "nextTurn");
+            nextTurnJson.addProperty("username", "nil");
+            try {
+                user.getInviteHandler().send(nextTurnJson);
+            } catch (Exception e) {
+                System.out.println("Could not proceed user " + user.getUsername() + " to next turn");
+            }
+        }
     }
 
     public boolean end() {
@@ -145,7 +162,7 @@ public class GameArea implements Serializable {
     }
 
     public void move(Civilization civilization) {
-        if (moved.get(civilization)) {
+        if (moved.containsKey(getUserByCivilization(civilization))) {
             return;
         }
         moved.put(getUserByCivilization(civilization), true);
@@ -156,10 +173,10 @@ public class GameArea implements Serializable {
     }
 
     public boolean hasMoved(Civilization civ) {
-        return moved.get(getUserByCivilization(civ));
+        return moved.containsKey(getUserByCivilization(civ));
     }
 
     public boolean hasMoved(User user) {
-        return moved.get(user);
+        return moved.containsKey(user);
     }
 }

@@ -63,9 +63,6 @@ public class SocketHandler extends Thread implements JsonResponsor {
         boolean controllerIsGame = true;
         try {
             method = GameController.class.getMethod(request.getMethodName(), paramTypes);
-            if (gameController.getGameArea().hasMoved(user)) {
-                return messageToJsonObj("You are done this turn!", false);
-            }
         } catch (Exception e) {
             try {
                 method = UserController.class.getMethod(request.getMethodName(), paramTypes);

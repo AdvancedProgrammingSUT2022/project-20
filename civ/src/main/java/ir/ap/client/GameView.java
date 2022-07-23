@@ -191,17 +191,8 @@ public class GameView extends View {
         nextTurn.setLayoutX(811);
         nextTurn.setLayoutY(508);
         nextTurn.setPrefWidth(200);
-        nextTurn.setPrefHeight(24); 
-        if( !mapView.isAllUnitsGetAction() ){
-            nextTurn.setText("Something Missed");
-        }else{
-            nextTurn.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    nextTurn();
-                }            
-            });
-        }
+        nextTurn.setPrefHeight(24);
+        nextTurn.setOnAction(e -> { nextTurn(); });
         return nextTurn;    
     }
 
@@ -249,10 +240,10 @@ public class GameView extends View {
         gameView.removeUnitInfoPanel();   
     }
 
-    private void nextTurn(){
+    public void nextTurn(){
+        send("nextTurn", currentUsername);
         removeUnitInfoPanel();
         updateGame();
-        //TODO: network and waiting for others
     }
 
     private void showTechnologyInfoPanel() {
