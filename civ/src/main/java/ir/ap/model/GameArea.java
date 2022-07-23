@@ -4,11 +4,10 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import com.google.gson.JsonObject;
-
 import ir.ap.model.Tile.TileKnowledge;
 
 public class GameArea implements Serializable {
-    public static final int MAX_TURN = 40;
+    public static final int MAX_TURN = 41;
     public static final int MAX_USERS = 10;
     public static final int MAX_LAND_TILES = 1000;
 
@@ -34,7 +33,7 @@ public class GameArea implements Serializable {
             for (int j = 0; j < MAX_LAND_TILES; j++)
                 tilesKnowledges[i][j] = TileKnowledge.FOG_OF_WAR;
         turn = 0;
-        year = -4000; // 4000 BC
+        year = 0; // 4000 BC
         era = Era.ANCIENT;
         this.seed = seed;
     }
@@ -61,6 +60,7 @@ public class GameArea implements Serializable {
 
     public void nextTurn() {
         ++turn;
+        year += 50;
         numberOfMovedUsers = 0;
         moved.clear();
         notifyAllUsersToNextTurn();
