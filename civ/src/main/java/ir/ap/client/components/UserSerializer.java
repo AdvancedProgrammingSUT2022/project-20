@@ -20,7 +20,7 @@ public class UserSerializer implements Serializable {
     public UserSerializer(String username) {
         this.username = new WritableObjectProperty<>(username);
         this.avatar = new WritableObjectProperty<>();
-        this.accepted = new WritableObjectProperty<>();
+        this.accepted = new WritableObjectProperty<>(false);
         this.nickname = new WritableObjectProperty<>();
         this.maxScore = new WritableObjectProperty<>();
     }

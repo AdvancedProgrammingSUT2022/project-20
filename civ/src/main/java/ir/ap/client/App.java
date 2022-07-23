@@ -22,12 +22,17 @@ public class App extends Application {
     public static final double SCREEN_HEIGHT = 576;
 
     private static Scene scene;
+    private static Stage stage;
 
     private static MediaPlayer menuMusic;
     private static MediaPlayer launchGameMusic;
 
     public static Scene getScene() {
         return scene;
+    }
+
+    public static Stage getStage() {
+        return stage;
     }
 
     private static Parent loadFXML(String fxml) throws IOException {
@@ -59,6 +64,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        App.stage = stage;
         scene = new Scene(loadFXML("fxml/login-view.fxml"), SCREEN_WIDTH, SCREEN_HEIGHT);
         scene.getStylesheets().add(GameView.class.getResource("css/styles.css").toExternalForm());
         menuMusic = new MediaPlayer(new Media(App.class.getResource("png/civAsset/Sounds/MenuMusic.mp3").toExternalForm()));

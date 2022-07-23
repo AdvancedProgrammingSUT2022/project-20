@@ -53,18 +53,22 @@ public class InvitePlayersView extends View {
         }
     }
 
-    public void addInvitedUser(String username, boolean toMsg) {
+    public void addInvitedUser(String username, boolean toMsg, boolean accept) {
         if (hasInvitedUser(username)) {
             error(messageLabel, "Chand bar invite mikoni?");
             return;
         }
-        UserSerializer userSerializer = new UserSerializer(username, true);
+        UserSerializer userSerializer = new UserSerializer(username, accept);
         JsonObject avatarJson = send("getAvatar", username);
         userSerializer.setAvatar(View.getAvatar(avatarJson.get("index").getAsInt()));
         invitedUsers.add(userSerializer);
         invitedPlayersTable.getItems().add(userSerializer);
         if (toMsg)
             success(messageLabel, "User invitation sent successfully");
+    }
+
+    public void addInvitedUser(String username, boolean toMsg) {
+        addInvitedUser(username, toMsg, false);
     }
 
     public void addInvitedUser(String username) {
