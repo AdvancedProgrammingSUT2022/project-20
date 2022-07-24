@@ -204,7 +204,7 @@ public class GameView extends View {
         nextTurn.setLayoutY(508);
         nextTurn.setPrefWidth(200);
         nextTurn.setPrefHeight(24);
-        nextTurn.setOnAction(e -> { nextTurn(); });
+        nextTurn.setOnAction(e -> { send("nextTurn", currentUsername); });
         return nextTurn;    
     }
 
@@ -253,7 +253,6 @@ public class GameView extends View {
     }
 
     public void nextTurn(){
-        send("nextTurn", currentUsername);
         removeUnitInfoPanel();
         updateGame();
     }

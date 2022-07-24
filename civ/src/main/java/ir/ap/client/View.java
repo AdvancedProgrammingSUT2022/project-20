@@ -101,7 +101,7 @@ public abstract class View {
                     } else if (type.equals("nextTurn")) {
                         if (currentView instanceof GameView) {
                             GameView gameView = (GameView) currentView;
-                            gameView.nextTurn();
+                            Platform.runLater(() -> { gameView.nextTurn(); });
                         }
                     }
                 } catch (Exception e) {
