@@ -252,8 +252,12 @@ public class GameController extends AbstractGameController implements JsonRespon
         unitObject.addProperty("mp", unit.getMp());
         unitObject.addProperty("maxMp", unit.getUnitType().getMovement());
         unitObject.addProperty("hp", unit.getHp());
+        unitObject.addProperty("combatStrenght", unit.getUnitType().getCombatStrength());
         unitObject.addProperty("tileId", unit.getTile().getIndex());
-        unitObject.addProperty("isCombat", unit.getUnitType().isCivilian());
+        boolean isCombat = unit.getUnitType().isCivilian();
+        if( isCombat )isCombat = false;
+        else isCombat = true;
+        unitObject.addProperty("isCombat", isCombat);
         return unitObject;
     }
 
@@ -269,7 +273,7 @@ public class GameController extends AbstractGameController implements JsonRespon
         if (civ == null)
             return messageToJsonObj(Message.USER_NOT_ON_GAME, false);
         JsonObject response = new JsonObject();
-        response.addProperty("civName", civ.getName());
+        response.add("civ", serializeCiv(civ, civ));
         return setOk(response, true);
     }
 
@@ -1409,6 +1413,20 @@ public class GameController extends AbstractGameController implements JsonRespon
         }
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("era", gameArea.getEra().name());
+        jsonObject.addProperty("ok", true);
+        return jsonObject;
+    }
+
+    public JsonObject getYear(){
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("year", gameArea.getYear());
+        jsonObject.addProperty("ok", true);
+        return jsonObject;
+    }
+
+    public JsonObject getTurn(){
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("turn", gameArea.getTurn());
         jsonObject.addProperty("ok", true);
         return jsonObject;
     }

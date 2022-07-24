@@ -1,5 +1,7 @@
 package ir.ap.client.components.map.serializers;
 
+import ir.ap.client.components.Hexagon;
+
 public class TileSerializer {
 
     private int index;
@@ -17,6 +19,15 @@ public class TileSerializer {
     private UnitSerializer nonCombatUnit;
     private UnitSerializer combatUnit;
     private CitySerializer cityInTile;
+    // private Hexagon tilHexagon;
+
+    // public Hexagon getTilHexagon() {
+    //     return tilHexagon;
+    // }
+
+    // public void setTilHexagon(Hexagon tilHexagon) {
+    //     this.tilHexagon = tilHexagon;
+    // }
 
     public int getIndex() {
         return index;
