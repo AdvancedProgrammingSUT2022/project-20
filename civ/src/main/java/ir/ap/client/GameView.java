@@ -26,6 +26,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
@@ -288,13 +289,12 @@ public class GameView extends View {
         JsonObject jsonObject = send("infoUnits", currentUsername);
         if(responseOk(jsonObject) == false) return;
 
-        ArrayList<String> unitNames = new ArrayList<String>();
+        ArrayList<Integer> unitNames = new ArrayList<Integer>();
         JsonArray jsonArray = jsonObject.getAsJsonArray("units");
         for(int i = 0; i < jsonArray.size(); i++)
         {
             JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
-            String name = GSON.fromJson(jsonObject1.get("name"), String.class);
-            unitNames.add(name);
+            unitNames.add(GSON.fromJson(jsonObject1.get("name"),Integer.class));
         }
     }
 
@@ -302,28 +302,21 @@ public class GameView extends View {
         JsonObject jsonObject = send("infoCities", currentUsername);
         if(responseOk(jsonObject) == false) return;
 
-        ArrayList<String> cityNames = new ArrayList<String>();
+        ArrayList<Integer> cityNames = new ArrayList<Integer>();
         JsonArray jsonArray = jsonObject.getAsJsonArray("cities");
         for(int i = 0; i < jsonArray.size(); i++)
         {
             JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
-            String name = GSON.fromJson(jsonObject1.get("name"), String.class);
-            cityNames.add(name);
+            cityNames.add(GSON.fromJson(jsonObject1.get("name"),Integer.class));
         }
     }
 
     private void showDemographicsInfoPanel(){
         JsonObject jsonObject = send("infoDemographics", currentUsername);
         if(responseOk(jsonObject) == false) return;
-
-        ArrayList<String> demographicsNames = new ArrayList<String>();
-        JsonArray jsonArray = jsonObject.getAsJsonArray("demographics");
-        for(int i = 0; i < jsonArray.size(); i++)
-        {
-            JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
-            String name = GSON.fromJson(jsonObject1.get("name"), String.class);
-            demographicsNames.add(name);
-        }
+        String civilizationName ;
+        JsonObject jsonObject1 = GSON.fromJson(jsonObject.get("demographics"), JsonObject.class);
+        civilizationName = GSON.fromJson(jsonObject1.get("name"),String.class);
     }
 
     private void showMilitaryInfo(){
@@ -331,13 +324,12 @@ public class GameView extends View {
         JsonObject jsonObject = send("infoMilitary", currentUsername);
         if(responseOk(jsonObject) == false) return;
 
-        ArrayList<String> militaryNames = new ArrayList<String>();
+        ArrayList<String> civilizationUnitNames = new ArrayList<String>();
         JsonArray jsonArray = jsonObject.getAsJsonArray("military");
         for(int i = 0; i < jsonArray.size(); i++)
         {
             JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
-            String name = GSON.fromJson(jsonObject1.get("name"), String.class);
-            militaryNames.add(name);
+            civilizationUnitNames.add(GSON.fromJson(jsonObject1.get("name"),String.class));
         }
     }
 
@@ -346,29 +338,25 @@ public class GameView extends View {
         JsonObject jsonObject = send("infoEconomic", currentUsername);
         if(responseOk(jsonObject) == false) return;
 
-        ArrayList<String> economicNames = new ArrayList<String>();
+        ArrayList<String> cityNames = new ArrayList<String>();
         JsonArray jsonArray = jsonObject.getAsJsonArray("economic");
         for(int i = 0; i < jsonArray.size(); i++)
         {
             JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
-            String name = GSON.fromJson(jsonObject1.get("name"), String.class);
-            economicNames.add(name);
+            cityNames.add(GSON.fromJson(jsonObject1.get("name"),String.class));
         }
         // bayad az unitsInfoPanel behesh berim
     }
-
-
     private void showNotificationPanel(){
         JsonObject jsonObject = send("infoNotifications", currentUsername);
         if(responseOk(jsonObject) == false) return;
 
-        ArrayList<String> notificationNames = new ArrayList<String>();
+        ArrayList<String> notifications = new ArrayList<String>();
         JsonArray jsonArray = jsonObject.getAsJsonArray("notifications");
         for(int i = 0; i < jsonArray.size(); i++)
         {
-            JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
-            String name = GSON.fromJson(jsonObject1.get("name"), String.class);
-            notificationNames.add(name);
+            String notification = GSON.fromJson(jsonArray.get(i), String.class);
+            notifications.add(notification);
         }
     }
 
