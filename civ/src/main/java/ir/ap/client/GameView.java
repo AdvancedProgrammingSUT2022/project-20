@@ -1,8 +1,10 @@
 package ir.ap.client;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import ir.ap.client.components.map.panel.CurrentResearchView;
+import ir.ap.client.components.map.panel.TechnologyInfoView;
 import ir.ap.client.components.map.panel.UnitActionsView;
 import ir.ap.client.components.map.panel.UnitInfoView;
 import ir.ap.client.components.map.MapView;
@@ -13,7 +15,7 @@ import ir.ap.client.components.map.serializers.CivilizationSerializer;
 import ir.ap.client.components.map.serializers.TechnologySerializer;
 import ir.ap.client.components.map.serializers.TileSerializer;
 import ir.ap.client.components.map.serializers.UnitSerializer;
-
+import ir.ap.model.Technology;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -25,6 +27,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Popup;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -132,7 +135,12 @@ public class GameView extends View {
         researchPanel.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                showTechnologyInfoPanel();
+                try {
+                    showTechnologyInfoPanel();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }            
         });
         unitsPanel.setPrefWidth(130);
@@ -182,6 +190,10 @@ public class GameView extends View {
             currentResearchRoot.setLayoutY(0);
             mapPart.getChildren().add(currentResearchRoot);
         }
+    }
+
+    public static void exitGame() throws IOException{
+        App.setRoot("launch-game-view.fxml");
     }
 
     private Button makeNextTurnButton(){
@@ -255,7 +267,7 @@ public class GameView extends View {
         //TODO: network and waiting for others
     }
 
-    private void showTechnologyInfoPanel() {
+    private void showTechnologyInfoPanel() throws IOException {
         ArrayList<String> improvementsNames = new ArrayList<String>();
         ArrayList<String> resourcesNames = new ArrayList<String>();
         ArrayList<String> unitTypesNames = new ArrayList<String>();
@@ -266,20 +278,54 @@ public class GameView extends View {
         JsonObject jsonObject = send("infoResearch", currentUsername);
         if (responseOk(jsonObject) == false) return;
 
+        FXMLLoader fxmlLoader = new FXMLLoader(GameView.class.getResource("fxml/components/map/technologyInfo-view.fxml"));
+        AnchorPane techRoot = fxmlLoader.load();
+        TechnologyInfoView techController = fxmlLoader.getController();
+
         for (int j = 0; j < 6; j++) {
             JsonElement jsonElement = jsonObject.getAsJsonArray("objectsUnlocksSeparated").get(j);
             JsonArray jsonArray = GSON.fromJson(jsonElement, JsonArray.class);
             for (int i = 0; i < jsonArray.size(); i++) {
                 JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
                 String name = GSON.fromJson(jsonObject1.get("name"), String.class);
-                if (j == 0) improvementsNames.add(name);
-                if (j == 1) resourcesNames.add(name);
-                if (j == 2) unitTypesNames.add(name);
-                if (j == 3) buildingTypesNames.add(name);
-                if (j == 4) unitActionsNames.add(name);
-                if (j == 5) technologiesNames.add(name);
+                if (j == 0) techController.addItemImprovement(name);
+                if (j == 1) techController.addItemResource(name);
+                if (j == 2) techController.addItemUnitType(name);
+                if (j == 3) techController.addItemBuildingType(name);
+                if (j == 4) techController.addItemUnitActions(name);
+                if (j == 5) techController.addItemTechnologies(name);
             }
         }
+
+        JsonObject jsonObject2 = send("civGetAllAvailableResearches", currentUsername, false);
+        JsonArray jsonArray = GSON.fromJson(jsonObject2.get("technologies"), JsonArray.class);
+        for(int i = 0 ; i < jsonArray.size() ; i ++){
+            TechnologySerializer technologySerializer = GSON.fromJson(jsonArray.get(i), TechnologySerializer.class);
+            techController.addTechnologyResearch(technologySerializer.getName());
+        }
+
+        ScrollPane sp = new ScrollPane(techRoot);
+        sp.setMaxWidth(App.SCREEN_WIDTH);
+        sp.setMaxHeight(App.SCREEN_HEIGHT-infoPanel.getPrefHeight());
+        scrollMap.setLayoutX(276);
+        scrollMap.setLayoutY(14);
+        sp.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        sp.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        Platform.runLater(() -> {
+            sp.requestFocus();
+        });
+        gameView.mapPart.getChildren().add(sp);
+    }
+
+    public static void researchTech(String name){
+        JsonObject jsonObject = send("getTechnologyByName", name);
+        if(!responseOk(jsonObject))return;
+        TechnologySerializer tech = GSON.fromJson(jsonObject.get("tech"), TechnologySerializer.class);
+        send("civSetCurrentResearch", currentUsername, tech.getId(), false);
+    }
+
+    public static void removeFromGameView(Object obj){
+        gameView.mapPart.getChildren().remove(obj);
     }
 
     private void showUnitsInfoPanel(){
@@ -360,8 +406,15 @@ public class GameView extends View {
         
     }
 
-    public void showMenuPanel(){
+    public void showMenuPanel() throws IOException{
+        FXMLLoader fxmlLoader = new FXMLLoader(GameView.class.getResource("fxml/components/map/Menu-view.fxml"));
+        AnchorPane menuRoot = fxmlLoader.load();
+        TechnologyInfoView menuController = fxmlLoader.getController();
+        gameView.mapPart.getChildren().add(menuRoot);
+    }
 
+    public static void showTileInfoPanel(TileSerializer tileSerializer){
+        
     }
 
     public static void showCityProductConstructionPanel(){
@@ -372,6 +425,12 @@ public class GameView extends View {
     }
 
     public static void showUnitInfoPanel(UnitSerializer unitSerializer) throws IOException{
+        JsonObject jsonObject = send("getCivilizationByUsername", currentUsername);
+        CivilizationSerializer civ = GSON.fromJson(jsonObject.get("civ"), CivilizationSerializer.class);        
+        if( unitSerializer.getCivId() != civ.getIndex() ){
+            //TODO: message
+            return;
+        }
         FXMLLoader fxmlLoader1 = new FXMLLoader(GameView.class.getResource("fxml/components/map/panel/unitInfo-view.fxml"));
         FXMLLoader fxmlLoader2 = new FXMLLoader(GameView.class.getResource("fxml/components/map/panel/unitActionButtons-view.fxml"));
         unitInfoRoot = fxmlLoader1.load();
@@ -392,9 +451,6 @@ public class GameView extends View {
         }
     }
 
-    public static void showTileInfoPanel(TileSerializer tileSerializer){
-        
-    }
 
     public static void removeUnitInfoPanel(){
         if(unitInfoRoot != null)gameView.mapPart.getChildren().remove(unitInfoRoot);

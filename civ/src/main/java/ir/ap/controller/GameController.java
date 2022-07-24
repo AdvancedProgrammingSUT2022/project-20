@@ -1520,4 +1520,22 @@ public class GameController extends AbstractGameController implements JsonRespon
         return jsonObject;
     }
 
+    public JsonObject getTechnologyByName(String name){
+        Technology technology = null;
+        String name1 = name.toUpperCase();
+        for(int i = 0 ; i < Technology.values().length ;i ++){
+            if(Technology.values()[ i ].name().equals(name)){
+                technology = Technology.values()[ i ];
+                break;
+            }
+        }
+        if( technology == null ){
+            return messageToJsonObj("wronge Name", false);
+        }
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("tech", serializeTechnology(technology));
+        jsonObject.addProperty("ok", true);
+        return jsonObject;
+    }
+
 }
