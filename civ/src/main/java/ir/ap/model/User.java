@@ -25,6 +25,7 @@ public class User implements Serializable {
 
     private transient SocketHandler socketHandler;
     private transient RequestHandler inviteHandler;
+    private transient String authToken;
     
     public User(String username, String nickname, String password) {
         this.username = username;
@@ -174,6 +175,14 @@ public class User implements Serializable {
 
     public void setInviteHandler(RequestHandler inviteHandler) {
         this.inviteHandler = inviteHandler;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
     }
 
     @Override

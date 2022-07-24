@@ -7,6 +7,7 @@ import java.io.Writer;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Random;
 
 import com.google.gson.JsonArray;
@@ -71,6 +72,19 @@ public class UserController implements JsonResponsor, AutoCloseable {
     private static final String PLAYERS_CONF_FILE = "players.json";
     private static final int AVATARS_CNT = 16;
     private static final Random rnd = new Random(System.currentTimeMillis());
+
+    private String getRandomString(int len) {
+        final String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        final String lower = upper.toLowerCase(Locale.ROOT);
+        final String digits = "0123456789";
+        final String alphanum = upper + lower + digits;
+        final char[] symbols = alphanum.toCharArray();
+        char[] result = new char[len];
+        for (int i = 0; i < len; i++) {
+            result[i] = symbols[rnd.nextInt(symbols.length)];
+        }
+        return new String(result);
+    }
 
     @Override
     public void close() {
@@ -155,12 +169,30 @@ public class UserController implements JsonResponsor, AutoCloseable {
         User user = User.getUser(username);
         if (user == null || !user.checkPassword(password))
             return messageToJsonObj(Message.INVALID_CREDENTIALS, false);
+        if (user.isLogin())
+            return messageToJsonObj("Already login", false);
         user.setLogin(true);
         user.setLastLogin(LocalDateTime.now());
         user.setSocketHandler(socketHandler);
         socketHandler.setUser(user);
+        user.setAuthToken(getRandomString(20));
+        JsonObject onlineJson = new JsonObject();
+        onlineJson.addProperty("type", "online");
+        onlineJson.addProperty("username", user.getUsername());
+        for (User otherUser : User.getUsers()) {
+            if (user != otherUser && otherUser.getInviteHandler() != null) {
+                try {
+                    otherUser.getInviteHandler().send(onlineJson);
+                } catch (Exception e) {
+                    System.out.println("Connection lost with invite handler for " + otherUser.getUsername());
+                }
+            }
+        }
         writeUsers();
-        return messageToJsonObj(Message.USER_LOGGED_IN, true);
+        JsonObject response = new JsonObject();
+        response.addProperty("msg", Message.USER_LOGGED_IN.toString());
+        response.addProperty("authToken", user.getAuthToken());
+        return setOk(response, true);
     }
 
     public JsonObject logout(String username) {
@@ -168,6 +200,21 @@ public class UserController implements JsonResponsor, AutoCloseable {
         if (user == null || !user.isLogin())
             return messageToJsonObj(Message.USER_NOT_LOGGED_IN, false);
         user.setLogin(false);
+        user.setAuthToken(null);
+        user.getSocketHandler().setUser(null);
+        user.setInviteHandler(null);
+        JsonObject onlineJson = new JsonObject();
+        onlineJson.addProperty("type", "offline");
+        onlineJson.addProperty("username", user.getUsername());
+        for (User otherUser : User.getUsers()) {
+            if (user != otherUser && otherUser.getInviteHandler() != null) {
+                try {
+                    otherUser.getInviteHandler().send(onlineJson);
+                } catch (Exception e) {
+                    System.out.println("Connection lost with invite handler for " + otherUser.getUsername());
+                }
+            }
+        }
         return messageToJsonObj(Message.USER_LOGGED_IN, true);
     }
 

@@ -243,7 +243,7 @@ public class CivilizationController extends AbstractGameController {
         for (City city : civilization.getCities()) {
             cityController.nextTurn(city);
         }
-        gameArea.nextTurn();
+        gameArea.move(civilization);
         return gameArea.end();
     }
 

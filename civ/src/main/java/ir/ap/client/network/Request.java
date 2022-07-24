@@ -4,15 +4,17 @@ import java.util.ArrayList;
 
 public class Request {
     private final String methodName;
+    private final String authToken;
     private final ArrayList<Object> params;
 
-    public Request(String methodName) {
+    public Request(String methodName, String authToken) {
         this.methodName = methodName;
         this.params = new ArrayList<>();
+        this.authToken = authToken;
     }
 
-    public Request(String methodName, Object... params) {
-        this(methodName);
+    public Request(String methodName, String authToken, Object... params) {
+        this(methodName, authToken);
         for (Object param : params) {
             addParam(param);
         }
@@ -28,5 +30,9 @@ public class Request {
 
     public ArrayList<Object> getParams() {
         return params;
+    }
+
+    public String getAuthToken() {
+        return authToken;
     }
 }

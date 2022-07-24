@@ -3,10 +3,11 @@ package ir.ap.model;
 import java.io.Serializable;
 import java.util.HashMap;
 
+import ir.ap.controller.GameController;
 import ir.ap.model.Tile.TileKnowledge;
 
 public class GameArea implements Serializable {
-    public static final int MAX_TURN = 100;
+    public static final int MAX_TURN = 41;
     public static final int MAX_USERS = 10;
     public static final int MAX_LAND_TILES = 1000;
 
@@ -16,6 +17,9 @@ public class GameArea implements Serializable {
     private TileKnowledge[][] tilesKnowledges = new TileKnowledge[ MAX_USERS ][ MAX_LAND_TILES ] ;
 
     private int turn;
+    private HashMap<User, Boolean> moved;
+    private int numberOfMovedUsers;
+
     private int year;
     private Era era;
     private final long seed;
@@ -28,7 +32,7 @@ public class GameArea implements Serializable {
             for (int j = 0; j < MAX_LAND_TILES; j++)
                 tilesKnowledges[i][j] = TileKnowledge.FOG_OF_WAR;
         turn = 0;
-        year = -4000; // 4000 BC
+        year = 0; // 4000 BC
         era = Era.ANCIENT;
         this.seed = seed;
     }
@@ -55,10 +59,13 @@ public class GameArea implements Serializable {
 
     public void nextTurn() {
         ++turn;
+        year += 50;
+        numberOfMovedUsers = 0;
+        moved.clear();
     }
 
     public boolean end() {
-        return (turn >= MAX_TURN * getUserCount());
+        return (turn >= MAX_TURN);
     }
 
     public int getYear() {
@@ -137,5 +144,24 @@ public class GameArea implements Serializable {
 
     public int getWeightedDistance(Tile tile1, Tile tile2){
         return map.getWeightedDistance(tile1, tile2);
+    }
+
+    public void move(Civilization civilization) {
+        if (moved.get(civilization)) {
+            return;
+        }
+        moved.put(getUserByCivilization(civilization), true);
+        ++numberOfMovedUsers;
+        if (numberOfMovedUsers == user2civ.size()) {
+            nextTurn();
+        }
+    }
+
+    public boolean hasMoved(Civilization civ) {
+        return moved.get(getUserByCivilization(civ));
+    }
+
+    public boolean hasMoved(User user) {
+        return moved.get(user);
     }
 }

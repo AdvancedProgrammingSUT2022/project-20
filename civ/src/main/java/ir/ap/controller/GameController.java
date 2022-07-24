@@ -3,7 +3,9 @@ package ir.ap.controller;
 import java.io.FileReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -415,8 +417,49 @@ public class GameController extends AbstractGameController implements JsonRespon
         boolean end = civController.nextTurn(civilization);
         JsonObject response = new JsonObject();
         response.addProperty("end", end);
-        if (end)
+        if (end) {
             response.addProperty("msg", getGameEndStr());
+            int numberOfCivilizationThatHasCity = 0;
+            Civilization winnerCivilization = null;
+            for(Civilization civ : (ArrayList<Civilization>) gameArea.getCiv2user().keySet())
+                if(!civilization.getCities().isEmpty()) {
+                    numberOfCivilizationThatHasCity++;
+                    winnerCivilization = civ;
+                }
+            if(numberOfCivilizationThatHasCity == 1)
+            {
+                response.addProperty("winner", GSON.toJson(winnerCivilization,JsonObject.class));
+                setOk(response, true);
+                return response;
+            }
+
+            HashMap<Civilization,Integer> scores = new HashMap<Civilization,Integer>();
+            int Max = -1;
+            for(Civilization civ : (ArrayList<Civilization>) gameArea.getCiv2user().keySet())
+                if(!civ.getCities().isEmpty())
+                {
+                    int score = 0;
+                    for(City city : civ.getCities())
+                    {
+                        score += city.getTerritory().size();
+                        score += city.getPopulation();
+                    }
+                    for(Technology technology : Technology.values())
+                         if(civ.getTechnologyReached(technology))
+                            score++;
+
+                    scores.put(civ,score);
+                    if(score > Max)
+                    {
+                        Max = score;
+                        winnerCivilization = civ;
+                    }
+                }
+            response.addProperty("winner", GSON.toJson(winnerCivilization,JsonObject.class));
+            response.addProperty("scores", GSON.toJson(scores,JsonObject.class));
+            setOk(response, true);
+            return response;
+        }
         setOk(response, true);
         return response;
     }
