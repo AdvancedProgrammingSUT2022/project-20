@@ -38,6 +38,10 @@ public class SocketHandler extends Thread implements JsonResponsor {
             return login(request.getParams().get(0).toString(), request.getParams().get(1).toString());
         } else if ("continueGame".equals(request.getMethodName())) {
             return continueGame(request.getParams().get(0).toString());
+        } else if ("setInviteHandler".equals(request.getMethodName())) {
+            return setInviteHandler(request.getParams().get(0).toString());
+        } else if ("launchGame".equals(request.getMethodName())) {
+            return launchGame();
         }
         Class<?>[] paramTypes = new Class<?>[request.getParams().size()];
         int counter = 0;
@@ -80,12 +84,32 @@ public class SocketHandler extends Thread implements JsonResponsor {
         }
     }
 
+    private JsonObject launchGame() {
+        gameController = new GameController();
+        gameController.addInvitedUser(user.getUsername());
+        gameController.setCreator(user.getUsername());
+        return messageToJsonObj("game controller set", true);
+    }
+
+    private JsonObject setInviteHandler(String username) {
+        User user = User.getUser(username);
+        if (user == null || !user.isLogin())
+            return messageToJsonObj("User not login", false);
+        try {
+            user.setInviteHandler(new RequestHandler(socket));
+        } catch (Exception e) {
+            return messageToJsonObj("Could not set invite handler", false);
+        }
+        return messageToJsonObj("Invite handler set successfully", true);
+    }
+
     public JsonObject login(String username, String password) {
         return userController.login(username, password, this);
     }
 
     public JsonObject newGame(String... players) {
-        gameController = new GameController();
+        if (gameController == null)
+            gameController = new GameController();
         JsonObject result = gameController.newGame(players);
         if (!isOk(result)) {
             gameController = null;
@@ -158,9 +182,13 @@ public class SocketHandler extends Thread implements JsonResponsor {
         }
     }
 
-    public synchronized void terminate() throws IOException {
+    public synchronized void terminate(boolean toCloseSocket) throws IOException {
         this.terminateFlag = true;
-        if (socket != null && !socket.isClosed())
+        if (toCloseSocket && socket != null && !socket.isClosed())
             socket.close();
+    }
+
+    public synchronized void terminate() throws IOException {
+        terminate(true);
     }
 }

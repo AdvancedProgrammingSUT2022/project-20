@@ -35,22 +35,27 @@ public class App extends Application {
         return stage;
     }
 
-    private static Parent loadFXML(String fxml) throws IOException {
+    private static Parent loadFXML(String fxml, boolean currentView) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml));
-        return fxmlLoader.load();
+        Parent result = fxmlLoader.load();
+        if (currentView)
+            View.currentView = fxmlLoader.getController();
+        return result;
     }
 
     public static void setRoot(String fxml) throws IOException {
         if( fxml.equals("fxml/launch-game-view.fxml") ){
-            menuMusic.stop();
+            if (menuMusic != null)
+                menuMusic.stop();
             launchGameMusic = new MediaPlayer(new Media(App.class.getResource("png/civAsset/Sounds/LaunchGameMusic.mp3").toExternalForm()));
             launchGameMusic.setAutoPlay(true);
             launchGameMusic.play();
         }
         else if( fxml.equals("fxml/game-view.fxml") ){
-            launchGameMusic.stop();
+            if (launchGameMusic != null)
+                launchGameMusic.stop();
         }
-        scene.setRoot(loadFXML(fxml));
+        scene.setRoot(loadFXML(fxml, true));
     }
 
     public static void main(String[] args) {
@@ -65,7 +70,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         App.stage = stage;
-        scene = new Scene(loadFXML("fxml/login-view.fxml"), SCREEN_WIDTH, SCREEN_HEIGHT);
+        scene = new Scene(loadFXML("fxml/login-view.fxml", true), SCREEN_WIDTH, SCREEN_HEIGHT);
         scene.getStylesheets().add(GameView.class.getResource("css/styles.css").toExternalForm());
         menuMusic = new MediaPlayer(new Media(App.class.getResource("png/civAsset/Sounds/MenuMusic.mp3").toExternalForm()));
         menuMusic.setAutoPlay(true);

@@ -10,8 +10,10 @@ import java.util.Collections;
 import java.util.Random;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import ir.ap.client.network.Request;
 import ir.ap.model.User;
 import ir.ap.network.SocketHandler;
 import javafx.scene.image.Image;
@@ -198,8 +200,50 @@ public class UserController implements JsonResponsor, AutoCloseable {
         if (user == null || !user.isLogin())
             return messageToJsonObj(Message.USER_NOT_LOGGED_IN, false);
         User toInviteUser = User.getUser(toInvite);
-        if (toInviteUser == null)
+        if (toInviteUser == null || !toInviteUser.isLogin())
             return messageToJsonObj(Message.USER_NOT_LOGGED_IN, false);
+        if (username.equals(toInvite) || user.getGameController().getArrayOfInvitedUsers().contains(toInvite)) {
+            return messageToJsonObj("Player already invited", false);
+        }
+        JsonObject invite = new JsonObject();
+        invite.addProperty("type", "request");
+        invite.addProperty("username", username);
+        if (toInviteUser.getInviteHandler() != null) {
+            try {
+                toInviteUser.getInviteHandler().send(invite);
+            } catch (Exception e) {
+                toInviteUser.getInviteHandler().close();
+                toInviteUser.setInviteHandler(null);
+            }
+        }
         return messageToJsonObj("Invitation successful", true);
+    }
+
+    public JsonObject respondInvitation(String username, String inviter, boolean accepted) {
+        User user = User.getUser(username);
+        User inviterUser = User.getUser(inviter);
+        if (user == null || inviterUser == null)
+            return messageToJsonObj(Message.USER_NOT_LOGGED_IN, false);
+        JsonObject respondInvitation = new JsonObject();
+        respondInvitation.addProperty("type", "response");
+        respondInvitation.addProperty("username", username);
+        respondInvitation.addProperty("accepted", accepted);
+        GameController gameController = inviterUser.getGameController();
+        if (accepted) {
+            gameController.addInvitedUser(username);
+            user.setGameController(gameController);
+        }
+        if (inviterUser.getInviteHandler() != null) {
+            for (JsonElement usernameEle : gameController.getInvitedUsers().getAsJsonArray("users")) {
+                try {
+                    String invitedUsername = usernameEle.getAsString();
+                    User invitedUser = User.getUser(invitedUsername);
+                    invitedUser.getInviteHandler().send(respondInvitation);
+                } catch (Exception e) {
+                    System.out.println("Connection with player " + usernameEle.getAsString() + " lost");
+                }
+            }
+        }
+        return messageToJsonObj("Invitation respond successful", true);
     }
 }

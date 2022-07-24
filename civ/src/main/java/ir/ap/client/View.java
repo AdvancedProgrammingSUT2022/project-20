@@ -1,10 +1,11 @@
 package ir.ap.client;
 
 import com.google.gson.*;
-import ir.ap.client.App;
 import ir.ap.client.network.Request;
 import ir.ap.client.network.RequestHandler;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
@@ -15,11 +16,12 @@ import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Optional;
 
 public abstract class View {
     protected static Socket socket;
     protected static RequestHandler requestHandler;
+    protected static RequestHandler inviteHandler;
 
     protected static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
@@ -41,6 +43,7 @@ public abstract class View {
             .create();
 
     protected static String currentUsername = null;
+    protected static View currentView;
 
     protected static final ArrayList<Image> avatars = new ArrayList<>();
 
@@ -52,6 +55,46 @@ public abstract class View {
             System.out.println("Unable to connect to the server");
         }
         readAvatars();
+    }
+
+    protected static void initializeInviteHandler() {
+        Thread inviteHandlerThread = new Thread(() -> {
+            while (true) {
+                try {
+                    JsonObject inviteJson = inviteHandler.read();
+                    System.out.println("New invite message");
+                    String sender = inviteJson.get("username").getAsString();
+                    String type = inviteJson.get("type").getAsString();
+                    if (type.equals("request")) {
+                        Platform.runLater(() -> {
+                            Alert enterGameAlert = new Alert(Alert.AlertType.CONFIRMATION, "Would you accept the invitation?", ButtonType.NO, ButtonType.YES);
+                            enterGameAlert.setTitle("Invitation to game");
+                            enterGameAlert.setHeaderText("You have a new invitation");
+                            enterGameAlert.setContentText(sender + " has invited you to start a new game. Would you like to proceed to the game?");
+                            Optional<ButtonType> response = enterGameAlert.showAndWait();
+                            boolean accepted = response.isPresent() && response.get() == ButtonType.YES;
+                            JsonObject respondInvitation = send("respondInvitation", currentUsername, sender, accepted);
+                            if (accepted && responseOk(respondInvitation)) {
+                                currentView.enterLaunchGame();
+                            }
+                        });
+                    } else if (type.equals("response")) {
+                        if (currentView instanceof LaunchGameView) {
+                            ((LaunchGameView) currentView).getInvitePlayersView().respondInvitation(sender, inviteJson.get("accepted").getAsBoolean());
+                        }
+                    } else if (type.equals("removed")) {
+                        currentView.enterMain();
+                    } else if (type.equals("enterGame")) {
+                        currentView.enterGame();
+                    }
+                } catch (Exception e) {
+                    System.out.println("Connection lost for invite handler on socket " + socket);
+                    return;
+                }
+            }
+        });
+        inviteHandlerThread.setDaemon(true);
+        inviteHandlerThread.start();
     }
 
     private static void readAvatars() {
@@ -117,11 +160,19 @@ public abstract class View {
     }
 
     public void exit() {
+        logout();
         App.exit();
     }
 
     public void logout() {
+        send("logout", currentUsername);
         currentUsername = null;
+        try {
+            inviteHandler.close();
+        } catch (Exception e) {
+            System.out.println("Unable to close invite handler");
+        }
+        inviteHandler = null;
         enterLogin();
     }
 
@@ -133,16 +184,15 @@ public abstract class View {
         }
     }
 
-    public void enterSettings() {
-
-    }
-
     public void enterProfile() {
         try {
             App.setRoot("fxml/profile-view.fxml");
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void enterSettings() {
     }
 
     public void enterMain() {
@@ -156,6 +206,14 @@ public abstract class View {
     public void enterGame() {
         try {
             App.setRoot("fxml/game-view.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void enterLaunchGame() {
+        try {
+            App.setRoot("fxml/launch-game-view.fxml");
         } catch (IOException e) {
             e.printStackTrace();
         }

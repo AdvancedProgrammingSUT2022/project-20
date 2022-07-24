@@ -1,5 +1,7 @@
 package ir.ap.model;
 
+import ir.ap.controller.GameController;
+import ir.ap.network.RequestHandler;
 import ir.ap.network.SocketHandler;
 
 import java.io.Serializable;
@@ -22,6 +24,7 @@ public class User implements Serializable {
     private int avatarIndex;
 
     private transient SocketHandler socketHandler;
+    private transient RequestHandler inviteHandler;
     
     public User(String username, String nickname, String password) {
         this.username = username;
@@ -155,6 +158,22 @@ public class User implements Serializable {
 
     public SocketHandler getSocketHandler() {
         return socketHandler;
+    }
+
+    public void setGameController(GameController gameController) {
+        socketHandler.setGameController(gameController);
+    }
+
+    public GameController getGameController() {
+        return socketHandler.getGameController();
+    }
+
+    public RequestHandler getInviteHandler() {
+        return inviteHandler;
+    }
+
+    public void setInviteHandler(RequestHandler inviteHandler) {
+        this.inviteHandler = inviteHandler;
     }
 
     @Override

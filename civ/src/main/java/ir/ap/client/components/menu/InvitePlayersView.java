@@ -1,13 +1,13 @@
 package ir.ap.client.components.menu;
 
 import com.google.gson.JsonObject;
+
 import ir.ap.client.View;
 import ir.ap.client.components.UserSerializer;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
 import java.util.*;
@@ -87,9 +87,14 @@ public class InvitePlayersView extends View {
         return false;
     }
 
-    private void removeInvitedUser(UserSerializer userSerializer) {
-        invitedUsers.remove(userSerializer);
-        invitedPlayersTable.getItems().remove(userSerializer);
+    private boolean removeInvitedUser(UserSerializer userSerializer) {
+        JsonObject response = send("removeInvitedUser", currentUsername, userSerializer.getUsername());
+        if (responseOk(response)) {
+            invitedUsers.remove(userSerializer);
+            invitedPlayersTable.getItems().remove(userSerializer);
+            return true;
+        }
+        return false;
     }
 
     public void removeSelectedPlayers() {
@@ -104,9 +109,12 @@ public class InvitePlayersView extends View {
                 error(messageLabel, "You should be in game!");
                 return;
             }
-            removeInvitedUser(userSerializer);
+            if (removeInvitedUser(userSerializer)) {
+                success(messageLabel, "Selected Users removed successfully");
+            } else {
+                error(messageLabel, userSerializer.getUsername() + " should be in game!");
+            }
         }
-        success(messageLabel, "Selected Users removed successfully");
     }
 
     public void error(Label messageLabel, String msg) {
@@ -125,5 +133,19 @@ public class InvitePlayersView extends View {
 
     public void success(String msg) {
         success(messageLabel, msg);
+    }
+
+    public void respondInvitation(String username, boolean accepted) {
+        for (UserSerializer user : invitedUsers) {
+            if (user.getUsername().equals(username)) {
+                user.setAccepted(accepted);
+                if (!accepted) {
+                    removeInvitedUser(user);
+                }
+                return;
+            }
+        }
+        if (accepted)
+            addInvitedUser(username, true);
     }
 }

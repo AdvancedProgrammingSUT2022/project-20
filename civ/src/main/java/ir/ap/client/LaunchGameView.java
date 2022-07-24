@@ -1,5 +1,6 @@
 package ir.ap.client;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import ir.ap.client.components.UserSerializer;
 import ir.ap.client.components.menu.InvitePlayersView;
@@ -37,14 +38,20 @@ public class LaunchGameView extends View {
     private InvitePlayersView invitePlayersView;
 
     public void initialize() throws IOException {
-        // TODO: invitation in server, get it in client
         initializeInvitationMenu();
         currentMenu = inviteMenuFXML;
-        invitePlayersView.addInvitedUser(currentUsername, false, true);
+        initializeInvitedUsers();
         menuPane.setContent(currentMenu);
         selectMapButtons.managedProperty().bind(selectMapButtons.visibleProperty());
         inviteButtons.managedProperty().bind(inviteButtons.visibleProperty());
         selectMapButtons.setVisible(false);
+    }
+
+    private void initializeInvitedUsers() {
+        JsonObject usersObj = send("getInvitedUsers");
+        for (JsonElement userEle : usersObj.getAsJsonArray("users")) {
+            invitePlayersView.addInvitedUser(userEle.getAsString(), false, true);
+        }
     }
 
     private void initializeInvitationMenu() throws IOException {
@@ -58,13 +65,17 @@ public class LaunchGameView extends View {
             ArrayList<UserSerializer> users = invitePlayersView.getInvitedUsers();
             String[] playersInGame = new String[users.size()];
             for (int i = 0; i < users.size(); i++) {
+                if (!users.get(i).getAccepted())
+                    continue;
                 playersInGame[i] = users.get(i).getUsername();
             }
             JsonObject res = send("newGame", playersInGame);
-            if (responseOk(res))
-                enterGame();
-            else
+            if (!responseOk(res))
                 invitePlayersView.error(getField(res, "msg", String.class));
         }
+    }
+
+    protected InvitePlayersView getInvitePlayersView() {
+        return invitePlayersView;
     }
 }

@@ -13,7 +13,7 @@
    <center>
       <VBox alignment="CENTER" prefHeight="200.0" spacing="16.0" BorderPane.alignment="CENTER">
          <children>
-            <Button defaultButton="true" minWidth="-Infinity" mnemonicParsing="false" onAction="#enterGame" prefHeight="30.0" prefWidth="300.0" text="Game Area" />
+            <Button defaultButton="true" minWidth="-Infinity" mnemonicParsing="false" onAction="#enterLaunchGame" prefHeight="30.0" prefWidth="300.0" text="Game Area" />
             <Button mnemonicParsing="false" onAction="#continueGame" prefHeight="30.0" prefWidth="300.0" text="Continue Game" />
             <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#enterScoreboard" prefHeight="30.0" prefWidth="300.0" text="Scoreboard" />
          </children>

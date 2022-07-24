@@ -6,13 +6,14 @@ import ir.ap.client.components.map.panel.CurrentResearchView;
 import ir.ap.client.components.map.panel.UnitActionsView;
 import ir.ap.client.components.map.panel.UnitInfoView;
 import ir.ap.client.components.map.MapView;
+
+import ir.ap.client.components.map.serializers.*;
+
 import ir.ap.client.components.map.serializers.CivilizationSerializer;
 import ir.ap.client.components.map.serializers.TechnologySerializer;
 import ir.ap.client.components.map.serializers.TileSerializer;
 import ir.ap.client.components.map.serializers.UnitSerializer;
-import ir.ap.controller.GameController;
-import ir.ap.controller.UserController;
-import ir.ap.model.Improvement;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -26,13 +27,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class GameView extends View {
@@ -289,12 +286,12 @@ public class GameView extends View {
         JsonObject jsonObject = send("infoUnits", currentUsername);
         if(responseOk(jsonObject) == false) return;
 
-        ArrayList<Integer> unitNames = new ArrayList<Integer>();
+        ArrayList<UnitSerializer> unitSerials = new ArrayList<UnitSerializer>();
         JsonArray jsonArray = jsonObject.getAsJsonArray("units");
         for(int i = 0; i < jsonArray.size(); i++)
         {
-            JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
-            unitNames.add(GSON.fromJson(jsonObject1.get("name"),Integer.class));
+            UnitSerializer unitSerializer = GSON.fromJson(jsonArray.get(i), UnitSerializer.class);
+            unitSerials.add(unitSerializer);
         }
     }
 
@@ -302,21 +299,20 @@ public class GameView extends View {
         JsonObject jsonObject = send("infoCities", currentUsername);
         if(responseOk(jsonObject) == false) return;
 
-        ArrayList<Integer> cityNames = new ArrayList<Integer>();
+        ArrayList<CitySerializer> citySerials = new ArrayList<CitySerializer>();
         JsonArray jsonArray = jsonObject.getAsJsonArray("cities");
         for(int i = 0; i < jsonArray.size(); i++)
         {
-            JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
-            cityNames.add(GSON.fromJson(jsonObject1.get("name"),Integer.class));
+            CitySerializer citySerializer = GSON.fromJson(jsonArray.get(i), CitySerializer.class);
+            citySerials.add(citySerializer);
         }
     }
 
     private void showDemographicsInfoPanel(){
         JsonObject jsonObject = send("infoDemographics", currentUsername);
         if(responseOk(jsonObject) == false) return;
-        String civilizationName ;
-        JsonObject jsonObject1 = GSON.fromJson(jsonObject.get("demographics"), JsonObject.class);
-        civilizationName = GSON.fromJson(jsonObject1.get("name"),String.class);
+        CivilizationSerializer civilizationSerial = GSON.fromJson(jsonObject.get("demographics"), CivilizationSerializer.class);
+
     }
 
     private void showMilitaryInfo(){
@@ -324,12 +320,12 @@ public class GameView extends View {
         JsonObject jsonObject = send("infoMilitary", currentUsername);
         if(responseOk(jsonObject) == false) return;
 
-        ArrayList<String> civilizationUnitNames = new ArrayList<String>();
+        ArrayList<UnitSerializer> civilizationUnitSerials = new ArrayList<UnitSerializer>();
         JsonArray jsonArray = jsonObject.getAsJsonArray("military");
         for(int i = 0; i < jsonArray.size(); i++)
         {
-            JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
-            civilizationUnitNames.add(GSON.fromJson(jsonObject1.get("name"),String.class));
+            UnitSerializer unitSerializer = GSON.fromJson(jsonArray.get(i), UnitSerializer.class);
+            civilizationUnitSerials.add(unitSerializer);
         }
     }
 
@@ -338,12 +334,12 @@ public class GameView extends View {
         JsonObject jsonObject = send("infoEconomic", currentUsername);
         if(responseOk(jsonObject) == false) return;
 
-        ArrayList<String> cityNames = new ArrayList<String>();
+        ArrayList<CitySerializer> citySerials = new ArrayList<CitySerializer>();
         JsonArray jsonArray = jsonObject.getAsJsonArray("economic");
         for(int i = 0; i < jsonArray.size(); i++)
         {
-            JsonObject jsonObject1 = GSON.fromJson(jsonArray.get(i), JsonObject.class);
-            cityNames.add(GSON.fromJson(jsonObject1.get("name"),String.class));
+            CitySerializer citySerializer = GSON.fromJson(jsonArray.get(i), CitySerializer.class);
+            citySerials.add(citySerializer);
         }
         // bayad az unitsInfoPanel behesh berim
     }

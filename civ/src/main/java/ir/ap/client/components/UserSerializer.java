@@ -87,6 +87,10 @@ public class UserSerializer implements Serializable {
         return maxScore.get();
     }
 
+    public void setAccepted(boolean acc) {
+        accepted.set(acc);
+    }
+
     public Boolean getAccepted() {
         return accepted.get();
     }
