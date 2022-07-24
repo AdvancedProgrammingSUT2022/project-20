@@ -396,6 +396,10 @@ public class GameView extends View {
         }
     }
 
+    public static void showTileInfoPanel(TileSerializer tileSerializer){
+        
+    }
+
     public static void removeUnitInfoPanel(){
         if(unitInfoRoot != null)gameView.mapPart.getChildren().remove(unitInfoRoot);
         if(unitActionButtonsRoot != null)gameView.mapPart.getChildren().remove(unitActionButtonsRoot);

@@ -84,6 +84,18 @@ public class Hexagon extends Polygon {
     public Hexagon(double x, double y, double r, TileSerializer tile) {
         this(x, y, r);
         this.setTile(tile);
+        Hexagon me = this;
+        this.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                double x = event.getX();
+                double y = event.getY();
+                if( (me.combatUnit != null && me.combatUnit.hasCollision(x, y)) || (me.nonCombatUnit != null && me.nonCombatUnit.hasCollision(x, y)) || (cityImage != null && me.cityHasCollision(x, y)) ){
+                    return;
+                }
+                GameView.showTileInfoPanel(tile);        
+            }
+        });
     }
     
     public TileSerializer getTile() {

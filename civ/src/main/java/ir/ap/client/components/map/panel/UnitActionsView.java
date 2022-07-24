@@ -236,9 +236,6 @@ public class UnitActionsView {
             public void handle(MouseEvent event) {
                 if( event.getEventType().toString().equals("MOUSE_CLICKED") ){
                     Hexagon hexagon = MapView.getHexagonIntersect(event.getX(), event.getY());
-                    // System.out.println(event.getSceneX());
-                    // System.out.println(event.getSceneY());
-                    // System.out.println(hexagon);
                     if( hexagon != null ){
                         if(GameView.unitAction("unitMoveTo", currentUsername, hexagon.getTile().getIndex(), false)){
                             GameView.updateGame();
